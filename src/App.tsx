@@ -1,20 +1,10 @@
-import {
-  Admin,
-  Resource,
-  ListGuesser,
-  EditGuesser,
-  ShowGuesser,
-  CustomRoutes,
-} from "react-admin";
-import { Layout } from "./Layout";
-import { Route } from "react-router-dom";
+import { ThemeProvider } from '@mui/material';
+import { createTheme, ThemeOptions } from '@mui/material/styles';
 import ImageOptimizer from "./components/ImageOptimizer";
-import { defaultTheme } from 'react-admin';
-import { ThemeOptions } from '@mui/material';
+import { CssBaseline } from '@mui/material';
 
-// Fusion du thème react-admin avec notre thème sombre
-const darkTheme: ThemeOptions = {
-  ...defaultTheme,
+// Configuration du thème sombre
+const darkTheme = createTheme({
   palette: {
     mode: 'dark',
     primary: {
@@ -33,30 +23,17 @@ const darkTheme: ThemeOptions = {
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#1E1E1E',
-        },
-      },
-    },
-    MuiDrawer: {
-      styleOverrides: {
-        paper: {
-          backgroundColor: '#121212',
+          display: 'none',
         },
       },
     },
   },
-};
+});
 
+// Application simplifiée sans react-admin
 export const App = () => (
-  <Admin layout={Layout} theme={darkTheme}>
-    <CustomRoutes>
-      <Route path="/optimize" element={<ImageOptimizer />} />
-    </CustomRoutes>
-    <Resource
-      name="Image"
-      list={ListGuesser}
-      edit={EditGuesser}
-      show={ShowGuesser}
-    />
-  </Admin>
+  <ThemeProvider theme={darkTheme}>
+    <CssBaseline />
+    <ImageOptimizer />
+  </ThemeProvider>
 );

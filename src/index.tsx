@@ -1,11 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { RouterProvider } from "react-router";
-import { createHashRouter } from "react-router-dom";
 import { App } from "./App";
-import { ThemeProvider, CssBaseline, StyledEngineProvider } from '@mui/material';
 import { GlobalStyles } from '@mui/material';
-import theme from './theme';
 
 // Force dark mode in the browser
 document.documentElement.style.colorScheme = 'dark';
@@ -29,21 +25,9 @@ const globalStyles = {
   },
 };
 
-const router = createHashRouter([
-  {
-    path: "*",
-    element: <App />,
-  },
-]);
-
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <StyledEngineProvider injectFirst>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <GlobalStyles styles={globalStyles} />
-        <RouterProvider router={router} />
-      </ThemeProvider>
-    </StyledEngineProvider>
+    <GlobalStyles styles={globalStyles} />
+    <App />
   </React.StrictMode>,
 );
