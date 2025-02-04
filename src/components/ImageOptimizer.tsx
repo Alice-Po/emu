@@ -385,9 +385,6 @@ const ImageOptimizer: React.FC = () => {
           Optimiseur d&apos;Images 
         </Typography>
         <Paper sx={{ p: 2, mb: 3 }}>
-          <Typography variant="body1" gutterBottom>
-            Optimisez vos images en étant sympa avec la planète et avec la vie privée de ses habitant.e.s ! 
-          </Typography>
           <Typography component="div" variant="body2" sx={{ mb: 2 }}>
             <strong>Fonctionnalités :</strong>
             <ul>
@@ -418,7 +415,70 @@ const ImageOptimizer: React.FC = () => {
           </Button>
         </Box>
 
-        <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
+       
+        {originalStats && compressedStats && (
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Image originale:
+                </Typography>
+                <Typography>
+                  • Taille: {formatFileSize(originalStats.size)}
+                </Typography>
+                <Typography>
+                  • Dimensions: {originalStats.width}x{originalStats.height}px
+                </Typography>
+              </Grid>
+              <Grid item xs={12} md={6}>
+                <Typography variant="subtitle2" gutterBottom>
+                  Image compressée:
+                </Typography>
+                <Typography>
+                  • Taille: {formatFileSize(compressedStats.size)}
+                </Typography>
+                <Typography>
+                  • Dimensions: {compressedStats.width}x{compressedStats.height}px
+                </Typography>
+                <Typography>
+                  • Réduction: {calculateCompressionRatio(originalStats, compressedStats)}
+                </Typography>
+              </Grid>
+            </Grid>
+          </Paper>
+        )}
+
+       
+        <Grid container spacing={3}>
+          <Grid item xs={12} md={6}>
+            <Typography gutterBottom>Qualité de compression (%)</Typography>
+            <Slider
+              value={quality}
+              onChange={handleQualityChange}
+              min={0}
+              max={100}
+              valueLabelDisplay="auto"
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <Typography gutterBottom>Largeur maximale (px)</Typography>
+            <Slider
+              value={maxWidth}
+              onChange={handleMaxWidthChange}
+              min={100}
+              max={3840}
+              step={100}
+              valueLabelDisplay="auto"
+            />
+          </Grid>
+        </Grid>
+
+        {loading && (
+          <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
+            <CircularProgress />
+          </Box>
+        )}
+ <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Grid item>
             <FormControlLabel
               control={
@@ -461,39 +521,20 @@ const ImageOptimizer: React.FC = () => {
           </Grid>
         </Grid>
 
-        {originalStats && compressedStats && (
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Image originale:
-                </Typography>
-                <Typography>
-                  • Taille: {formatFileSize(originalStats.size)}
-                </Typography>
-                <Typography>
-                  • Dimensions: {originalStats.width}x{originalStats.height}px
-                </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Image compressée:
-                </Typography>
-                <Typography>
-                  • Taille: {formatFileSize(compressedStats.size)}
-                </Typography>
-                <Typography>
-                  • Dimensions: {compressedStats.width}x{compressedStats.height}px
-                </Typography>
-                <Typography>
-                  • Réduction: {calculateCompressionRatio(originalStats, compressedStats)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </Paper>
-        )}
-
-        {metadata && (
+        <Grid container spacing={2} sx={{ mt: 2 }}>
+          <Grid item xs={12} md={6}>
+            <Typography variant="subtitle1" gutterBottom>
+              Image originale
+            </Typography>
+            {originalImage && (
+              <Box
+                component="img"
+                src={URL.createObjectURL(originalImage)}
+                sx={{ maxWidth: '100%', height: 'auto' }}
+                alt="Original"
+              />
+            )}
+             {metadata && (
           <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
               Métadonnées de l&apos;image
@@ -558,49 +599,6 @@ const ImageOptimizer: React.FC = () => {
           </Paper>
         )}
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Typography gutterBottom>Qualité de compression (%)</Typography>
-            <Slider
-              value={quality}
-              onChange={handleQualityChange}
-              min={0}
-              max={100}
-              valueLabelDisplay="auto"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography gutterBottom>Largeur maximale (px)</Typography>
-            <Slider
-              value={maxWidth}
-              onChange={handleMaxWidthChange}
-              min={100}
-              max={3840}
-              step={100}
-              valueLabelDisplay="auto"
-            />
-          </Grid>
-        </Grid>
-
-        {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-            <CircularProgress />
-          </Box>
-        )}
-
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="subtitle1" gutterBottom>
-              Image originale
-            </Typography>
-            {originalImage && (
-              <Box
-                component="img"
-                src={URL.createObjectURL(originalImage)}
-                sx={{ maxWidth: '100%', height: 'auto' }}
-                alt="Original"
-              />
-            )}
           </Grid>
           <Grid item xs={12} md={6}>
             <Box sx={{ position: 'relative' }}>
