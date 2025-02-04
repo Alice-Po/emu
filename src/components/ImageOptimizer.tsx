@@ -3,6 +3,7 @@ import imageCompression from 'browser-image-compression';
 import * as faceapi from 'face-api.js';
 import { ReactCrop, type Crop } from 'react-image-crop';
 import 'react-image-crop/dist/ReactCrop.css';
+import * as exifr from 'exifr';
 import {
   Box,
   Button,
@@ -30,6 +31,18 @@ interface ImageStats {
   height: number;
 }
 
+interface ImageMetadata {
+  Make?: string;
+  Model?: string;
+  DateTimeOriginal?: string;
+  ExposureTime?: number;
+  FNumber?: number;
+  ISO?: number;
+  FocalLength?: number;
+  latitude?: number;
+  longitude?: number;
+}
+
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';
   const k = 1024;
@@ -51,6 +64,10 @@ const hexToRgb = (hex: string) => {
     g: 0xFF,
     b: 0x20
   };
+};
+
+const hasMetadata = (metadata: ImageMetadata): boolean => {
+  return Object.values(metadata).some(value => value !== undefined);
 };
 
 const ImageOptimizer: React.FC = () => {
@@ -76,6 +93,7 @@ const ImageOptimizer: React.FC = () => {
   });
   const [isCropping, setIsCropping] = useState<boolean>(false);
   const imageRef = useRef<HTMLImageElement>(null);
+  const [metadata, setMetadata] = useState<ImageMetadata | null>(null);
 
   useEffect(() => {
     const loadModels = async () => {
@@ -107,11 +125,36 @@ const ImageOptimizer: React.FC = () => {
     });
   };
 
+  const extractMetadata = async (file: File): Promise<ImageMetadata> => {
+    try {
+      const exif = await exifr.parse(file, {
+        pick: ['Make', 'Model', 'DateTimeOriginal', 'ExposureTime', 'FNumber', 'ISO', 'FocalLength', 'latitude', 'longitude']
+      });
+      return {
+        Make: exif?.Make,
+        Model: exif?.Model,
+        DateTimeOriginal: exif?.DateTimeOriginal,
+        ExposureTime: exif?.ExposureTime,
+        FNumber: exif?.FNumber,
+        ISO: exif?.ISO,
+        FocalLength: exif?.FocalLength,
+        latitude: exif?.latitude,
+        longitude: exif?.longitude
+      };
+    } catch (error) {
+      console.error('Erreur lors de la lecture des métadonnées:', error);
+      return {};
+    }
+  };
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
     const dimensions = await getImageDimensions(file);
+    const imageMetadata = await extractMetadata(file);
+    
+    setMetadata(imageMetadata);
     setOriginalStats({
       size: file.size,
       width: dimensions.width,
@@ -634,6 +677,71 @@ const ImageOptimizer: React.FC = () => {
                 </Typography>
               </Grid>
             </Grid>
+          </Paper>
+        )}
+
+        {metadata && (
+          <Paper sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
+            <Typography variant="h6" gutterBottom>
+              Métadonnées de l&apos;image
+            </Typography>
+            {hasMetadata(metadata) ? (
+              <Grid container spacing={2}>
+                {metadata.Make && (
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      <strong>Appareil:</strong> {metadata.Make} {metadata.Model}
+                    </Typography>
+                  </Grid>
+                )}
+                {metadata.DateTimeOriginal && (
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      <strong>Date de prise:</strong> {new Date(metadata.DateTimeOriginal).toLocaleString()}
+                    </Typography>
+                  </Grid>
+                )}
+                {metadata.ExposureTime && (
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      <strong>Temps d&apos;exposition:</strong> {metadata.ExposureTime}s
+                    </Typography>
+                  </Grid>
+                )}
+                {metadata.FNumber && (
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      <strong>Ouverture:</strong> f/{metadata.FNumber}
+                    </Typography>
+                  </Grid>
+                )}
+                {metadata.ISO && (
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      <strong>ISO:</strong> {metadata.ISO}
+                    </Typography>
+                  </Grid>
+                )}
+                {metadata.FocalLength && (
+                  <Grid item xs={12} sm={6}>
+                    <Typography>
+                      <strong>Distance focale:</strong> {metadata.FocalLength}mm
+                    </Typography>
+                  </Grid>
+                )}
+                {metadata.latitude && metadata.longitude && (
+                  <Grid item xs={12}>
+                    <Typography>
+                      <strong>Localisation:</strong> {metadata.latitude.toFixed(6)}, {metadata.longitude.toFixed(6)}
+                    </Typography>
+                  </Grid>
+                )}
+              </Grid>
+            ) : (
+              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                Aucune métadonnée n&apos;est disponible pour cette image.
+              </Typography>
+            )}
           </Paper>
         )}
 

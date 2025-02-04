@@ -43,4 +43,7 @@ export default defineConfig(({ mode }) => ({
   },
   resolve: { alias },
   base: "./",
+  optimizeDeps: {
+    include: ['exifr']
+  }
 }));
