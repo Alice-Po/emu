@@ -649,7 +649,7 @@ const ImageOptimizer: React.FC = () => {
         </Grid>
 
         {originalStats && compressedStats && (
-          <Paper sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
+          <Paper sx={{ p: 2, mb: 3 }}>
             <Grid container spacing={2}>
               <Grid item xs={12} md={6}>
                 <Typography variant="subtitle2" gutterBottom>
@@ -681,7 +681,7 @@ const ImageOptimizer: React.FC = () => {
         )}
 
         {metadata && (
-          <Paper sx={{ p: 2, mb: 3, bgcolor: 'background.default' }}>
+          <Paper sx={{ p: 2, mb: 3 }}>
             <Typography variant="h6" gutterBottom>
               Métadonnées de l&apos;image
             </Typography>
