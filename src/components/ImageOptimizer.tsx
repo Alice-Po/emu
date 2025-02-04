@@ -1,5 +1,6 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
+import * as faceapi from 'face-api.js';
 import {
   Box,
   Button,
@@ -19,6 +20,7 @@ import {
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
+import BlurOnIcon from '@mui/icons-material/BlurOn';
 
 interface ImageStats {
   size: number;
@@ -61,6 +63,28 @@ const ImageOptimizer: React.FC = () => {
   const [fluorColor, setFluorColor] = useState<string>(DEFAULT_FLUO_COLOR);
   const [rotation, setRotation] = useState<number>(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [applyBlur, setApplyBlur] = useState<boolean>(true);
+  const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
+
+  useEffect(() => {
+    const loadModels = async () => {
+      try {
+        console.log('Début du chargement des modèles de détection de visages...');
+        // Charger les modèles plus complets
+        await Promise.all([
+          faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
+          faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
+          faceapi.nets.faceRecognitionNet.loadFromUri('/models')
+        ]);
+        console.log('Modèles de détection de visages chargés avec succès');
+        setModelsLoaded(true);
+      } catch (error) {
+        console.error('Erreur lors du chargement des modèles:', error);
+        setModelsLoaded(false);
+      }
+    };
+    loadModels();
+  }, []);
 
   const getImageDimensions = (file: File | Blob): Promise<{ width: number; height: number }> => {
     return new Promise((resolve) => {
@@ -104,16 +128,50 @@ const ImageOptimizer: React.FC = () => {
     return imageData;
   };
 
+  const blurFaces = async (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
+    try {
+      console.log('Début de la détection des visages...');
+    const detections = await faceapi.detectAllFaces(
+      canvas,
+        new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 })
+      ).withFaceLandmarks();
+
+      console.log(`${detections.length} visage(s) détecté(s)`);
+
+      detections.forEach(detection => {
+        const box = detection.detection.box;
+        const margin = Math.max(box.width, box.height) * 0.3;
+        const blurArea = {
+          x: Math.max(0, box.x - margin),
+          y: Math.max(0, box.y - margin),
+          width: Math.min(canvas.width - box.x, box.width + 2 * margin),
+          height: Math.min(canvas.height - box.y, box.height + 2 * margin)
+        };
+        
+        ctx.filter = `blur(20px)`;
+        ctx.drawImage(
+          canvas,
+          blurArea.x, blurArea.y, blurArea.width, blurArea.height,
+          blurArea.x, blurArea.y, blurArea.width, blurArea.height
+        );
+        ctx.filter = 'none';
+      });
+    } catch (error) {
+      console.error('Erreur lors du floutage des visages:', error);
+    }
+  };
+
   const processImage = async (file: File, currentColor: string, shouldApplyStyle: boolean): Promise<Blob> => {
     console.log('processImage - Début du traitement:', {
       shouldApplyStyle,
       currentColor,
-      fileSize: file.size
+      fileSize: file.size,
+      applyBlur
     });
 
     return new Promise((resolve) => {
       const img = new Image();
-      img.onload = () => {
+      img.onload = async () => {
         const canvas = canvasRef.current;
         if (!canvas) return;
 
@@ -122,23 +180,21 @@ const ImageOptimizer: React.FC = () => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        console.log('processImage - Avant traitement:', {
-          shouldApplyStyle,
-          dimensions: `${canvas.width}x${canvas.height}`,
-          currentColor
-        });
-
         // Dessiner l&apos;image originale
         ctx.drawImage(img, 0, 0);
 
-        if (shouldApplyStyle) {  // Si le monochrome est activé
+        // Flouter les visages si activé
+        if (applyBlur && modelsLoaded) {
+          console.log('processImage - Application du floutage des visages');
+          await blurFaces(canvas, ctx);
+        }
+
+        // Appliquer l&apos;effet monochrome si activé
+        if (shouldApplyStyle) {
           console.log('processImage - Application du filtre monochrome');
-          // Appliquer l&apos;effet monochrome
           const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
           const processedImageData = applyMonochromeEffect(imageData, currentColor);
           ctx.putImageData(processedImageData, 0, 0);
-        } else {
-          console.log('processImage - Pas de filtre appliqué (mode couleur original)');
         }
 
         canvas.toBlob((blob) => {
@@ -446,6 +502,23 @@ const ImageOptimizer: React.FC = () => {
               />
             </Grid>
           )}
+          <Grid item>
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={applyBlur}
+                  onChange={(e) => {
+                    setApplyBlur(e.target.checked);
+                    if (originalImage) {
+                      compressImage(originalImage);
+                    }
+                  }}
+                  disabled={!modelsLoaded}
+                />
+              }
+              label="Flouter les visages"
+            />
+          </Grid>
         </Grid>
 
         {originalStats && compressedStats && (
