@@ -628,6 +628,9 @@ const ImageOptimizer: React.FC = () => {
                       alt="Compressed"
                     />
                   )}
+              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                Les metadonnées ont été automatiquement suppriméespendant le traitement.
+              </Typography>
                   <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
                     <Tooltip title="Pivoter l'image">
                       <IconButton onClick={rotateImage} color="primary">
