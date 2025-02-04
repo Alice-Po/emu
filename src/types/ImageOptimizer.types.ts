@@ -1,4 +1,4 @@
-import { WithFaceLandmarks, FaceDetection } from 'face-api.js';
+import { FaceDetection } from 'face-api.js';
 
 /**
  * Interface pour les statistiques d'une image
@@ -23,11 +23,6 @@ export interface ImageMetadata {
   latitude?: number;
   longitude?: number;
 }
-
-/**
- * Type pour la détection de visage avec face-api.js
- */
-export type FaceDetectionWithLandmarks = WithFaceLandmarks<{ detection: FaceDetection }>;
 
 /**
  * Interface pour les dimensions d'une image

@@ -25,42 +25,20 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
+import { ImageStats, ImageMetadata } from '../types/ImageOptimizer.types';
 import {
-  ImageStats,
-  ImageMetadata,
-  FaceDetectionWithLandmarks,
-  ImageDimensions,
-  CompressionOptions,
-  BlurArea,
-  RGBColor
-} from '../types/ImageOptimizer.types';
-
-const formatFileSize = (bytes: number): string => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return `${parseFloat((bytes / Math.pow(k, i)).toFixed(2))} ${sizes[i]}`;
-};
+  formatFileSize,
+  hexToRgb,
+  hasMetadata,
+  getImageDimensions,
+  extractMetadata,
+  applyMonochromeEffect,
+  processImage,
+  getCroppedImg,
+  calculateCompressionRatio
+} from '../utils/imageUtils';
 
 const DEFAULT_FLUO_COLOR = '#9DFF20';
-
-const hexToRgb = (hex: string) => {
-  const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-  return result ? {
-    r: parseInt(result[1], 16),
-    g: parseInt(result[2], 16),
-    b: parseInt(result[3], 16)
-  } : {
-    r: 0x9D,
-    g: 0xFF,
-    b: 0x20
-  };
-};
-
-const hasMetadata = (metadata: ImageMetadata): boolean => {
-  return Object.values(metadata).some(value => value !== undefined);
-};
 
 const ImageOptimizer: React.FC = () => {
   const [originalImage, setOriginalImage] = useState<File | null>(null);
@@ -91,13 +69,8 @@ const ImageOptimizer: React.FC = () => {
     const loadModels = async () => {
       try {
         console.log('Début du chargement des modèles de détection de visages...');
-        // Charger les modèles plus complets
-        await Promise.all([
-          faceapi.nets.ssdMobilenetv1.loadFromUri('/models'),
-          faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
-          faceapi.nets.faceRecognitionNet.loadFromUri('/models')
-        ]);
-        console.log('Modèles de détection de visages chargés avec succès');
+        await faceapi.nets.ssdMobilenetv1.loadFromUri('/models');
+        console.log('Modèle de détection de visages chargé avec succès');
         setModelsLoaded(true);
       } catch (error) {
         console.error('Erreur lors du chargement des modèles:', error);
@@ -106,38 +79,6 @@ const ImageOptimizer: React.FC = () => {
     };
     loadModels();
   }, []);
-
-  const getImageDimensions = (file: File | Blob): Promise<{ width: number; height: number }> => {
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = () => {
-        resolve({ width: img.width, height: img.height });
-      };
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
-  const extractMetadata = async (file: File): Promise<ImageMetadata> => {
-    try {
-      const exif = await exifr.parse(file, {
-        pick: ['Make', 'Model', 'DateTimeOriginal', 'ExposureTime', 'FNumber', 'ISO', 'FocalLength', 'latitude', 'longitude']
-      });
-      return {
-        Make: exif?.Make,
-        Model: exif?.Model,
-        DateTimeOriginal: exif?.DateTimeOriginal,
-        ExposureTime: exif?.ExposureTime,
-        FNumber: exif?.FNumber,
-        ISO: exif?.ISO,
-        FocalLength: exif?.FocalLength,
-        latitude: exif?.latitude,
-        longitude: exif?.longitude
-      };
-    } catch (error) {
-      console.error('Erreur lors de la lecture des métadonnées:', error);
-      return {};
-    }
-  };
 
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -156,36 +97,18 @@ const ImageOptimizer: React.FC = () => {
     await compressImage(file);
   };
 
-  const applyMonochromeEffect = (imageData: ImageData, color: string): ImageData => {
-    const data = imageData.data;
-    const rgbColor = hexToRgb(color);
-
-    for (let i = 0; i < data.length; i += 4) {
-      // Convertir en niveau de gris
-      const gray = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
-      
-      // Appliquer l&apos;effet monochrome avec la couleur fluo choisie
-      const mixRatio = 0.7;  // 70% gris, 30% couleur
-      data[i] = Math.min(255, gray * mixRatio + (rgbColor.r * (1 - mixRatio)));     // Rouge
-      data[i + 1] = Math.min(255, gray * mixRatio + (rgbColor.g * (1 - mixRatio))); // Vert
-      data[i + 2] = Math.min(255, gray * mixRatio + (rgbColor.b * (1 - mixRatio))); // Bleu
-      // Alpha reste inchangé
-    }
-    return imageData;
-  };
-
   const blurFaces = async (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
     try {
       console.log('Début de la détection des visages...');
       const detections = await faceapi.detectAllFaces(
         canvas,
         new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 })
-      ).withFaceLandmarks();
+      );
 
       console.log(`${detections.length} visage(s) détecté(s)`);
 
-      detections.forEach((detection: faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>) => {
-        const box = detection.detection.box;
+      detections.forEach((detection) => {
+        const box = detection.box;
         const margin = Math.max(box.width, box.height) * 0.3;
         const blurArea = {
           x: Math.max(0, box.x - margin),
@@ -207,57 +130,6 @@ const ImageOptimizer: React.FC = () => {
     }
   };
 
-  const processImage = async (file: File, currentColor: string, shouldApplyStyle: boolean): Promise<Blob> => {
-    console.log('processImage - Début du traitement:', {
-      shouldApplyStyle,
-      currentColor,
-      fileSize: file.size,
-      applyBlur
-    });
-
-    return new Promise((resolve) => {
-      const img = new Image();
-      img.onload = async () => {
-        const canvas = canvasRef.current;
-        if (!canvas) return;
-
-        canvas.width = img.width;
-        canvas.height = img.height;
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // Dessiner l&apos;image originale
-        ctx.drawImage(img, 0, 0);
-
-        // Flouter les visages si activé
-        if (applyBlur && modelsLoaded) {
-          console.log('processImage - Application du floutage des visages');
-          await blurFaces(canvas, ctx);
-        }
-
-        // Appliquer l&apos;effet monochrome si activé
-        if (shouldApplyStyle) {
-          console.log('processImage - Application du filtre monochrome');
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const processedImageData = applyMonochromeEffect(imageData, currentColor);
-          ctx.putImageData(processedImageData, 0, 0);
-        }
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            console.log('processImage - Fin du traitement:', {
-              resultSize: blob.size,
-              shouldApplyStyle,
-              withFilter: shouldApplyStyle
-            });
-            resolve(blob);
-          }
-        }, 'image/jpeg', quality / 100);
-      };
-      img.src = URL.createObjectURL(file);
-    });
-  };
-
   const compressImage = async (imageFile: File) => {
     try {
       setLoading(true);
@@ -270,7 +142,15 @@ const ImageOptimizer: React.FC = () => {
       };
 
       const compressedFile = await imageCompression(imageFile, options);
-      const processedBlob = await processImage(compressedFile, fluorColor, applyStyle);
+      const processedBlob = await processImage(
+        compressedFile,
+        fluorColor,
+        applyStyle,
+        quality,
+        applyBlur,
+        modelsLoaded,
+        canvasRef
+      );
       const dimensions = await getImageDimensions(processedBlob);
       
       setCompressedStats({
@@ -310,7 +190,15 @@ const ImageOptimizer: React.FC = () => {
     if (originalImage) {
       setLoading(true);
       try {
-        const processedBlob = await processImage(originalImage, newColor, applyStyle);
+        const processedBlob = await processImage(
+          originalImage,
+          newColor,
+          applyStyle,
+          quality,
+          applyBlur,
+          modelsLoaded,
+          canvasRef
+        );
         const dimensions = await getImageDimensions(processedBlob);
         
         setCompressedStats({
@@ -346,88 +234,41 @@ const ImageOptimizer: React.FC = () => {
     document.body.removeChild(link);
   };
 
-  const compressionRatio = (): string => {
-    if (!originalStats || !compressedStats) return '0%';
-    const ratio = ((originalStats.size - compressedStats.size) / originalStats.size) * 100;
-    return `${ratio.toFixed(1)}%`;
-  };
-
   const handleStyleChange = async (newValue: boolean) => {
-    console.log('handleStyleChange - Début:', {
-      oldValue: applyStyle,
-      newValue,
-      hasImage: !!originalImage
-    });
-
     setApplyStyle(newValue);
     if (originalImage) {
       setLoading(true);
       try {
-        if (!newValue) {
-          console.log('handleStyleChange - Mode couleur original');
-          // Si on désactive le monochrome, on recompresse l'image originale
-          const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: maxWidth,
-            useWebWorker: true,
-            quality: quality / 100,
-          };
-          const compressedFile = await imageCompression(originalImage, options);
-          const processedBlob = await processImage(compressedFile, fluorColor, false);
-          const dimensions = await getImageDimensions(processedBlob);
-          
-          setCompressedStats({
-            size: processedBlob.size,
-            width: dimensions.width,
-            height: dimensions.height,
-          });
+        const options = {
+          maxSizeMB: 1,
+          maxWidthOrHeight: maxWidth,
+          useWebWorker: true,
+          quality: quality / 100,
+        };
+        const compressedFile = await imageCompression(originalImage, options);
+        const processedBlob = await processImage(
+          compressedFile,
+          fluorColor,
+          newValue,
+          quality,
+          applyBlur,
+          modelsLoaded,
+          canvasRef
+        );
+        const dimensions = await getImageDimensions(processedBlob);
+        
+        setCompressedStats({
+          size: processedBlob.size,
+          width: dimensions.width,
+          height: dimensions.height,
+        });
 
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setCompressedImage(reader.result as string);
-            setLoading(false);
-          };
-          reader.readAsDataURL(processedBlob);
-        } else {
-          console.log('handleStyleChange - Mode monochrome:', {
-            fluorColor,
-            quality,
-            maxWidth
-          });
-          // Si on active le monochrome, on compresse d'abord puis on applique l'effet
-          const options = {
-            maxSizeMB: 1,
-            maxWidthOrHeight: maxWidth,
-            useWebWorker: true,
-            quality: quality / 100,
-          };
-          const compressedFile = await imageCompression(originalImage, options);
-          console.log('handleStyleChange - Après compression:', {
-            compressedSize: compressedFile.size
-          });
-
-          const processedBlob = await processImage(compressedFile, fluorColor, true);
-          console.log('handleStyleChange - Après processImage:', {
-            processedSize: processedBlob.size,
-            fluorColor
-          });
-
-          const dimensions = await getImageDimensions(processedBlob);
-          
-          setCompressedStats({
-            size: processedBlob.size,
-            width: dimensions.width,
-            height: dimensions.height,
-          });
-
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setCompressedImage(reader.result as string);
-            setLoading(false);
-            console.log('handleStyleChange - Traitement terminé');
-          };
-          reader.readAsDataURL(processedBlob);
-        }
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setCompressedImage(reader.result as string);
+          setLoading(false);
+        };
+        reader.readAsDataURL(processedBlob);
       } catch (error) {
         console.error('Erreur lors du changement de style:', error);
         setLoading(false);
@@ -501,57 +342,20 @@ const ImageOptimizer: React.FC = () => {
     }
   };
 
-  const getCroppedImg = async (
-    image: HTMLImageElement,
-    crop: Crop
-  ): Promise<Blob> => {
-    const canvas = document.createElement('canvas');
-    const scaleX = image.naturalWidth / image.width;
-    const scaleY = image.naturalHeight / image.height;
-    canvas.width = crop.width * scaleX;
-    canvas.height = crop.height * scaleY;
-    const ctx = canvas.getContext('2d');
-
-    if (!ctx) {
-      throw new Error('No 2d context');
-    }
-
-    ctx.drawImage(
-      image,
-      crop.x * scaleX,
-      crop.y * scaleY,
-      crop.width * scaleX,
-      crop.height * scaleY,
-      0,
-      0,
-      crop.width * scaleX,
-      crop.height * scaleY
-    );
-
-    return new Promise((resolve) => {
-      canvas.toBlob(
-        (blob) => {
-          if (!blob) {
-            throw new Error('Canvas is empty');
-          }
-          resolve(blob);
-        },
-        'image/jpeg',
-        quality / 100
-      );
-    });
-  };
-
   const handleCropComplete = async () => {
     if (!imageRef.current || !crop.width || !crop.height) return;
 
     try {
       setLoading(true);
-      const croppedBlob = await getCroppedImg(imageRef.current, crop);
+      const croppedBlob = await getCroppedImg(imageRef.current, crop, quality);
       const processedBlob = await processImage(
         new File([croppedBlob], 'cropped.jpg', { type: 'image/jpeg' }),
         fluorColor,
-        applyStyle
+        applyStyle,
+        quality,
+        applyBlur,
+        modelsLoaded,
+        canvasRef
       );
       
       const dimensions = await getImageDimensions(processedBlob);
@@ -682,7 +486,7 @@ const ImageOptimizer: React.FC = () => {
                   • Dimensions: {compressedStats.width}x{compressedStats.height}px
                 </Typography>
                 <Typography>
-                  • Réduction: {compressionRatio()}
+                  • Réduction: {calculateCompressionRatio(originalStats, compressedStats)}
                 </Typography>
               </Grid>
             </Grid>
