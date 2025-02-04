@@ -1,6 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import imageCompression from 'browser-image-compression';
 import * as faceapi from 'face-api.js';
+import { ReactCrop, type Crop } from 'react-image-crop';
+import 'react-image-crop/dist/ReactCrop.css';
 import {
   Box,
   Button,
@@ -65,6 +67,15 @@ const ImageOptimizer: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [applyBlur, setApplyBlur] = useState<boolean>(true);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
+  const [crop, setCrop] = useState<Crop>({
+    unit: '%',
+    width: 100,
+    height: 100,
+    x: 0,
+    y: 0
+  });
+  const [isCropping, setIsCropping] = useState<boolean>(false);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   useEffect(() => {
     const loadModels = async () => {
@@ -131,14 +142,14 @@ const ImageOptimizer: React.FC = () => {
   const blurFaces = async (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
     try {
       console.log('Début de la détection des visages...');
-    const detections = await faceapi.detectAllFaces(
-      canvas,
+      const detections = await faceapi.detectAllFaces(
+        canvas,
         new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 })
       ).withFaceLandmarks();
 
       console.log(`${detections.length} visage(s) détecté(s)`);
 
-      detections.forEach(detection => {
+      detections.forEach((detection: faceapi.WithFaceLandmarks<{ detection: faceapi.FaceDetection }>) => {
         const box = detection.detection.box;
         const margin = Math.max(box.width, box.height) * 0.3;
         const blurArea = {
@@ -455,6 +466,79 @@ const ImageOptimizer: React.FC = () => {
     }
   };
 
+  const getCroppedImg = async (
+    image: HTMLImageElement,
+    crop: Crop
+  ): Promise<Blob> => {
+    const canvas = document.createElement('canvas');
+    const scaleX = image.naturalWidth / image.width;
+    const scaleY = image.naturalHeight / image.height;
+    canvas.width = crop.width * scaleX;
+    canvas.height = crop.height * scaleY;
+    const ctx = canvas.getContext('2d');
+
+    if (!ctx) {
+      throw new Error('No 2d context');
+    }
+
+    ctx.drawImage(
+      image,
+      crop.x * scaleX,
+      crop.y * scaleY,
+      crop.width * scaleX,
+      crop.height * scaleY,
+      0,
+      0,
+      crop.width * scaleX,
+      crop.height * scaleY
+    );
+
+    return new Promise((resolve) => {
+      canvas.toBlob(
+        (blob) => {
+          if (!blob) {
+            throw new Error('Canvas is empty');
+          }
+          resolve(blob);
+        },
+        'image/jpeg',
+        quality / 100
+      );
+    });
+  };
+
+  const handleCropComplete = async () => {
+    if (!imageRef.current || !crop.width || !crop.height) return;
+
+    try {
+      setLoading(true);
+      const croppedBlob = await getCroppedImg(imageRef.current, crop);
+      const processedBlob = await processImage(
+        new File([croppedBlob], 'cropped.jpg', { type: 'image/jpeg' }),
+        fluorColor,
+        applyStyle
+      );
+      
+      const dimensions = await getImageDimensions(processedBlob);
+      setCompressedStats({
+        size: processedBlob.size,
+        width: dimensions.width,
+        height: dimensions.height,
+      });
+
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setCompressedImage(reader.result as string);
+        setIsCropping(false);
+        setLoading(false);
+      };
+      reader.readAsDataURL(processedBlob);
+    } catch (error) {
+      console.error('Erreur lors du recadrage:', error);
+      setLoading(false);
+    }
+  };
+
   return (
     <Card>
       <CardContent>
@@ -604,25 +688,66 @@ const ImageOptimizer: React.FC = () => {
               </Typography>
               {compressedImage && (
                 <>
-                  <Box
-                    component="img"
-                    src={compressedImage}
-                    sx={{ maxWidth: '100%', height: 'auto' }}
-                    alt="Compressed"
-                  />
+                  {isCropping ? (
+                    <ReactCrop
+                      crop={crop}
+                      onChange={(c: Crop) => setCrop(c)}
+                      aspect={undefined}
+                    >
+                      <img
+                        ref={imageRef}
+                        src={compressedImage}
+                        style={{ maxWidth: '100%' }}
+                        alt="À recadrer"
+                      />
+                    </ReactCrop>
+                  ) : (
+                    <Box
+                      component="img"
+                      src={compressedImage}
+                      sx={{ maxWidth: '100%', height: 'auto' }}
+                      alt="Compressed"
+                    />
+                  )}
                   <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
                     <Tooltip title="Pivoter l'image">
                       <IconButton onClick={rotateImage} color="primary">
                         <RotateRightIcon />
                       </IconButton>
                     </Tooltip>
-                    <Button
-                      variant="contained"
-                      startIcon={<DownloadIcon />}
-                      onClick={downloadImage}
-                    >
-                      Télécharger l&apos;image optimisée
-                    </Button>
+                    {isCropping ? (
+                      <>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handleCropComplete}
+                        >
+                          Appliquer le recadrage
+                        </Button>
+                        <Button
+                          variant="outlined"
+                          onClick={() => setIsCropping(false)}
+                        >
+                          Annuler
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <Button
+                          variant="outlined"
+                          onClick={() => setIsCropping(true)}
+                        >
+                          Recadrer
+                        </Button>
+                        <Button
+                          variant="contained"
+                          startIcon={<DownloadIcon />}
+                          onClick={downloadImage}
+                        >
+                          Télécharger l&apos;image optimisée
+                        </Button>
+                      </>
+                    )}
                   </Box>
                 </>
               )}
