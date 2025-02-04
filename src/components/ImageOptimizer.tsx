@@ -13,9 +13,12 @@ import {
   Switch,
   FormControlLabel,
   TextField,
+  IconButton,
+  Tooltip,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
+import RotateRightIcon from '@mui/icons-material/RotateRight';
 
 interface ImageStats {
   size: number;
@@ -56,6 +59,7 @@ const ImageOptimizer: React.FC = () => {
   const [compressedStats, setCompressedStats] = useState<ImageStats | null>(null);
   const [applyStyle, setApplyStyle] = useState<boolean>(true);
   const [fluorColor, setFluorColor] = useState<string>(DEFAULT_FLUO_COLOR);
+  const [rotation, setRotation] = useState<number>(0);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const getImageDimensions = (file: File | Blob): Promise<{ width: number; height: number }> => {
@@ -329,6 +333,72 @@ const ImageOptimizer: React.FC = () => {
     }
   };
 
+  const rotateImage = async () => {
+    if (!originalImage) return;
+    
+    setLoading(true);
+    try {
+      const newRotation = (rotation + 90) % 360;
+      setRotation(newRotation);
+      
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const img = new Image();
+      img.onload = async () => {
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // Ajuster les dimensions du canvas pour la rotation
+        if (newRotation % 180 === 0) {
+          canvas.width = img.width;
+          canvas.height = img.height;
+        } else {
+          canvas.width = img.height;
+          canvas.height = img.width;
+        }
+
+        // Appliquer la rotation
+        ctx.save();
+        ctx.translate(canvas.width / 2, canvas.height / 2);
+        ctx.rotate((newRotation * Math.PI) / 180);
+        ctx.drawImage(img, -img.width / 2, -img.height / 2);
+        ctx.restore();
+
+        // Appliquer le filtre monochrome si nécessaire
+        if (applyStyle) {
+          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const processedImageData = applyMonochromeEffect(imageData, fluorColor);
+          ctx.putImageData(processedImageData, 0, 0);
+        }
+
+        // Convertir en blob et mettre à jour l'image
+        canvas.toBlob(async (blob) => {
+          if (blob) {
+            const dimensions = await getImageDimensions(blob);
+            setCompressedStats({
+              size: blob.size,
+              width: dimensions.width,
+              height: dimensions.height,
+            });
+
+            const reader = new FileReader();
+            reader.onloadend = () => {
+              setCompressedImage(reader.result as string);
+              setLoading(false);
+            };
+            reader.readAsDataURL(blob);
+          }
+        }, 'image/jpeg', quality / 100);
+      };
+
+      img.src = URL.createObjectURL(originalImage);
+    } catch (error) {
+      console.error('Erreur lors de la rotation:', error);
+      setLoading(false);
+    }
+  };
+
   return (
     <Card>
       <CardContent>
@@ -455,27 +525,35 @@ const ImageOptimizer: React.FC = () => {
             )}
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography variant="subtitle1" gutterBottom>
-              Image optimisée
-            </Typography>
-            {compressedImage && (
-              <>
-                <Box
-                  component="img"
-                  src={compressedImage}
-                  sx={{ maxWidth: '100%', height: 'auto' }}
-                  alt="Compressed"
-                />
-                <Button
-                  variant="contained"
-                  startIcon={<DownloadIcon />}
-                  onClick={downloadImage}
-                  sx={{ mt: 2 }}
-                >
-                  Télécharger l&apos;image optimisée
-                </Button>
-              </>
-            )}
+            <Box sx={{ position: 'relative' }}>
+              <Typography variant="subtitle1" gutterBottom>
+                Image optimisée
+              </Typography>
+              {compressedImage && (
+                <>
+                  <Box
+                    component="img"
+                    src={compressedImage}
+                    sx={{ maxWidth: '100%', height: 'auto' }}
+                    alt="Compressed"
+                  />
+                  <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
+                    <Tooltip title="Pivoter l'image">
+                      <IconButton onClick={rotateImage} color="primary">
+                        <RotateRightIcon />
+                      </IconButton>
+                    </Tooltip>
+                    <Button
+                      variant="contained"
+                      startIcon={<DownloadIcon />}
+                      onClick={downloadImage}
+                    >
+                      Télécharger l&apos;image optimisée
+                    </Button>
+                  </Box>
+                </>
+              )}
+            </Box>
           </Grid>
         </Grid>
       </CardContent>
