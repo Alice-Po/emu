@@ -25,24 +25,15 @@ import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
 import BlurOnIcon from '@mui/icons-material/BlurOn';
-
-interface ImageStats {
-  size: number;
-  width: number;
-  height: number;
-}
-
-interface ImageMetadata {
-  Make?: string;
-  Model?: string;
-  DateTimeOriginal?: string;
-  ExposureTime?: number;
-  FNumber?: number;
-  ISO?: number;
-  FocalLength?: number;
-  latitude?: number;
-  longitude?: number;
-}
+import {
+  ImageStats,
+  ImageMetadata,
+  FaceDetectionWithLandmarks,
+  ImageDimensions,
+  CompressionOptions,
+  BlurArea,
+  RGBColor
+} from '../types/ImageOptimizer.types';
 
 const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return '0 B';
@@ -597,7 +588,7 @@ const ImageOptimizer: React.FC = () => {
             <strong>Fonctionnalités :</strong>
             <ul>
               <li>Compression intelligente avec contrôle de la qualité</li>
-              <li>Protection de la vie privée avec floutage automatique des visages</li>
+              <li>Floutage automatique des visages</li>
               <li>Outils de recadrage et rotation</li>
               <li>Lecture des meta-données</li>
             </ul>
