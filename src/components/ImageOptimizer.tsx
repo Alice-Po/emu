@@ -19,6 +19,7 @@ import {
   TextField,
   IconButton,
   Tooltip,
+  Link,
 } from '@mui/material';
 import CloudUploadIcon from '@mui/icons-material/CloudUpload';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -586,8 +587,25 @@ const ImageOptimizer: React.FC = () => {
     <Card>
       <CardContent>
         <Typography variant="h5" gutterBottom>
-          Optimiseur d&apos;Images
+          Optimiseur d&apos;Images 
         </Typography>
+        <Paper sx={{ p: 2, mb: 3 }}>
+          <Typography variant="body1" gutterBottom>
+            Optimisez vos images en étant sympa avec la planète et avec la vie privée de ses habitant.e.s ! 
+          </Typography>
+          <Typography component="div" variant="body2" sx={{ mb: 2 }}>
+            <strong>Fonctionnalités :</strong>
+            <ul>
+              <li>Compression intelligente avec contrôle de la qualité</li>
+              <li>Protection de la vie privée avec floutage automatique des visages</li>
+              <li>Outils de recadrage et rotation</li>
+              <li>Lecture des meta-données</li>
+            </ul>
+          </Typography>
+          <Typography variant="body2" color="primary" sx={{ fontWeight: 'medium' }}>
+            ✨ Toutes les images sont traitées localement dans votre navigateur - Aucun envoi sur un serveur !
+          </Typography>
+        </Paper>
 
         <Box sx={{ mb: 3 }}>
           <Button
@@ -864,6 +882,31 @@ const ImageOptimizer: React.FC = () => {
         </Grid>
       </CardContent>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <Box 
+        component="footer" 
+        sx={{ 
+          p: 2, 
+          mt: 3, 
+          borderTop: 1, 
+          borderColor: 'divider',
+          textAlign: 'center',
+          backgroundColor: 'background.paper'
+        }}
+      >
+        <Typography variant="body2" color="text.secondary">
+          Les contributions sont les bienvenues ! 
+          <Link 
+            href="https://github.com/Alice-Po/image-ecolo" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            sx={{ ml: 1 }}
+          >
+            Voir le projet sur GitHub
+          </Link>
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+            Made in Boccagia        </Typography>
+      </Box>
     </Card>
   );
 };
