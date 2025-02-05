@@ -9,7 +9,6 @@ import {
   Button,
   Card,
   CardContent,
-  CircularProgress,
   Grid,
   Slider,
   Typography,
@@ -32,28 +31,35 @@ import {
   hasMetadata,
   getImageDimensions,
   extractMetadata,
-  applyMonochromeEffect,
-  processImage,
+  applyDitheringEffect,
+  processImageWhithStyle,
   getCroppedImg,
   calculateCompressionRatio
 } from '../utils/imageUtils';
+import { useImageProcessor } from '../hooks/useImageProcessor';
 
-const DEFAULT_FLUO_COLOR = '#9DFF20';
 
 const ImageOptimizer: React.FC = () => {
-  const [originalImage, setOriginalImage] = useState<File | null>(null);
-  const [compressedImage, setCompressedImage] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
+  const {
+    loading,
+    originalImage,
+    compressedImage,
+    originalStats,
+    compressedStats,
+    metadata,
+    canvasRef,
+    processImage,
+    setOriginalImage,
+    reset
+  } = useImageProcessor();
+
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
-  const [originalStats, setOriginalStats] = useState<ImageStats | null>(null);
-  const [compressedStats, setCompressedStats] = useState<ImageStats | null>(null);
   const [applyStyle, setApplyStyle] = useState<boolean>(true);
-  const [fluorColor, setFluorColor] = useState<string>(DEFAULT_FLUO_COLOR);
-  const [rotation, setRotation] = useState<number>(0);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
-  const [applyBlur, setApplyBlur] = useState<boolean>(true);
+  const [colorCount, setColorCount] = useState<number>(8);
+  const [applyBlur, setApplyBlur] = useState<boolean>(false);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
+  const [rotation, setRotation] = useState<number>(0);
   const [crop, setCrop] = useState<Crop>({
     unit: '%',
     width: 100,
@@ -63,7 +69,7 @@ const ImageOptimizer: React.FC = () => {
   });
   const [isCropping, setIsCropping] = useState<boolean>(false);
   const imageRef = useRef<HTMLImageElement>(null);
-  const [metadata, setMetadata] = useState<ImageMetadata | null>(null);
+  const [loadingMessage, setLoadingMessage] = useState<string>("Patience, votre image est en cours de traitement..");
 
   useEffect(() => {
     const loadModels = async () => {
@@ -80,146 +86,106 @@ const ImageOptimizer: React.FC = () => {
     loadModels();
   }, []);
 
+  // Effet pour changer le message après 3 secondes
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (loading) {
+      setLoadingMessage("Patience, votre image est en cours de traitement..");
+      timeoutId = setTimeout(() => {
+        setLoadingMessage("Ok c'est vrai que c'est un peu long..");
+      }, 5000);
+      timeoutId = setTimeout(() => {
+        setLoadingMessage("Ca vient ! Ca vient !");
+      }, 8000);
+    }
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [loading]);
+
   const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    const dimensions = await getImageDimensions(file);
-    const imageMetadata = await extractMetadata(file);
-    
-    setMetadata(imageMetadata);
-    setOriginalStats({
-      size: file.size,
-      width: dimensions.width,
-      height: dimensions.height,
-    });
     setOriginalImage(file);
-    await compressImage(file);
-  };
-
-  const blurFaces = async (canvas: HTMLCanvasElement, ctx: CanvasRenderingContext2D) => {
-    try {
-      console.log('Début de la détection des visages...');
-      const detections = await faceapi.detectAllFaces(
-        canvas,
-        new faceapi.SsdMobilenetv1Options({ minConfidence: 0.1 })
-      );
-
-      console.log(`${detections.length} visage(s) détecté(s)`);
-
-      detections.forEach((detection) => {
-        const box = detection.box;
-        const margin = Math.max(box.width, box.height) * 0.3;
-        const blurArea = {
-          x: Math.max(0, box.x - margin),
-          y: Math.max(0, box.y - margin),
-          width: Math.min(canvas.width - box.x, box.width + 2 * margin),
-          height: Math.min(canvas.height - box.y, box.height + 2 * margin)
-        };
-        
-        ctx.filter = `blur(20px)`;
-        ctx.drawImage(
-          canvas,
-          blurArea.x, blurArea.y, blurArea.width, blurArea.height,
-          blurArea.x, blurArea.y, blurArea.width, blurArea.height
-        );
-        ctx.filter = 'none';
-      });
-    } catch (error) {
-      console.error('Erreur lors du floutage des visages:', error);
-    }
-  };
-
-  const compressImage = async (imageFile: File) => {
-    try {
-      setLoading(true);
-
-      const options = {
-        maxSizeMB: 1,
-        maxWidthOrHeight: maxWidth,
-        useWebWorker: true,
-        quality: quality / 100,
-      };
-
-      const compressedFile = await imageCompression(imageFile, options);
-      const processedBlob = await processImage(
-        compressedFile,
-        fluorColor,
-        applyStyle,
-        quality,
-        applyBlur,
-        modelsLoaded,
-        canvasRef
-      );
-      const dimensions = await getImageDimensions(processedBlob);
-      
-      setCompressedStats({
-        size: processedBlob.size,
-        width: dimensions.width,
-        height: dimensions.height,
-      });
-
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCompressedImage(reader.result as string);
-        setLoading(false);
-      };
-      reader.readAsDataURL(processedBlob);
-    } catch (error) {
-      console.error('Erreur lors de la compression:', error);
-      setLoading(false);
-    }
+    await processImage(file, {
+      quality,
+      maxWidth,
+      applyStyle,
+      applyBlur,
+      colorCount
+    });
   };
 
   const handleQualityChange = (_event: Event, newValue: number | number[]) => {
-    setQuality(newValue as number);
+    const value = newValue as number;
+    setQuality(value);
     if (originalImage) {
-      compressImage(originalImage);
+      processImage(originalImage, {
+        quality: value,
+        maxWidth,
+        applyStyle,
+        applyBlur,
+        colorCount
+      });
     }
   };
 
   const handleMaxWidthChange = (_event: Event, newValue: number | number[]) => {
-    setMaxWidth(newValue as number);
+    const value = newValue as number;
+    setMaxWidth(value);
     if (originalImage) {
-      compressImage(originalImage);
+      processImage(originalImage, {
+        quality,
+        maxWidth: value,
+        applyStyle,
+        applyBlur,
+        colorCount
+      });
     }
   };
 
-  const handleColorChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newColor = event.target.value;
+  const handleColorCountChange = (_event: Event, newValue: number | number[]) => {
+    const value = newValue as number;
+    setColorCount(value);
     if (originalImage) {
-      setLoading(true);
-      try {
-        const processedBlob = await processImage(
-          originalImage,
-          newColor,
-          applyStyle,
-          quality,
-          applyBlur,
-          modelsLoaded,
-          canvasRef
-        );
-        const dimensions = await getImageDimensions(processedBlob);
-        
-        setCompressedStats({
-          size: processedBlob.size,
-          width: dimensions.width,
-          height: dimensions.height,
-        });
+      processImage(originalImage, {
+        quality,
+        maxWidth,
+        applyStyle,
+        applyBlur,
+        colorCount: value
+      });
+    }
+  };
 
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setFluorColor(newColor);
-          setCompressedImage(reader.result as string);
-          setLoading(false);
-        };
-        reader.readAsDataURL(processedBlob);
-      } catch (error) {
-        console.error('Erreur lors de la mise à jour de la couleur:', error);
-        setLoading(false);
-      }
-    } else {
-      setFluorColor(newColor);
+  const handleStyleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.checked;
+    setApplyStyle(value);
+    if (originalImage) {
+      processImage(originalImage, {
+        quality,
+        maxWidth,
+        applyStyle: value,
+        applyBlur,
+        colorCount
+      });
+    }
+  };
+
+  const handleBlurChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.checked;
+    setApplyBlur(value);
+    if (originalImage) {
+      processImage(originalImage, {
+        quality,
+        maxWidth,
+        applyStyle,
+        applyBlur: value,
+        colorCount
+      });
     }
   };
 
@@ -234,147 +200,40 @@ const ImageOptimizer: React.FC = () => {
     document.body.removeChild(link);
   };
 
-  const handleStyleChange = async (newValue: boolean) => {
-    setApplyStyle(newValue);
-    if (originalImage) {
-      setLoading(true);
-      try {
-        const options = {
-          maxSizeMB: 1,
-          maxWidthOrHeight: maxWidth,
-          useWebWorker: true,
-          quality: quality / 100,
-        };
-        const compressedFile = await imageCompression(originalImage, options);
-        const processedBlob = await processImage(
-          compressedFile,
-          fluorColor,
-          newValue,
-          quality,
-          applyBlur,
-          modelsLoaded,
-          canvasRef
-        );
-        const dimensions = await getImageDimensions(processedBlob);
-        
-        setCompressedStats({
-          size: processedBlob.size,
-          width: dimensions.width,
-          height: dimensions.height,
-        });
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setCompressedImage(reader.result as string);
-          setLoading(false);
-        };
-        reader.readAsDataURL(processedBlob);
-      } catch (error) {
-        console.error('Erreur lors du changement de style:', error);
-        setLoading(false);
-      }
-    }
-  };
-
-  const rotateImage = async () => {
+  const handleRotation = async () => {
     if (!originalImage) return;
+    const newRotation = (rotation + 90) % 360;
+    setRotation(newRotation);
     
-    setLoading(true);
-    try {
-      const newRotation = (rotation + 90) % 360;
-      setRotation(newRotation);
-      
-      const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const img = new Image();
-      img.onload = async () => {
-        const ctx = canvas.getContext('2d');
-        if (!ctx) return;
-
-        // Ajuster les dimensions du canvas pour la rotation
-        if (newRotation % 180 === 0) {
-          canvas.width = img.width;
-          canvas.height = img.height;
-        } else {
-          canvas.width = img.height;
-          canvas.height = img.width;
-        }
-
-        // Appliquer la rotation
-        ctx.save();
-        ctx.translate(canvas.width / 2, canvas.height / 2);
-        ctx.rotate((newRotation * Math.PI) / 180);
-        ctx.drawImage(img, -img.width / 2, -img.height / 2);
-        ctx.restore();
-
-        // Appliquer le filtre monochrome si nécessaire
-        if (applyStyle) {
-          const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-          const processedImageData = applyMonochromeEffect(imageData, fluorColor);
-          ctx.putImageData(processedImageData, 0, 0);
-        }
-
-        // Convertir en blob et mettre à jour l'image
-        canvas.toBlob(async (blob) => {
-          if (blob) {
-            const dimensions = await getImageDimensions(blob);
-            setCompressedStats({
-              size: blob.size,
-              width: dimensions.width,
-              height: dimensions.height,
-            });
-
-            const reader = new FileReader();
-            reader.onloadend = () => {
-              setCompressedImage(reader.result as string);
-              setLoading(false);
-            };
-            reader.readAsDataURL(blob);
-          }
-        }, 'image/jpeg', quality / 100);
-      };
-
-      img.src = URL.createObjectURL(originalImage);
-    } catch (error) {
-      console.error('Erreur lors de la rotation:', error);
-      setLoading(false);
-    }
+    // Retraiter l'image avec la nouvelle rotation
+    await processImage(originalImage, {
+      quality,
+      maxWidth,
+      applyStyle,
+      applyBlur,
+      colorCount,
+      rotation: newRotation
+    });
   };
 
   const handleCropComplete = async () => {
     if (!imageRef.current || !crop.width || !crop.height) return;
 
     try {
-      setLoading(true);
       const croppedBlob = await getCroppedImg(imageRef.current, crop, quality);
-      const processedBlob = await processImage(
-        new File([croppedBlob], 'cropped.jpg', { type: 'image/jpeg' }),
-        fluorColor,
-        applyStyle,
-        quality,
-        applyBlur,
-        modelsLoaded,
-        canvasRef
-      );
+      const croppedFile = new File([croppedBlob], 'cropped.jpg', { type: 'image/jpeg' });
       
-      const dimensions = await getImageDimensions(processedBlob);
-      setCompressedStats({
-        size: processedBlob.size,
-        width: dimensions.width,
-        height: dimensions.height,
+      await processImage(croppedFile, {
+        quality,
+        maxWidth,
+        applyStyle,
+        applyBlur,
+        colorCount
       });
 
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setCompressedImage(reader.result as string);
-        setIsCropping(false);
-        setLoading(false);
-      };
-      reader.readAsDataURL(processedBlob);
+      setIsCropping(false);
     } catch (error) {
       console.error('Erreur lors du recadrage:', error);
-      setLoading(false);
     }
   };
 
@@ -473,46 +332,45 @@ const ImageOptimizer: React.FC = () => {
           </Grid>
         </Grid>
 
-        {loading && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', my: 2 }}>
-            <CircularProgress />
-          </Box>
-        )}
- <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
+        <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
           <Grid item>
             <FormControlLabel
               control={
                 <Switch
                   checked={applyStyle}
-                  onChange={(e) => handleStyleChange(e.target.checked)}
+                  onChange={handleStyleChange}
                 />
               }
-              label="Activer le monochrome"
+              label="Appliquer l'effet de dithering"
             />
           </Grid>
           {applyStyle && (
-            <Grid item>
-              <TextField
-                type="color"
-                value={fluorColor}
-                onChange={handleColorChange}
-                sx={{ width: 150 }}
-                label="Couleur fluo"
-                size="small"
-              />
-            </Grid>
+            <>
+              <Grid item xs={12} md={6}>
+                <Typography gutterBottom>Nombre de couleurs</Typography>
+                <Slider
+                  value={colorCount}
+                  onChange={handleColorCountChange}
+                  min={2}
+                  max={32}
+                  step={1}
+                  marks={[
+                    { value: 2, label: '2' },
+                    { value: 8, label: '8' },
+                    { value: 16, label: '16' },
+                    { value: 32, label: '32' }
+                  ]}
+                  valueLabelDisplay="auto"
+                />
+              </Grid>
+            </>
           )}
           <Grid item>
             <FormControlLabel
               control={
                 <Switch
                   checked={applyBlur}
-                  onChange={(e) => {
-                    setApplyBlur(e.target.checked);
-                    if (originalImage) {
-                      compressImage(originalImage);
-                    }
-                  }}
+                  onChange={handleBlurChange}
                   disabled={!modelsLoaded}
                 />
               }
@@ -605,7 +463,31 @@ const ImageOptimizer: React.FC = () => {
               <Typography variant="subtitle1" gutterBottom>
                 Image optimisée
               </Typography>
-              {compressedImage && (
+              {loading ? (
+                <>
+                  <Box
+                    component="img"
+                    src="/loading-3887_256.gif"
+                    sx={{ 
+                      maxWidth: '100%', 
+                      height: 'auto',
+                      display: 'block',
+                      margin: '0 auto'
+                    }}
+                    alt="Chargement en cours..."
+                  />
+                  <Typography 
+                    color="text.secondary" 
+                    sx={{ 
+                      textAlign: 'center', 
+                      mt: 2,
+                      fontStyle: 'italic'
+                    }}
+                  >
+                    {loadingMessage}
+                  </Typography>
+                </>
+              ) : compressedImage && (
                 <>
                   {isCropping ? (
                     <ReactCrop
@@ -628,12 +510,12 @@ const ImageOptimizer: React.FC = () => {
                       alt="Compressed"
                     />
                   )}
-              <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
-                Les metadonnées ont été automatiquement suppriméespendant le traitement.
-              </Typography>
+                  <Typography color="text.secondary" sx={{ fontStyle: 'italic' }}>
+                    Les metadonnées ont été automatiquement supprimées pendant le traitement.
+                  </Typography>
                   <Box sx={{ mt: 2, display: 'flex', gap: 2, alignItems: 'center' }}>
                     <Tooltip title="Pivoter l'image">
-                      <IconButton onClick={rotateImage} color="primary">
+                      <IconButton onClick={handleRotation} color="primary">
                         <RotateRightIcon />
                       </IconButton>
                     </Tooltip>

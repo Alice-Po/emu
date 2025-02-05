@@ -2,6 +2,7 @@ import { RGBColor, ImageDimensions, ImageMetadata, ImageStats } from '../types/I
 import * as exifr from 'exifr';
 import { Crop } from 'react-image-crop';
 import * as faceapi from 'face-api.js';
+import { utils, image, buildPalette, applyPalette } from 'image-q';
 
 /**
  * Convertit une taille en bytes en format lisible
@@ -76,24 +77,61 @@ export const extractMetadata = async (file: File): Promise<ImageMetadata> => {
 };
 
 /**
- * Applique un effet monochrome à une image
+ * Applique un effet de dithering à une image
+ * @param imageData Les données de l'image à traiter
+ * @param numColors Le nombre de couleurs à utiliser (entre 2 et 32)
  */
-export const applyMonochromeEffect = (imageData: ImageData, color: string): ImageData => {
-  const data = imageData.data;
-  const rgbColor = hexToRgb(color);
+export const applyDitheringEffect = async (imageData: ImageData, numColors = 8): Promise<ImageData> => {
+  // Vérifier que le nombre de couleurs est dans la plage valide
+  const colors = Math.max(2, Math.min(32, numColors));
 
-  for (let i = 0; i < data.length; i += 4) {
-    // Convertir en niveau de gris
-    const gray = (data[i] * 0.299 + data[i + 1] * 0.587 + data[i + 2] * 0.114);
-    
-    // Appliquer l'effet monochrome avec la couleur fluo choisie
-    const mixRatio = 0.7;  // 70% gris, 30% couleur
-    data[i] = Math.min(255, gray * mixRatio + (rgbColor.r * (1 - mixRatio)));     // Rouge
-    data[i + 1] = Math.min(255, gray * mixRatio + (rgbColor.g * (1 - mixRatio))); // Vert
-    data[i + 2] = Math.min(255, gray * mixRatio + (rgbColor.b * (1 - mixRatio))); // Bleu
-    // Alpha reste inchangé
+  // Créer un point container pour l'image source
+  const pointContainer = utils.PointContainer.fromUint8Array(
+    imageData.data,
+    imageData.width,
+    imageData.height
+  );
+  console.log("Point container créé", pointContainer);
+
+  try {
+    // Créer la palette
+    const palette = await buildPalette([pointContainer], {
+      colorDistanceFormula: 'euclidean',
+      paletteQuantization: 'neuquant',
+      colors: colors, // Utiliser le nombre de couleurs spécifié
+      onProgress: (progress: number) => console.log('buildPalette', progress),
+    });
+    console.log("Palette créée", palette);
+
+    if (!palette) {
+      throw new Error('La création de la palette a échoué');
+    }
+
+    // Applique la palette à l'image avec dithering
+    const outPointContainer = await applyPalette(pointContainer, palette, {
+      colorDistanceFormula: 'euclidean',
+      imageQuantization: 'floyd-steinberg', // Algorithme de dithering
+      onProgress: (progress: number) => console.log('applyPalette', progress),
+    });
+    console.log("Dithering appliqué", outPointContainer);
+
+    if (!outPointContainer) {
+      throw new Error('L\'application de la palette a échoué');
+    }
+
+    // Convertir le résultat en ImageData
+    const uint8array = outPointContainer.toUint8Array();
+    const newImageData = new ImageData(
+      new Uint8ClampedArray(uint8array),
+      imageData.width,
+      imageData.height
+    );
+
+    return newImageData;
+  } catch (error) {
+    console.error('Erreur lors de l\'application du dithering:', error);
+    return imageData; // Retourner l'image originale en cas d'erreur
   }
-  return imageData;
 };
 
 /**
@@ -186,23 +224,34 @@ export const blurFaces = async (canvas: HTMLCanvasElement, ctx: CanvasRenderingC
   }
 };
 
+interface ProcessingCache {
+  pointContainer: any;
+  imageData: ImageData | null;
+  lastOptions: any;
+}
+
 /**
- * Traite une image avec les effets spécifiés (monochrome, floutage)
+ * Traite une image avec les effets spécifiés (dithering, floutage)
  */
-export const processImage = async (
+export const processImageWhithStyle = async (
   file: File,
-  currentColor: string,
   shouldApplyStyle: boolean,
   quality: number,
   applyBlur: boolean,
   modelsLoaded: boolean,
-  canvasRef: React.RefObject<HTMLCanvasElement>
+  canvasRef: React.RefObject<HTMLCanvasElement>,
+  colorCount = 8,
+  rotation = 0,
+  cache?: ProcessingCache
 ): Promise<Blob> => {
   console.log('processImage - Début du traitement:', {
     shouldApplyStyle,
-    currentColor,
     fileSize: file.size,
-    applyBlur
+    applyBlur,
+    colorCount,
+    rotation,
+    useCache: !!cache,
+    cacheColorCount: cache?.lastOptions?.colorCount
   });
 
   return new Promise((resolve) => {
@@ -211,26 +260,78 @@ export const processImage = async (
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      canvas.width = img.width;
-      canvas.height = img.height;
+      // Ajuster les dimensions du canvas pour la rotation
+      if (rotation % 180 === 0) {
+        canvas.width = img.width;
+        canvas.height = img.height;
+      } else {
+        canvas.width = img.height;
+        canvas.height = img.width;
+      }
+
       const ctx = canvas.getContext('2d');
       if (!ctx) return;
 
-      // Dessiner l'image originale
-      ctx.drawImage(img, 0, 0);
+      // Appliquer la rotation
+      ctx.save();
+      ctx.translate(canvas.width / 2, canvas.height / 2);
+      ctx.rotate((rotation * Math.PI) / 180);
+      ctx.drawImage(img, -img.width / 2, -img.height / 2);
+      ctx.restore();
 
-      // Flouter les visages si activé
+      let currentImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+
+      // Appliquer l'effet de dithering si activé
+      if (shouldApplyStyle) {
+        console.log('processImage - Application du filtre dithering');
+        
+        // Vérifier si le cache est valide et si le nombre de couleurs correspond
+        const isCacheValid = cache?.imageData && 
+                           cache?.pointContainer && 
+                           cache.lastOptions && 
+                           cache.lastOptions.colorCount === colorCount &&
+                           cache.lastOptions.rotation === rotation &&
+                           cache.lastOptions.applyBlur === applyBlur;
+        
+        if (isCacheValid && cache.imageData) {
+          console.log('Utilisation du cache pour le dithering (colorCount:', colorCount, ')');
+          currentImageData = cache.imageData;
+        } else {
+          console.log('Application d\'un nouveau dithering (colorCount:', colorCount, ')');
+          currentImageData = await applyDitheringEffect(currentImageData, colorCount);
+          
+          // Ne pas mettre à jour le cache maintenant si on doit encore flouter les visages
+          if (cache && !applyBlur) {
+            cache.imageData = currentImageData;
+            cache.pointContainer = utils.PointContainer.fromUint8Array(
+              currentImageData.data,
+              currentImageData.width,
+              currentImageData.height
+            );
+            cache.lastOptions = { colorCount, rotation, applyBlur };
+          }
+        }
+        
+        // Appliquer l'image traitée
+        ctx.putImageData(currentImageData, 0, 0);
+      }
+
+      // Flouter les visages si activé (après le dithering)
       if (applyBlur && modelsLoaded) {
         console.log('processImage - Application du floutage des visages');
         await blurFaces(canvas, ctx);
-      }
 
-      // Appliquer l'effet monochrome si activé
-      if (shouldApplyStyle) {
-        console.log('processImage - Application du filtre monochrome');
-        const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        const processedImageData = applyMonochromeEffect(imageData, currentColor);
-        ctx.putImageData(processedImageData, 0, 0);
+        // Si on a appliqué le floutage, on met à jour le cache avec l'état final
+        if (cache && shouldApplyStyle) {
+          currentImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          cache.imageData = currentImageData;
+          cache.pointContainer = utils.PointContainer.fromUint8Array(
+            currentImageData.data,
+            currentImageData.width,
+            currentImageData.height
+          );
+          cache.lastOptions = { colorCount, rotation, applyBlur };
+        }
       }
 
       canvas.toBlob((blob) => {
@@ -238,7 +339,9 @@ export const processImage = async (
           console.log('processImage - Fin du traitement:', {
             resultSize: blob.size,
             shouldApplyStyle,
-            withFilter: shouldApplyStyle
+            withFilter: shouldApplyStyle,
+            colorCount,
+            applyBlur
           });
           resolve(blob);
         }
