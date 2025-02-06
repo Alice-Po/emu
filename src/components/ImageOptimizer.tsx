@@ -1,3 +1,19 @@
+/**
+ * ImageOptimizer Component
+ *
+ * A comprehensive image processing component that provides various optimization and editing features.
+ * All processing is done locally in the browser without server uploads.
+ *
+ * Features:
+ * - Image compression with quality control
+ * - Face detection and automatic blurring
+ * - Image cropping and rotation
+ * - Dithering effect with customizable color palette
+ * - EXIF metadata extraction
+ *
+ * @component
+ */
+
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import DownloadIcon from "@mui/icons-material/Download";
 import RotateRightIcon from "@mui/icons-material/RotateRight";
@@ -20,6 +36,7 @@ import * as faceapi from "face-api.js";
 import React, { useEffect, useRef, useState } from "react";
 import { ReactCrop, type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
+import { useDebounce } from "../hooks/useDebounce";
 import { useImageProcessor } from "../hooks/useImageProcessor";
 import {
   calculateCompressionRatio,
@@ -28,6 +45,10 @@ import {
   hasMetadata,
 } from "../utils/imageUtils";
 
+/**
+ * Main ImageOptimizer component that handles all image processing operations
+ * @returns {JSX.Element} The rendered component
+ */
 const ImageOptimizer: React.FC = () => {
   const {
     loading,
@@ -62,104 +83,80 @@ const ImageOptimizer: React.FC = () => {
     "Patience, votre image est en cours de traitement..",
   );
 
-  useEffect(() => {
-    const loadModels = async () => {
-      try {
-        console.log(
-          "Début du chargement des modèles de détection de visages...",
-        );
-        await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
-        console.log("Modèle de détection de visages chargé avec succès");
-        setModelsLoaded(true);
-      } catch (error) {
-        console.error("Erreur lors du chargement des modèles:", error);
-        setModelsLoaded(false);
-      }
-    };
-    loadModels();
-  }, []);
+  /**
+   * Debounced function that handles parameter changes for image processing
+   * Prevents excessive reprocessing when sliding controls
+   *
+   * @param {Object} params - The parameters to update
+   * @param {string} params.name - The name of the parameter to update (quality, maxWidth, or colorCount)
+   * @param {number} params.value - The new value for the parameter
+   */
+  const debouncedProcessWithParams = useDebounce(
+    (params: { name: string; value: number }) => {
+      if (!originalImage) return;
 
-  // Effet pour changer le message après 3 secondes
-  useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    if (loading) {
-      setLoadingMessage("Patience, votre image est en cours de traitement..");
-      timeoutId = setTimeout(() => {
-        setLoadingMessage("Ok c'est vrai que c'est un peu long..");
-      }, 5000);
-      timeoutId = setTimeout(() => {
-        setLoadingMessage("Ca vient ! Ca vient !");
-      }, 8000);
-    }
-    return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-    };
-  }, [loading]);
-
-  const handleImageUpload = async (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    setOriginalImage(file);
-    await processImage(file, {
-      quality,
-      maxWidth,
-      applyStyle,
-      applyBlur,
-      colorCount,
-    });
-  };
-
-  const handleQualityChange = (_event: Event, newValue: number | number[]) => {
-    const value = newValue as number;
-    setQuality(value);
-    if (originalImage) {
-      debouncedProcessImage(originalImage, {
-        quality: value,
+      const options = {
+        quality,
         maxWidth,
         applyStyle,
         applyBlur,
         colorCount,
-      });
-      console.log("mise a jour sur changement sur un slide effectué");
-    }
+        [params.name]: params.value,
+      };
+
+      processImage(originalImage, options);
+    },
+    500,
+  );
+
+  /**
+   * Handles changes to the quality slider
+   * Updates the quality state and triggers debounced image processing
+   *
+   * @param {Event} _event - The event object (unused)
+   * @param {number | number[]} newValue - The new quality value
+   */
+  const handleQualityChange = (_event: Event, newValue: number | number[]) => {
+    const value = newValue as number;
+    setQuality(value);
+    debouncedProcessWithParams({ name: "quality", value });
   };
 
+  /**
+   * Handles changes to the maximum width slider
+   * Updates the maxWidth state and triggers debounced image processing
+   *
+   * @param {Event} _event - The event object (unused)
+   * @param {number | number[]} newValue - The new maximum width value
+   */
   const handleMaxWidthChange = (_event: Event, newValue: number | number[]) => {
     const value = newValue as number;
     setMaxWidth(value);
-    if (originalImage) {
-      processImage(originalImage, {
-        quality,
-        maxWidth: value,
-        applyStyle,
-        applyBlur,
-        colorCount,
-      });
-    }
+    debouncedProcessWithParams({ name: "maxWidth", value });
   };
 
+  /**
+   * Handles changes to the color count slider for dithering effect
+   * Updates the colorCount state and triggers debounced image processing
+   *
+   * @param {Event} _event - The event object (unused)
+   * @param {number | number[]} newValue - The new color count value
+   */
   const handleColorCountChange = (
     _event: Event,
     newValue: number | number[],
   ) => {
     const value = newValue as number;
     setColorCount(value);
-    if (originalImage) {
-      processImage(originalImage, {
-        quality,
-        maxWidth,
-        applyStyle,
-        applyBlur,
-        colorCount: value,
-      });
-    }
+    debouncedProcessWithParams({ name: "colorCount", value });
   };
 
+  /**
+   * Handles toggling of the dithering effect
+   * Immediately processes the image with the new style setting
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} event - The change event
+   */
   const handleStyleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.checked;
     setApplyStyle(value);
@@ -174,6 +171,12 @@ const ImageOptimizer: React.FC = () => {
     }
   };
 
+  /**
+   * Handles toggling of the face blur effect
+   * Immediately processes the image with the new blur setting
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} event - The change event
+   */
   const handleBlurChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const value = event.target.checked;
     setApplyBlur(value);
@@ -188,6 +191,10 @@ const ImageOptimizer: React.FC = () => {
     }
   };
 
+  /**
+   * Initiates download of the processed image
+   * Creates a temporary link element to trigger the download
+   */
   const downloadImage = () => {
     if (!compressedImage) return;
 
@@ -199,12 +206,15 @@ const ImageOptimizer: React.FC = () => {
     document.body.removeChild(link);
   };
 
+  /**
+   * Handles image rotation in 90-degree increments
+   * Immediately processes the image with the new rotation
+   */
   const handleRotation = async () => {
     if (!originalImage) return;
     const newRotation = (rotation + 90) % 360;
     setRotation(newRotation);
 
-    // Retraiter l'image avec la nouvelle rotation
     await processImage(originalImage, {
       quality,
       maxWidth,
@@ -215,6 +225,10 @@ const ImageOptimizer: React.FC = () => {
     });
   };
 
+  /**
+   * Completes the cropping operation
+   * Creates a new image from the cropped area and processes it
+   */
   const handleCropComplete = async () => {
     if (!imageRef.current || !crop.width || !crop.height) return;
 
@@ -236,6 +250,72 @@ const ImageOptimizer: React.FC = () => {
     } catch (error) {
       console.error("Erreur lors du recadrage:", error);
     }
+  };
+
+  /**
+   * Effect hook to load face detection models on component mount
+   * Initializes the face-api.js models for face detection and blurring
+   */
+  useEffect(() => {
+    const loadModels = async () => {
+      try {
+        console.log(
+          "Début du chargement des modèles de détection de visages...",
+        );
+        await faceapi.nets.ssdMobilenetv1.loadFromUri("/models");
+        console.log("Modèle de détection de visages chargé avec succès");
+        setModelsLoaded(true);
+      } catch (error) {
+        console.error("Erreur lors du chargement des modèles:", error);
+        setModelsLoaded(false);
+      }
+    };
+    loadModels();
+  }, []);
+
+  /**
+   * Effect hook to manage loading messages
+   * Updates the loading message with humorous text based on processing duration
+   * Messages change at 5s and 8s intervals
+   */
+  useEffect(() => {
+    let timeoutId: NodeJS.Timeout;
+    if (loading) {
+      setLoadingMessage("Patience, votre image est en cours de traitement..");
+      timeoutId = setTimeout(() => {
+        setLoadingMessage("Ok c'est vrai que c'est un peu long..");
+      }, 5000);
+      timeoutId = setTimeout(() => {
+        setLoadingMessage("Ca vient ! Ca vient !");
+      }, 8000);
+    }
+    return () => {
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+  }, [loading]);
+
+  /**
+   * Handles initial image upload
+   * Sets the original image and triggers initial processing
+   *
+   * @param {React.ChangeEvent<HTMLInputElement>} event - The file input change event
+   */
+  const handleImageUpload = async (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setOriginalImage(file);
+    await processImage(file, {
+      quality,
+      maxWidth,
+      applyStyle,
+      applyBlur,
+      colorCount,
+    });
   };
 
   return (
