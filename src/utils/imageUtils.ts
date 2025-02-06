@@ -348,7 +348,6 @@ export const processImageWhithStyle = async (
               paletteQuantization: "neuquant",
               colors: colorCount,
               onProgress: (progress: number) => {
-                console.log("buildPalette", progress);
                 onProgress?.("Création de la palette", progress);
               },
             });
@@ -383,7 +382,6 @@ export const processImageWhithStyle = async (
               paletteQuantization: "neuquant",
               colors: colorCount,
               onProgress: (progress: number) => {
-                console.log("buildPalette", progress);
                 onProgress?.("Création de la palette", progress);
               },
             });
@@ -400,7 +398,6 @@ export const processImageWhithStyle = async (
               colorDistanceFormula: "euclidean",
               imageQuantization: "floyd-steinberg",
               onProgress: (progress: number) => {
-                console.log("applyPalette", progress);
                 onProgress?.("Application du dithering", progress);
               },
             },

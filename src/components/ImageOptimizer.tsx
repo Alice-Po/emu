@@ -22,6 +22,7 @@ import {
   Button,
   Card,
   CardContent,
+  CircularProgress,
   FormControlLabel,
   Grid,
   IconButton,
@@ -373,36 +374,173 @@ const ImageOptimizer: React.FC = () => {
         </Box>
 
         {originalStats && compressedStats && (
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Image originale:
+          <Paper
+            sx={{
+              p: 3,
+              mb: 3,
+              bgcolor: "background.paper",
+              borderRadius: 2,
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", md: "row" },
+                gap: 4,
+                alignItems: "center",
+                position: "relative",
+              }}
+            >
+              {/* Colonne de gauche - Image originale */}
+              <Box
+                sx={{
+                  flex: 1,
+                  width: "100%",
+                  p: 2,
+                  bgcolor: "grey.900",
+                  borderRadius: 1,
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="h6" gutterBottom color="grey.300">
+                  Image originale
                 </Typography>
-                <Typography>
-                  • Taille: {formatFileSize(originalStats.size)}
+                <Typography variant="h4" color="grey.100" sx={{ mb: 1 }}>
+                  {formatFileSize(originalStats.size)}
                 </Typography>
-                <Typography>
-                  • Dimensions: {originalStats.width}x{originalStats.height}px
+                <Typography color="grey.400">
+                  {originalStats.width} × {originalStats.height}px
                 </Typography>
-              </Grid>
-              <Grid item xs={12} md={6}>
-                <Typography variant="subtitle2" gutterBottom>
-                  Image compressée:
+              </Box>
+
+              {/* Indicateur central de réduction */}
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                  position: { xs: "relative", md: "absolute" },
+                  left: { md: "50%" },
+                  transform: { md: "translateX(-50%)" },
+                  zIndex: 1,
+                }}
+              >
+                <Box sx={{ position: "relative", display: "inline-flex" }}>
+                  <CircularProgress
+                    variant="determinate"
+                    value={parseFloat(
+                      calculateCompressionRatio(originalStats, compressedStats),
+                    )}
+                    size={160}
+                    thickness={5}
+                    sx={{
+                      color: (theme) => {
+                        const ratio = parseFloat(
+                          calculateCompressionRatio(
+                            originalStats,
+                            compressedStats,
+                          ),
+                        );
+                        if (ratio >= 70) return theme.palette.success.main;
+                        if (ratio >= 40) return theme.palette.warning.main;
+                        return theme.palette.error.main;
+                      },
+                      bgcolor: "grey.800",
+                      borderRadius: "50%",
+                    }}
+                  />
+                  <Box
+                    sx={{
+                      top: 0,
+                      left: 0,
+                      bottom: 0,
+                      right: 0,
+                      position: "absolute",
+                      display: "flex",
+                      flexDirection: "column",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: "background.paper",
+                      borderRadius: "50%",
+                    }}
+                  >
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        fontWeight: "bold",
+                        color: (theme) => {
+                          const ratio = parseFloat(
+                            calculateCompressionRatio(
+                              originalStats,
+                              compressedStats,
+                            ),
+                          );
+                          if (ratio >= 70) return theme.palette.success.main;
+                          if (ratio >= 40) return theme.palette.warning.main;
+                          return theme.palette.error.main;
+                        },
+                      }}
+                    >
+                      {calculateCompressionRatio(
+                        originalStats,
+                        compressedStats,
+                      )}
+                    </Typography>
+                    <Typography variant="caption" color="text.secondary">
+                      de réduction
+                    </Typography>
+                  </Box>
+                </Box>
+              </Box>
+
+              {/* Colonne de droite - Image compressée */}
+              <Box
+                sx={{
+                  flex: 1,
+                  width: "100%",
+                  p: 2,
+                  bgcolor: (theme) => {
+                    const ratio = parseFloat(
+                      calculateCompressionRatio(originalStats, compressedStats),
+                    );
+                    if (ratio >= 70) return theme.palette.success.dark;
+                    if (ratio >= 40) return theme.palette.warning.dark;
+                    return theme.palette.error.dark;
+                  },
+                  borderRadius: 1,
+                  textAlign: "center",
+                }}
+              >
+                <Typography variant="h6" gutterBottom color="grey.300">
+                  Image optimisée
                 </Typography>
-                <Typography>
-                  • Taille: {formatFileSize(compressedStats.size)}
+                <Typography variant="h4" color="grey.100" sx={{ mb: 1 }}>
+                  {formatFileSize(compressedStats.size)}
                 </Typography>
-                <Typography>
-                  • Dimensions: {compressedStats.width}x{compressedStats.height}
-                  px
+                <Typography color="grey.400">
+                  {compressedStats.width} × {compressedStats.height}px
                 </Typography>
-                <Typography>
-                  • Réduction:{" "}
-                  {calculateCompressionRatio(originalStats, compressedStats)}
-                </Typography>
-              </Grid>
-            </Grid>
+              </Box>
+            </Box>
+
+            <Typography
+              variant="body1"
+              color="text.secondary"
+              sx={{
+                mt: 3,
+                textAlign: "center",
+              }}
+            >
+              {parseFloat(
+                calculateCompressionRatio(originalStats, compressedStats),
+              ) >= 70
+                ? "Excellente optimisation ! 🎉"
+                : parseFloat(
+                      calculateCompressionRatio(originalStats, compressedStats),
+                    ) >= 40
+                  ? "Bonne optimisation"
+                  : "Optimisation modérée"}
+            </Typography>
           </Paper>
         )}
 
