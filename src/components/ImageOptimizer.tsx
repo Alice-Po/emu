@@ -82,6 +82,7 @@ const ImageOptimizer: React.FC = () => {
   const [loadingMessage, setLoadingMessage] = useState<string>(
     "Patience, votre image est en cours de traitement..",
   );
+  const [maxWidthLimit, setMaxWidthLimit] = useState<number>(3840);
 
   /**
    * Debounced function that handles parameter changes for image processing
@@ -125,12 +126,13 @@ const ImageOptimizer: React.FC = () => {
   /**
    * Handles changes to the maximum width slider
    * Updates the maxWidth state and triggers debounced image processing
+   * The maximum width is limited to the original image width
    *
    * @param {Event} _event - The event object (unused)
    * @param {number | number[]} newValue - The new maximum width value
    */
   const handleMaxWidthChange = (_event: Event, newValue: number | number[]) => {
-    const value = newValue as number;
+    const value = Math.min(newValue as number, maxWidthLimit);
     setMaxWidth(value);
     debouncedProcessWithParams({ name: "maxWidth", value });
   };
@@ -318,6 +320,15 @@ const ImageOptimizer: React.FC = () => {
     });
   };
 
+  useEffect(() => {
+    if (originalStats?.width) {
+      if (maxWidth > originalStats.width) {
+        setMaxWidth(originalStats.width);
+      }
+      setMaxWidthLimit(originalStats.width);
+    }
+  }, [originalStats?.width]);
+
   return (
     <Card>
       <CardContent>
@@ -406,14 +417,18 @@ const ImageOptimizer: React.FC = () => {
             />
           </Grid>
           <Grid item xs={12} md={6}>
-            <Typography gutterBottom>Largeur maximale (px)</Typography>
+            <Typography gutterBottom>
+              Largeur maximale (px)
+              {originalStats?.width ? ` (max: ${originalStats.width}px)` : ""}
+            </Typography>
             <Slider
               value={maxWidth}
               onChange={handleMaxWidthChange}
               min={100}
-              max={3840}
+              max={maxWidthLimit}
               step={100}
               valueLabelDisplay="auto"
+              disabled={!originalImage}
             />
           </Grid>
         </Grid>
