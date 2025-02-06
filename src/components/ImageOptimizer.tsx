@@ -344,7 +344,7 @@ const ImageOptimizer: React.FC = () => {
               <li>Compression intelligente avec contrôle de la qualité</li>
               <li>Floutage automatique des visages</li>
               <li>Outils de recadrage et rotation</li>
-              <li>Lecture des meta-données</li>
+              <li>Lecture et effacement des meta-données</li>
             </ul>
           </Typography>
           <Typography
@@ -380,6 +380,7 @@ const ImageOptimizer: React.FC = () => {
               mb: 3,
               bgcolor: "background.paper",
               borderRadius: 2,
+              overflow: "hidden",
             }}
           >
             <Box
@@ -397,7 +398,7 @@ const ImageOptimizer: React.FC = () => {
                   flex: 1,
                   width: "100%",
                   p: 2,
-                  bgcolor: "grey.900",
+                  bgcolor: "#1E1E1E",
                   borderRadius: 1,
                   textAlign: "center",
                 }}
@@ -416,81 +417,88 @@ const ImageOptimizer: React.FC = () => {
               {/* Indicateur central de réduction */}
               <Box
                 sx={{
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
                   position: { xs: "relative", md: "absolute" },
                   left: { md: "50%" },
                   transform: { md: "translateX(-50%)" },
-                  zIndex: 1,
+                  zIndex: 2,
+                  width: 180,
+                  height: 180,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
                 }}
               >
-                <Box sx={{ position: "relative", display: "inline-flex" }}>
-                  <CircularProgress
-                    variant="determinate"
-                    value={parseFloat(
-                      calculateCompressionRatio(originalStats, compressedStats),
-                    )}
-                    size={160}
-                    thickness={5}
-                    sx={{
-                      color: (theme) => {
-                        const ratio = parseFloat(
-                          calculateCompressionRatio(
-                            originalStats,
-                            compressedStats,
-                          ),
-                        );
-                        if (ratio >= 70) return theme.palette.success.main;
-                        if (ratio >= 40) return theme.palette.warning.main;
-                        return theme.palette.error.main;
-                      },
-                      bgcolor: "grey.800",
-                      borderRadius: "50%",
-                    }}
-                  />
+                {loading ? (
                   <Box
                     sx={{
-                      top: 0,
-                      left: 0,
-                      bottom: 0,
-                      right: 0,
-                      position: "absolute",
+                      width: "100%",
+                      height: "100%",
                       display: "flex",
-                      flexDirection: "column",
                       alignItems: "center",
                       justifyContent: "center",
-                      bgcolor: "background.paper",
+                      bgcolor: "#1E1E1E",
                       borderRadius: "50%",
                     }}
                   >
-                    <Typography
-                      variant="h4"
+                    <CircularProgress
+                      size={60}
+                      thickness={4}
+                      sx={{ color: "#9DFF20" }}
+                    />
+                  </Box>
+                ) : (
+                  <>
+                    <Box
                       sx={{
-                        fontWeight: "bold",
-                        color: (theme) => {
-                          const ratio = parseFloat(
-                            calculateCompressionRatio(
-                              originalStats,
-                              compressedStats,
-                            ),
-                          );
-                          if (ratio >= 70) return theme.palette.success.main;
-                          if (ratio >= 40) return theme.palette.warning.main;
-                          return theme.palette.error.main;
-                        },
+                        width: "100%",
+                        height: "100%",
+                        position: "absolute",
+                        background: `conic-gradient(
+                          #9DFF20 0deg,
+                          #9DFF20 ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg,
+                          transparent ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg
+                        )`,
+                        borderRadius: "50%",
+                        transform: "rotate(-90deg)",
+                      }}
+                    />
+                    <Box
+                      sx={{
+                        width: "92%",
+                        height: "92%",
+                        bgcolor: "#1E1E1E",
+                        borderRadius: "50%",
+                        position: "relative",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                       }}
                     >
-                      {calculateCompressionRatio(
-                        originalStats,
-                        compressedStats,
-                      )}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      de réduction
-                    </Typography>
-                  </Box>
-                </Box>
+                      <Typography
+                        variant="h4"
+                        sx={{
+                          fontWeight: "bold",
+                          color: "#9DFF20",
+                          lineHeight: 1,
+                        }}
+                      >
+                        {calculateCompressionRatio(
+                          originalStats,
+                          compressedStats,
+                        )}
+                      </Typography>
+                      <Typography
+                        sx={{
+                          color: "rgba(255,255,255,0.7)",
+                          fontSize: "0.875rem",
+                        }}
+                      >
+                        de réduction
+                      </Typography>
+                    </Box>
+                  </>
+                )}
               </Box>
 
               {/* Colonne de droite - Image compressée */}
@@ -499,48 +507,99 @@ const ImageOptimizer: React.FC = () => {
                   flex: 1,
                   width: "100%",
                   p: 2,
-                  bgcolor: (theme) => {
-                    const ratio = parseFloat(
-                      calculateCompressionRatio(originalStats, compressedStats),
-                    );
-                    if (ratio >= 70) return theme.palette.success.dark;
-                    if (ratio >= 40) return theme.palette.warning.dark;
-                    return theme.palette.error.dark;
-                  },
+                  bgcolor: loading ? "#1E1E1E" : "#9DFF20",
                   borderRadius: 1,
                   textAlign: "center",
+                  position: "relative",
+                  transition: "background-color 0.3s ease",
+                  "&::before": !loading
+                    ? {
+                        content: '""',
+                        position: "absolute",
+                        left: -100,
+                        top: "50%",
+                        transform: "translateY(-50%)",
+                        width: 100,
+                        height: 100,
+                        background: "#9DFF20",
+                        clipPath: "circle(50% at 100% 50%)",
+                      }
+                    : undefined,
                 }}
               >
-                <Typography variant="h6" gutterBottom color="grey.300">
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{
+                    color: loading ? "grey.300" : "rgba(0, 0, 0, 0.87)",
+                    transition: "color 0.3s ease",
+                  }}
+                >
                   Image optimisée
                 </Typography>
-                <Typography variant="h4" color="grey.100" sx={{ mb: 1 }}>
-                  {formatFileSize(compressedStats.size)}
-                </Typography>
-                <Typography color="grey.400">
-                  {compressedStats.width} × {compressedStats.height}px
-                </Typography>
+                {loading ? (
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      height: 100,
+                    }}
+                  >
+                    <CircularProgress sx={{ color: "#9DFF20" }} />
+                  </Box>
+                ) : (
+                  <>
+                    <Typography
+                      variant="h4"
+                      sx={{
+                        color: "rgba(0, 0, 0, 0.87)",
+                        mb: 1,
+                        fontWeight: "bold",
+                      }}
+                    >
+                      {formatFileSize(compressedStats.size)}
+                    </Typography>
+                    <Typography sx={{ color: "rgba(0, 0, 0, 0.7)" }}>
+                      {compressedStats.width} × {compressedStats.height}px
+                    </Typography>
+                  </>
+                )}
               </Box>
             </Box>
 
-            <Typography
-              variant="body1"
-              color="text.secondary"
-              sx={{
-                mt: 3,
-                textAlign: "center",
-              }}
-            >
-              {parseFloat(
-                calculateCompressionRatio(originalStats, compressedStats),
-              ) >= 70
-                ? "Excellente optimisation ! 🎉"
-                : parseFloat(
-                      calculateCompressionRatio(originalStats, compressedStats),
-                    ) >= 40
-                  ? "Bonne optimisation"
-                  : "Optimisation modérée"}
-            </Typography>
+            {!loading && (
+              <Typography
+                variant="body1"
+                sx={{
+                  mt: 3,
+                  textAlign: "center",
+                  color: "#9DFF20",
+                  fontWeight: "bold",
+                  fontSize: "1.1rem",
+                  textShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                  padding: "8px 16px",
+                  borderRadius: "4px",
+                  backgroundColor: "rgba(0,0,0,0.7)",
+                  display: "inline-block",
+                  margin: "0 auto",
+                  marginTop: 3,
+                }}
+              >
+                {parseFloat(
+                  calculateCompressionRatio(originalStats, compressedStats),
+                ) >= 70
+                  ? "Excellente optimisation ! 🎉"
+                  : parseFloat(
+                        calculateCompressionRatio(
+                          originalStats,
+                          compressedStats,
+                        ),
+                      ) >= 40
+                    ? "Bonne optimisation"
+                    : "Optimisation modérée"}
+              </Typography>
+            )}
           </Paper>
         )}
 
