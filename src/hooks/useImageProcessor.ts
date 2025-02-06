@@ -25,6 +25,13 @@ interface ProcessingCache {
 
 export const useImageProcessor = () => {
   const [loading, setLoading] = useState(false);
+  const [progress, setProgress] = useState<{
+    step: string;
+    value: number;
+  }>({
+    step: "",
+    value: 0,
+  });
   const [originalImage, setOriginalImage] = useState<File | null>(null);
   const [compressedImage, setCompressedImage] = useState<string | null>(null);
   const [originalStats, setOriginalStats] = useState<ImageStats | null>(null);
@@ -82,6 +89,11 @@ export const useImageProcessor = () => {
       if (!file) return;
 
       setLoading(true);
+      setProgress({
+        step: "Initialisation...",
+        value: 0,
+      });
+
       try {
         // Vérifier si on peut réutiliser le cache
         if (!shouldReprocess(options, file)) {
@@ -96,6 +108,12 @@ export const useImageProcessor = () => {
             options.colorCount,
             options.rotation || 0,
             processingCache.current,
+            (step: string, value: number) => {
+              setProgress({
+                step,
+                value,
+              });
+            },
           );
 
           // Mise à jour des stats compressées
@@ -152,6 +170,12 @@ export const useImageProcessor = () => {
           options.colorCount,
           options.rotation || 0,
           processingCache.current,
+          (step: string, value: number) => {
+            setProgress({
+              step,
+              value,
+            });
+          },
         );
 
         const compressedDimensions = await getImageDimensions(processedBlob);
@@ -170,6 +194,10 @@ export const useImageProcessor = () => {
       } catch (error) {
         console.error("Erreur lors du traitement:", error);
         setLoading(false);
+        setProgress({
+          step: "",
+          value: 0,
+        });
       }
     },
     [originalImage],
@@ -201,6 +229,7 @@ export const useImageProcessor = () => {
 
   return {
     loading,
+    progress,
     originalImage,
     compressedImage,
     originalStats,

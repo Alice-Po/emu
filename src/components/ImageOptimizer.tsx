@@ -52,6 +52,7 @@ import {
 const ImageOptimizer: React.FC = () => {
   const {
     loading,
+    progress,
     originalImage,
     compressedImage,
     originalStats,
@@ -582,16 +583,29 @@ const ImageOptimizer: React.FC = () => {
                     }}
                     alt="Chargement en cours..."
                   />
-                  <Typography
-                    color="text.secondary"
-                    sx={{
-                      textAlign: "center",
-                      mt: 2,
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {loadingMessage}
-                  </Typography>
+                  <Box sx={{ textAlign: "center", mt: 2 }}>
+                    <Typography
+                      color="text.secondary"
+                      sx={{
+                        fontStyle: "italic",
+                        mb: 1,
+                      }}
+                    >
+                      {loadingMessage}
+                    </Typography>
+                    {progress.step && (
+                      <Typography
+                        variant="body2"
+                        color="text.secondary"
+                        sx={{
+                          fontFamily: "monospace",
+                          fontSize: "0.9em",
+                        }}
+                      >
+                        {`${progress.step} : ${Math.round(progress.value)}%`}
+                      </Typography>
+                    )}
+                  </Box>
                 </>
               ) : (
                 compressedImage && (

@@ -271,6 +271,7 @@ export const processImageWhithStyle = async (
   colorCount = 8,
   rotation = 0,
   cache?: ProcessingCache,
+  onProgress?: (step: string, value: number) => void,
 ): Promise<Blob> => {
   console.log("processImage - Début du traitement:", {
     shouldApplyStyle,
@@ -285,10 +286,12 @@ export const processImageWhithStyle = async (
   return new Promise((resolve) => {
     const img = new Image();
     img.onload = async () => {
+      // Étape 1: Préparation de l'image
+      onProgress?.("Préparation de l'image", 0);
       const canvas = canvasRef.current;
       if (!canvas) return;
 
-      // Ajuster les dimensions du canvas pour la rotation
+      // Configuration du canvas et rotation
       if (rotation % 180 === 0) {
         canvas.width = img.width;
         canvas.height = img.height;
@@ -296,6 +299,7 @@ export const processImageWhithStyle = async (
         canvas.width = img.height;
         canvas.height = img.width;
       }
+      onProgress?.("Préparation de l'image", 50);
 
       const ctx = canvas.getContext("2d");
       if (!ctx) return;
@@ -306,6 +310,7 @@ export const processImageWhithStyle = async (
       ctx.rotate((rotation * Math.PI) / 180);
       ctx.drawImage(img, -img.width / 2, -img.height / 2);
       ctx.restore();
+      onProgress?.("Préparation de l'image", 100);
 
       let currentImageData = ctx.getImageData(
         0,
@@ -319,38 +324,35 @@ export const processImageWhithStyle = async (
         cache.paletteCache = new Map();
       }
 
-      // Appliquer l'effet de dithering si activé
+      // Étape 2: Dithering (si activé)
       if (shouldApplyStyle) {
-        console.log("processImage - Application du filtre dithering");
-
+        onProgress?.("Préparation du dithering", 0);
         let palette;
         if (cache) {
           const imageHash = generateImageHash(currentImageData);
           const cacheKey = `${imageHash}-${colorCount}`;
 
-          // Vérifier si nous avons déjà une palette en cache pour cette image et ce nombre de couleurs
           palette = cache.paletteCache.get(cacheKey);
           if (palette) {
-            console.log("Utilisation d'une palette en cache");
+            onProgress?.("Utilisation de la palette en cache", 100);
           } else {
-            console.log("Création d'une nouvelle palette");
-            // Créer un point container pour l'image source
+            onProgress?.("Création de la palette", 0);
             const pointContainer = utils.PointContainer.fromUint8Array(
               currentImageData.data,
               currentImageData.width,
               currentImageData.height,
             );
 
-            // Créer la palette
             palette = await buildPalette([pointContainer], {
               colorDistanceFormula: "euclidean",
               paletteQuantization: "neuquant",
               colors: colorCount,
-              onProgress: (progress: number) =>
-                console.log("buildPalette", progress),
+              onProgress: (progress: number) => {
+                console.log("buildPalette", progress);
+                onProgress?.("Création de la palette", progress);
+              },
             });
 
-            // Mettre la palette en cache
             if (palette) {
               cache.paletteCache.set(cacheKey, palette);
             }
@@ -366,33 +368,24 @@ export const processImageWhithStyle = async (
           cache.lastOptions.rotation === rotation &&
           cache.lastOptions.applyBlur === applyBlur;
 
-        if (isCacheValid && cache.imageData) {
-          console.log(
-            "Utilisation du cache pour le dithering (colorCount:",
-            colorCount,
-            ")",
-          );
-          currentImageData = cache.imageData;
-        } else {
-          console.log(
-            "Application d'un nouveau dithering (colorCount:",
-            colorCount,
-            ")",
-          );
+        // Étape 3: Application du dithering
+        if (!isCacheValid || !cache?.imageData) {
+          onProgress?.("Application du dithering", 0);
           const pointContainer = utils.PointContainer.fromUint8Array(
             currentImageData.data,
             currentImageData.width,
             currentImageData.height,
           );
 
-          // Utiliser la palette existante ou en créer une nouvelle si pas de cache
           if (!palette) {
             palette = await buildPalette([pointContainer], {
               colorDistanceFormula: "euclidean",
               paletteQuantization: "neuquant",
               colors: colorCount,
-              onProgress: (progress: number) =>
-                console.log("buildPalette", progress),
+              onProgress: (progress: number) => {
+                console.log("buildPalette", progress);
+                onProgress?.("Création de la palette", progress);
+              },
             });
           }
 
@@ -400,15 +393,16 @@ export const processImageWhithStyle = async (
             throw new Error("La création de la palette a échoué");
           }
 
-          // Applique la palette à l'image avec dithering
           const outPointContainer = await applyPalette(
             pointContainer,
             palette,
             {
               colorDistanceFormula: "euclidean",
               imageQuantization: "floyd-steinberg",
-              onProgress: (progress: number) =>
-                console.log("applyPalette", progress),
+              onProgress: (progress: number) => {
+                console.log("applyPalette", progress);
+                onProgress?.("Application du dithering", progress);
+              },
             },
           );
 
@@ -416,7 +410,6 @@ export const processImageWhithStyle = async (
             throw new Error("L'application de la palette a échoué");
           }
 
-          // Convertir le résultat en ImageData
           const uint8array = outPointContainer.toUint8Array();
           currentImageData = new ImageData(
             new Uint8ClampedArray(uint8array),
@@ -424,24 +417,22 @@ export const processImageWhithStyle = async (
             currentImageData.height,
           );
 
-          // Ne pas mettre à jour le cache maintenant si on doit encore flouter les visages
           if (cache && !applyBlur) {
             cache.imageData = currentImageData;
             cache.pointContainer = pointContainer;
             cache.lastOptions = { colorCount, rotation, applyBlur };
           }
-        }
 
-        // Appliquer l'image traitée
-        ctx.putImageData(currentImageData, 0, 0);
+          ctx.putImageData(currentImageData, 0, 0);
+        }
       }
 
-      // Flouter les visages si activé (après le dithering)
+      // Étape 4: Floutage des visages (si activé)
       if (applyBlur && modelsLoaded) {
-        console.log("processImage - Application du floutage des visages");
+        onProgress?.("Détection des visages", 0);
         await blurFaces(canvas, ctx);
+        onProgress?.("Floutage des visages", 100);
 
-        // Si on a appliqué le floutage, on met à jour le cache avec l'état final
         if (cache && shouldApplyStyle) {
           currentImageData = ctx.getImageData(
             0,
@@ -459,6 +450,8 @@ export const processImageWhithStyle = async (
         }
       }
 
+      // Étape finale: Compression et finalisation
+      onProgress?.("Finalisation", 0);
       canvas.toBlob(
         (blob) => {
           if (blob) {
@@ -469,6 +462,7 @@ export const processImageWhithStyle = async (
               colorCount,
               applyBlur,
             });
+            onProgress?.("Terminé", 100);
             resolve(blob);
           }
         },
