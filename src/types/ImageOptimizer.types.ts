@@ -1,5 +1,3 @@
-import { FaceDetection } from 'face-api.js';
-
 /**
  * Interface pour les statistiques d'une image
  */
@@ -53,10 +51,10 @@ export interface BlurArea {
 }
 
 /**
- * Interface pour la couleur RGB
+ * Interface pour le cache de la palette
  */
-export interface RGBColor {
-  r: number;
-  g: number;
-  b: number;
-} 
+export interface PaletteCache {
+  imageHash: string; // Un identifiant unique pour l'image
+  colorCount: number;
+  palette: any; // Le type exact dépend de image-q
+}
