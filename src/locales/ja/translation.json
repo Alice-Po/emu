@@ -1,6 +1,7 @@
 {
     "title": "画像最適化ツール",
     "beta": "ベータ版",
+    "language": "言語",
     "features": {
         "title": "機能一覧：",
         "list": {
@@ -86,8 +87,7 @@
     "footer": {
         "contributions": "コントリビューション歓迎！",
         "github": "GitHubでプロジェクトを見る",
-        "madeIn": "Boccagiaにて制作",
-        "language": "言語"
+        "madeIn": "Boccagiaにて制作"
     },
     "metadataRemoved": "処理中にメタデータは自動的に削除されました。",
     "image": {

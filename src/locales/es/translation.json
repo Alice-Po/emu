@@ -1,6 +1,7 @@
 {
     "title": "Optimizador de Imágenes",
     "beta": "Beta",
+    "language": "Idioma",
     "features": {
         "title": "Características:",
         "list": {
@@ -86,8 +87,7 @@
     "footer": {
         "contributions": "¡Las contribuciones son bienvenidas!",
         "github": "Ver proyecto en GitHub",
-        "madeIn": "Hecho en Boccagia",
-        "language": "Idioma"
+        "madeIn": "Hecho en Boccagia"
     },
     "metadataRemoved": "Los metadatos se han eliminado automáticamente durante el procesamiento.",
     "image": {

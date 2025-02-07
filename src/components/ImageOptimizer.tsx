@@ -374,16 +374,22 @@ const ImageOptimizer: React.FC = () => {
               }}
             >
               <Typography
-                variant="body2"
-                color="text.secondary"
-                sx={{ fontSize: "0.9rem" }}
+                variant="h2"
+                id="language-section-title"
+                sx={{
+                  fontSize: "0.9rem",
+                  color: "text.secondary",
+                  fontWeight: "medium",
+                }}
               >
-                Langue :
+                {t("language")}
               </Typography>
               <Select
                 value={i18n.language}
                 onChange={handleLanguageChange}
                 size="small"
+                aria-label={t("language")}
+                title={t("language")}
                 sx={{
                   minWidth: 120,
                   height: 32,
@@ -495,19 +501,22 @@ const ImageOptimizer: React.FC = () => {
             aria-labelledby="upload-section-title"
             sx={{ mb: 3 }}
           >
-            <Button
-              variant="contained"
-              component="label"
-              startIcon={<CloudUploadIcon />}
-            >
-              {t("uploadButton")}
+            <label htmlFor="image-upload">
               <input
                 type="file"
+                id="image-upload"
                 hidden
                 accept="image/*"
                 onChange={handleImageUpload}
               />
-            </Button>
+              <Button
+                variant="contained"
+                component="span"
+                startIcon={<CloudUploadIcon />}
+              >
+                {t("uploadButton")}
+              </Button>
+            </label>
           </Box>
 
           {originalStats && compressedStats && (
@@ -540,10 +549,25 @@ const ImageOptimizer: React.FC = () => {
                     textAlign: "center",
                   }}
                 >
-                  <Typography variant="h6" gutterBottom color="grey.300">
+                  <Typography
+                    color="grey.300"
+                    variant="h2"
+                    gutterBottom
+                    sx={{
+                      transition: "color 0.3s ease",
+                      fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
+                    }}
+                  >
                     {t("stats.original.title")}
                   </Typography>
-                  <Typography variant="h4" color="grey.100" sx={{ mb: 1 }}>
+                  <Typography
+                    variant="h3"
+                    color="grey.100"
+                    sx={{
+                      mb: 1,
+                      fontSize: { xs: "h4.fontSize", sm: "h4.fontSize" },
+                    }}
+                  >
                     {formatFileSize(originalStats.size)}
                   </Typography>
                   <Typography color="grey.400">
@@ -668,11 +692,12 @@ const ImageOptimizer: React.FC = () => {
                   }}
                 >
                   <Typography
-                    variant="h6"
+                    variant="h3"
                     gutterBottom
                     sx={{
                       color: loading ? "grey.300" : "rgba(0, 0, 0, 0.87)",
                       transition: "color 0.3s ease",
+                      fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
                     }}
                   >
                     {t("stats.optimized.title")}
@@ -765,12 +790,13 @@ const ImageOptimizer: React.FC = () => {
               >
                 <Box sx={{ mb: 3 }}>
                   <Typography
-                    variant="h6"
+                    variant="h2"
                     gutterBottom
                     id="basic-settings-title"
                     sx={{
                       color: "primary.main",
                       fontWeight: "medium",
+                      fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
                       display: "flex",
                       alignItems: "center",
                       gap: 1,
@@ -900,12 +926,12 @@ const ImageOptimizer: React.FC = () => {
                     }}
                   >
                     <Typography
-                      variant="h6"
+                      variant="h2"
                       id="dithering-section-title"
                       sx={{
                         color: "primary.main",
                         fontWeight: "medium",
-                        fontSize: { xs: "1.25rem", sm: "1.25rem" },
+                        fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
@@ -1032,12 +1058,12 @@ const ImageOptimizer: React.FC = () => {
                     }}
                   >
                     <Typography
-                      variant="h6"
+                      variant="h2"
                       id="face-blur-section-title"
                       sx={{
                         color: "primary.main",
                         fontWeight: "medium",
-                        fontSize: { xs: "1.25rem", sm: "1.25rem" },
+                        fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
                         display: "flex",
                         alignItems: "center",
                         gap: 1,
@@ -1118,7 +1144,25 @@ const ImageOptimizer: React.FC = () => {
               )}
               {metadata && (
                 <Paper sx={{ p: 2, mb: 3 }}>
-                  <Typography variant="h6" gutterBottom>
+                  <Typography
+                    variant="h2"
+                    sx={{
+                      color: "primary.main",
+                      fontWeight: "medium",
+                      fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      "&::before": {
+                        content: '""',
+                        width: 4,
+                        height: { xs: 24, sm: 24 },
+                        backgroundColor: "primary.main",
+                        borderRadius: 1,
+                      },
+                    }}
+                    gutterBottom
+                  >
                     {t("metadata.title")}
                   </Typography>
                   {hasMetadata(metadata) ? (
@@ -1258,11 +1302,19 @@ const ImageOptimizer: React.FC = () => {
                           component="img"
                           src={compressedImage}
                           sx={{ maxWidth: "100%", height: "auto" }}
-                          alt={t("image.compressed.alt", {
-                            width: compressedStats.width,
-                            height: compressedStats.height,
-                            quality: quality,
-                          })}
+                          alt={
+                            compressedStats
+                              ? t("image.compressed.alt", {
+                                  width: compressedStats.width,
+                                  height: compressedStats.height,
+                                  quality: quality,
+                                })
+                              : t("image.compressed.alt", {
+                                  width: 0,
+                                  height: 0,
+                                  quality: quality,
+                                })
+                          }
                         />
                       )}
                       <Typography

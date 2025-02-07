@@ -1,6 +1,7 @@
 {
     "title": "Image Optimizer",
     "beta": "Beta",
+    "language": "Language",
     "features": {
         "title": "Features:",
         "list": {
@@ -86,8 +87,7 @@
     "footer": {
         "contributions": "Contributions are welcome!",
         "github": "View project on GitHub",
-        "madeIn": "Made in Boccagia",
-        "language": "Language"
+        "madeIn": "Made in Boccagia"
     },
     "metadataRemoved": "Metadata has been automatically removed during processing.",
     "image": {
