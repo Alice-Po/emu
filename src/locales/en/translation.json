@@ -1,0 +1,78 @@
+{
+    "title": "Image Optimizer",
+    "beta": "Beta",
+    "features": {
+        "title": "Features:",
+        "list": {
+            "compression": "Smart compression with quality control",
+            "faceBlur": "Automatic face blurring",
+            "cropRotate": "Crop and rotation tools",
+            "metadata": "Metadata reading and removal"
+        }
+    },
+    "localProcessing": "✨ All images are processed locally in your browser - No server upload!",
+    "uploadButton": "Upload an image",
+    "stats": {
+        "original": {
+            "title": "Original image",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "optimized": {
+            "title": "Optimized image",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "reduction": {
+            "label": "reduction",
+            "excellent": "Excellent optimization! 🎉",
+            "good": "Good optimization",
+            "moderate": "Moderate optimization"
+        }
+    },
+    "controls": {
+        "quality": {
+            "label": "Compression quality (%)"
+        },
+        "maxWidth": {
+            "label": "Maximum width (px)",
+            "max": "(max: {{width}}px)"
+        },
+        "dithering": {
+            "label": "Apply dithering effect",
+            "colors": "Number of colors"
+        },
+        "faceBlur": {
+            "label": "Blur faces"
+        }
+    },
+    "loading": {
+        "initial": "Please wait while your image is being processed..",
+        "long": "Ok, it's taking a bit longer than expected..",
+        "veryLong": "Almost there!"
+    },
+    "metadata": {
+        "title": "Image metadata",
+        "noData": "No metadata is available for this image.",
+        "device": "Device",
+        "date": "Date taken",
+        "exposure": "Exposure time",
+        "aperture": "Aperture",
+        "focalLength": "Focal length",
+        "location": "Location"
+    },
+    "actions": {
+        "rotate": "Rotate image",
+        "crop": {
+            "start": "Crop",
+            "apply": "Apply crop",
+            "cancel": "Cancel"
+        },
+        "download": "Download optimized image"
+    },
+    "footer": {
+        "contributions": "Contributions are welcome!",
+        "github": "View project on GitHub",
+        "madeIn": "Made in Boccagia",
+        "language": "Language"
+    },
+    "metadataRemoved": "Metadata has been automatically removed during processing."
+}

@@ -1,29 +1,30 @@
-import { ThemeProvider } from '@mui/material';
-import { createTheme, ThemeOptions } from '@mui/material/styles';
+import { ThemeProvider } from "@mui/material";
+import { createTheme, ThemeOptions } from "@mui/material/styles";
 import ImageOptimizer from "./components/ImageOptimizer";
-import { CssBaseline } from '@mui/material';
+import { CssBaseline } from "@mui/material";
+import "./i18n";
 
 // Configuration du thème sombre
 const darkTheme = createTheme({
   palette: {
-    mode: 'dark',
+    mode: "dark",
     primary: {
-      main: '#9DFF20',
+      main: "#9DFF20",
     },
     background: {
-      default: '#121212',
-      paper: '#1E1E1E',
+      default: "#121212",
+      paper: "#1E1E1E",
     },
     text: {
-      primary: '#ffffff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
+      primary: "#ffffff",
+      secondary: "rgba(255, 255, 255, 0.7)",
     },
   },
   components: {
     MuiAppBar: {
       styleOverrides: {
         root: {
-          display: 'none',
+          display: "none",
         },
       },
     },

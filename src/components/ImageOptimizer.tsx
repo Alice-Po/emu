@@ -27,7 +27,10 @@ import {
   Grid,
   IconButton,
   Link,
+  MenuItem,
   Paper,
+  Select,
+  SelectChangeEvent,
   Slider,
   Switch,
   Tooltip,
@@ -35,6 +38,7 @@ import {
 } from "@mui/material";
 import * as faceapi from "face-api.js";
 import React, { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { ReactCrop, type Crop } from "react-image-crop";
 import "react-image-crop/dist/ReactCrop.css";
 import { useDebounce } from "../hooks/useDebounce";
@@ -51,6 +55,7 @@ import {
  * @returns {JSX.Element} The rendered component
  */
 const ImageOptimizer: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const {
     loading,
     progress,
@@ -285,12 +290,12 @@ const ImageOptimizer: React.FC = () => {
   useEffect(() => {
     let timeoutId: NodeJS.Timeout;
     if (loading) {
-      setLoadingMessage("Patience, votre image est en cours de traitement..");
+      setLoadingMessage(t("loading.initial"));
       timeoutId = setTimeout(() => {
-        setLoadingMessage("Ok c'est vrai que c'est un peu long..");
+        setLoadingMessage(t("loading.long"));
       }, 5000);
       timeoutId = setTimeout(() => {
-        setLoadingMessage("Ca vient ! Ca vient !");
+        setLoadingMessage(t("loading.veryLong"));
       }, 8000);
     }
     return () => {
@@ -298,7 +303,7 @@ const ImageOptimizer: React.FC = () => {
         clearTimeout(timeoutId);
       }
     };
-  }, [loading]);
+  }, [loading, t]);
 
   /**
    * Handles initial image upload
@@ -331,20 +336,64 @@ const ImageOptimizer: React.FC = () => {
     }
   }, [originalStats?.width]);
 
+  const handleLanguageChange = (event: SelectChangeEvent) => {
+    i18n.changeLanguage(event.target.value);
+  };
+
   return (
     <Card>
       <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Optimiseur d&apos;Images <small>Beta</small>
-        </Typography>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            mb: 2,
+          }}
+        >
+          <Typography variant="h5">
+            {t("title")} <small>{t("beta")}</small>
+          </Typography>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Typography
+              variant="body2"
+              color="text.secondary"
+              sx={{ fontSize: "0.9rem" }}
+            >
+              Langue :
+            </Typography>
+            <Select
+              value={i18n.language}
+              onChange={handleLanguageChange}
+              size="small"
+              sx={{
+                minWidth: 100,
+                height: 32,
+                ".MuiSelect-select": {
+                  py: 0.5,
+                },
+              }}
+            >
+              <MenuItem value="fr">Français</MenuItem>
+              <MenuItem value="en">English</MenuItem>
+            </Select>
+          </Box>
+        </Box>
+
         <Paper sx={{ p: 2, mb: 3 }}>
           <Typography component="div" variant="body2" sx={{ mb: 2 }}>
-            <strong>Fonctionnalités :</strong>
+            <strong>{t("features.title")}</strong>
             <ul>
-              <li>Compression intelligente avec contrôle de la qualité</li>
-              <li>Floutage automatique des visages</li>
-              <li>Outils de recadrage et rotation</li>
-              <li>Lecture et effacement des meta-données</li>
+              <li>{t("features.list.compression")}</li>
+              <li>{t("features.list.faceBlur")}</li>
+              <li>{t("features.list.cropRotate")}</li>
+              <li>{t("features.list.metadata")}</li>
             </ul>
           </Typography>
           <Typography
@@ -352,8 +401,7 @@ const ImageOptimizer: React.FC = () => {
             color="primary"
             sx={{ fontWeight: "medium" }}
           >
-            ✨ Toutes les images sont traitées localement dans votre navigateur
-            - Aucun envoi sur un serveur !
+            {t("localProcessing")}
           </Typography>
         </Paper>
 
@@ -363,7 +411,7 @@ const ImageOptimizer: React.FC = () => {
             component="label"
             startIcon={<CloudUploadIcon />}
           >
-            Télécharger une image
+            {t("uploadButton")}
             <input
               type="file"
               hidden
@@ -404,13 +452,16 @@ const ImageOptimizer: React.FC = () => {
                 }}
               >
                 <Typography variant="h6" gutterBottom color="grey.300">
-                  Image originale
+                  {t("stats.original.title")}
                 </Typography>
                 <Typography variant="h4" color="grey.100" sx={{ mb: 1 }}>
                   {formatFileSize(originalStats.size)}
                 </Typography>
                 <Typography color="grey.400">
-                  {originalStats.width} × {originalStats.height}px
+                  {t("stats.original.dimensions", {
+                    width: originalStats.width,
+                    height: originalStats.height,
+                  })}
                 </Typography>
               </Box>
 
@@ -494,7 +545,7 @@ const ImageOptimizer: React.FC = () => {
                           fontSize: "0.875rem",
                         }}
                       >
-                        de réduction
+                        {t("stats.reduction.label")}
                       </Typography>
                     </Box>
                   </>
@@ -535,7 +586,7 @@ const ImageOptimizer: React.FC = () => {
                     transition: "color 0.3s ease",
                   }}
                 >
-                  Image optimisée
+                  {t("stats.optimized.title")}
                 </Typography>
                 {loading ? (
                   <Box
@@ -561,7 +612,10 @@ const ImageOptimizer: React.FC = () => {
                       {formatFileSize(compressedStats.size)}
                     </Typography>
                     <Typography sx={{ color: "rgba(0, 0, 0, 0.7)" }}>
-                      {compressedStats.width} × {compressedStats.height}px
+                      {t("stats.optimized.dimensions", {
+                        width: compressedStats.width,
+                        height: compressedStats.height,
+                      })}
                     </Typography>
                   </>
                 )}
@@ -589,15 +643,15 @@ const ImageOptimizer: React.FC = () => {
                 {parseFloat(
                   calculateCompressionRatio(originalStats, compressedStats),
                 ) >= 70
-                  ? "Excellente optimisation ! 🎉"
+                  ? t("stats.reduction.excellent")
                   : parseFloat(
                         calculateCompressionRatio(
                           originalStats,
                           compressedStats,
                         ),
                       ) >= 40
-                    ? "Bonne optimisation"
-                    : "Optimisation modérée"}
+                    ? t("stats.reduction.good")
+                    : t("stats.reduction.moderate")}
               </Typography>
             )}
           </Paper>
@@ -605,7 +659,7 @@ const ImageOptimizer: React.FC = () => {
 
         <Grid container spacing={3}>
           <Grid item xs={12} md={6}>
-            <Typography gutterBottom>Qualité de compression (%)</Typography>
+            <Typography gutterBottom>{t("controls.quality.label")}</Typography>
             <Slider
               value={quality}
               onChange={handleQualityChange}
@@ -616,8 +670,10 @@ const ImageOptimizer: React.FC = () => {
           </Grid>
           <Grid item xs={12} md={6}>
             <Typography gutterBottom>
-              Largeur maximale (px)
-              {originalStats?.width ? ` (max: ${originalStats.width}px)` : ""}
+              {t("controls.maxWidth.label")}
+              {originalStats?.width
+                ? t("controls.maxWidth.max", { width: originalStats.width })
+                : ""}
             </Typography>
             <Slider
               value={maxWidth}
@@ -637,13 +693,15 @@ const ImageOptimizer: React.FC = () => {
               control={
                 <Switch checked={applyStyle} onChange={handleStyleChange} />
               }
-              label="Appliquer l'effet de dithering"
+              label={t("controls.dithering.label")}
             />
           </Grid>
           {applyStyle && (
             <>
               <Grid item xs={12} md={6}>
-                <Typography gutterBottom>Nombre de couleurs</Typography>
+                <Typography gutterBottom>
+                  {t("controls.dithering.colors")}
+                </Typography>
                 <Slider
                   value={colorCount}
                   onChange={handleColorCountChange}
@@ -670,7 +728,7 @@ const ImageOptimizer: React.FC = () => {
                   disabled={!modelsLoaded}
                 />
               }
-              label="Flouter les visages"
+              label={t("controls.faceBlur.label")}
             />
           </Grid>
         </Grid>
@@ -678,7 +736,7 @@ const ImageOptimizer: React.FC = () => {
         <Grid container spacing={2} sx={{ mt: 2 }}>
           <Grid item xs={12} md={6}>
             <Typography variant="subtitle1" gutterBottom>
-              Image originale
+              {t("stats.original.title")}
             </Typography>
             {originalImage && (
               <Box
@@ -691,22 +749,22 @@ const ImageOptimizer: React.FC = () => {
             {metadata && (
               <Paper sx={{ p: 2, mb: 3 }}>
                 <Typography variant="h6" gutterBottom>
-                  Métadonnées de l&apos;image
+                  {t("metadata.title")}
                 </Typography>
                 {hasMetadata(metadata) ? (
                   <Grid container spacing={2}>
                     {metadata.Make && (
                       <Grid item xs={12} sm={6}>
                         <Typography>
-                          <strong>Appareil:</strong> {metadata.Make}{" "}
-                          {metadata.Model}
+                          <strong>{t("metadata.device")}:</strong>{" "}
+                          {metadata.Make} {metadata.Model}
                         </Typography>
                       </Grid>
                     )}
                     {metadata.DateTimeOriginal && (
                       <Grid item xs={12} sm={6}>
                         <Typography>
-                          <strong>Date de prise:</strong>{" "}
+                          <strong>{t("metadata.date")}:</strong>{" "}
                           {new Date(metadata.DateTimeOriginal).toLocaleString()}
                         </Typography>
                       </Grid>
@@ -714,7 +772,7 @@ const ImageOptimizer: React.FC = () => {
                     {metadata.ExposureTime && (
                       <Grid item xs={12} sm={6}>
                         <Typography>
-                          <strong>Temps d&apos;exposition:</strong>{" "}
+                          <strong>{t("metadata.exposure")}:</strong>{" "}
                           {metadata.ExposureTime}s
                         </Typography>
                       </Grid>
@@ -722,21 +780,15 @@ const ImageOptimizer: React.FC = () => {
                     {metadata.FNumber && (
                       <Grid item xs={12} sm={6}>
                         <Typography>
-                          <strong>Ouverture:</strong> f/{metadata.FNumber}
-                        </Typography>
-                      </Grid>
-                    )}
-                    {metadata.ISO && (
-                      <Grid item xs={12} sm={6}>
-                        <Typography>
-                          <strong>ISO:</strong> {metadata.ISO}
+                          <strong>{t("metadata.aperture")}:</strong> f/
+                          {metadata.FNumber}
                         </Typography>
                       </Grid>
                     )}
                     {metadata.FocalLength && (
                       <Grid item xs={12} sm={6}>
                         <Typography>
-                          <strong>Distance focale:</strong>{" "}
+                          <strong>{t("metadata.focalLength")}:</strong>{" "}
                           {metadata.FocalLength}mm
                         </Typography>
                       </Grid>
@@ -744,7 +796,7 @@ const ImageOptimizer: React.FC = () => {
                     {metadata.latitude && metadata.longitude && (
                       <Grid item xs={12}>
                         <Typography>
-                          <strong>Localisation:</strong>{" "}
+                          <strong>{t("metadata.location")}:</strong>{" "}
                           {metadata.latitude.toFixed(6)},{" "}
                           {metadata.longitude.toFixed(6)}
                         </Typography>
@@ -756,7 +808,7 @@ const ImageOptimizer: React.FC = () => {
                     color="text.secondary"
                     sx={{ fontStyle: "italic" }}
                   >
-                    Aucune métadonnée n&apos;est disponible pour cette image.
+                    {t("metadata.noData")}
                   </Typography>
                 )}
               </Paper>
@@ -765,7 +817,7 @@ const ImageOptimizer: React.FC = () => {
           <Grid item xs={12} md={6}>
             <Box sx={{ position: "relative" }}>
               <Typography variant="subtitle1" gutterBottom>
-                Image optimisée
+                {t("stats.optimized.title")}
               </Typography>
               {loading ? (
                 <>
@@ -778,15 +830,12 @@ const ImageOptimizer: React.FC = () => {
                       display: "block",
                       margin: "0 auto",
                     }}
-                    alt="Chargement en cours..."
+                    alt="Loading..."
                   />
                   <Box sx={{ textAlign: "center", mt: 2 }}>
                     <Typography
                       color="text.secondary"
-                      sx={{
-                        fontStyle: "italic",
-                        mb: 1,
-                      }}
+                      sx={{ fontStyle: "italic", mb: 1 }}
                     >
                       {loadingMessage}
                     </Typography>
@@ -794,10 +843,7 @@ const ImageOptimizer: React.FC = () => {
                       <Typography
                         variant="body2"
                         color="text.secondary"
-                        sx={{
-                          fontFamily: "monospace",
-                          fontSize: "0.9em",
-                        }}
+                        sx={{ fontFamily: "monospace", fontSize: "0.9em" }}
                       >
                         {`${progress.step} : ${Math.round(progress.value)}%`}
                       </Typography>
@@ -817,7 +863,7 @@ const ImageOptimizer: React.FC = () => {
                           ref={imageRef}
                           src={compressedImage}
                           style={{ maxWidth: "100%" }}
-                          alt="À recadrer"
+                          alt="To crop"
                         />
                       </ReactCrop>
                     ) : (
@@ -832,8 +878,7 @@ const ImageOptimizer: React.FC = () => {
                       color="text.secondary"
                       sx={{ fontStyle: "italic" }}
                     >
-                      Les metadonnées ont été automatiquement supprimées pendant
-                      le traitement.
+                      {t("metadataRemoved")}
                     </Typography>
                     <Box
                       sx={{
@@ -843,7 +888,7 @@ const ImageOptimizer: React.FC = () => {
                         alignItems: "center",
                       }}
                     >
-                      <Tooltip title="Pivoter l'image">
+                      <Tooltip title={t("actions.rotate")}>
                         <IconButton onClick={handleRotation} color="primary">
                           <RotateRightIcon />
                         </IconButton>
@@ -855,13 +900,13 @@ const ImageOptimizer: React.FC = () => {
                             color="primary"
                             onClick={handleCropComplete}
                           >
-                            Appliquer le recadrage
+                            {t("actions.crop.apply")}
                           </Button>
                           <Button
                             variant="outlined"
                             onClick={() => setIsCropping(false)}
                           >
-                            Annuler
+                            {t("actions.crop.cancel")}
                           </Button>
                         </>
                       ) : (
@@ -870,14 +915,14 @@ const ImageOptimizer: React.FC = () => {
                             variant="outlined"
                             onClick={() => setIsCropping(true)}
                           >
-                            Recadrer
+                            {t("actions.crop.start")}
                           </Button>
                           <Button
                             variant="contained"
                             startIcon={<DownloadIcon />}
                             onClick={downloadImage}
                           >
-                            Télécharger l&apos;image optimisée
+                            {t("actions.download")}
                           </Button>
                         </>
                       )}
@@ -888,34 +933,39 @@ const ImageOptimizer: React.FC = () => {
             </Box>
           </Grid>
         </Grid>
+
+        <Box
+          component="footer"
+          sx={{
+            p: 2,
+            mt: 3,
+            borderTop: 1,
+            borderColor: "divider",
+            textAlign: "center",
+            backgroundColor: "background.paper",
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <Typography variant="body2" color="text.secondary">
+            {t("footer.contributions")}
+            <Link
+              href="https://github.com/Alice-Po/image-ecolo"
+              target="_blank"
+              rel="noopener noreferrer"
+              sx={{ ml: 1 }}
+            >
+              {t("footer.github")}
+            </Link>
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            {t("footer.madeIn")}
+          </Typography>
+        </Box>
       </CardContent>
       <canvas ref={canvasRef} style={{ display: "none" }} />
-      <Box
-        component="footer"
-        sx={{
-          p: 2,
-          mt: 3,
-          borderTop: 1,
-          borderColor: "divider",
-          textAlign: "center",
-          backgroundColor: "background.paper",
-        }}
-      >
-        <Typography variant="body2" color="text.secondary">
-          Les contributions sont les bienvenues !
-          <Link
-            href="https://github.com/Alice-Po/image-ecolo"
-            target="_blank"
-            rel="noopener noreferrer"
-            sx={{ ml: 1 }}
-          >
-            Voir le projet sur GitHub
-          </Link>
-        </Typography>
-        <Typography variant="body2" color="text.secondary">
-          Made in Boccagia{" "}
-        </Typography>
-      </Box>
     </Card>
   );
 };

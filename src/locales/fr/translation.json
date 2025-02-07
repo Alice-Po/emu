@@ -1,0 +1,78 @@
+{
+    "title": "Optimiseur d'Images",
+    "beta": "Beta",
+    "features": {
+        "title": "Fonctionnalités :",
+        "list": {
+            "compression": "Compression intelligente avec contrôle de la qualité",
+            "faceBlur": "Floutage automatique des visages",
+            "cropRotate": "Outils de recadrage et rotation",
+            "metadata": "Lecture et effacement des meta-données"
+        }
+    },
+    "localProcessing": "✨ Toutes les images sont traitées localement dans votre navigateur - Aucun envoi sur un serveur !",
+    "uploadButton": "Télécharger une image",
+    "stats": {
+        "original": {
+            "title": "Image originale",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "optimized": {
+            "title": "Image optimisée",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "reduction": {
+            "label": "de réduction",
+            "excellent": "Excellente optimisation ! 🎉",
+            "good": "Bonne optimisation",
+            "moderate": "Optimisation modérée"
+        }
+    },
+    "controls": {
+        "quality": {
+            "label": "Qualité de compression (%)"
+        },
+        "maxWidth": {
+            "label": "Largeur maximale (px)",
+            "max": "(max: {{width}}px)"
+        },
+        "dithering": {
+            "label": "Appliquer l'effet de dithering",
+            "colors": "Nombre de couleurs"
+        },
+        "faceBlur": {
+            "label": "Flouter les visages"
+        }
+    },
+    "loading": {
+        "initial": "Patience, votre image est en cours de traitement..",
+        "long": "Ok c'est vrai que c'est un peu long..",
+        "veryLong": "Ca vient ! Ca vient !"
+    },
+    "metadata": {
+        "title": "Métadonnées de l'image",
+        "noData": "Aucune métadonnée n'est disponible pour cette image.",
+        "device": "Appareil",
+        "date": "Date de prise",
+        "exposure": "Temps d'exposition",
+        "aperture": "Ouverture",
+        "focalLength": "Distance focale",
+        "location": "Localisation"
+    },
+    "actions": {
+        "rotate": "Pivoter l'image",
+        "crop": {
+            "start": "Recadrer",
+            "apply": "Appliquer le recadrage",
+            "cancel": "Annuler"
+        },
+        "download": "Télécharger l'image optimisée"
+    },
+    "footer": {
+        "contributions": "Les contributions sont les bienvenues !",
+        "github": "Voir le projet sur GitHub",
+        "madeIn": "Made in Boccagia",
+        "language": "Langue"
+    },
+    "metadataRemoved": "Les metadonnées ont été automatiquement supprimées pendant le traitement."
+}
