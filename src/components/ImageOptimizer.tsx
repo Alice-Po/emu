@@ -341,905 +341,986 @@ const ImageOptimizer: React.FC = () => {
   };
 
   return (
-    <Card>
-      <CardContent>
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            mb: 2,
-          }}
-        >
-          <Typography variant="h5">
-            {t("title")} <small>{t("beta")}</small>
-          </Typography>
+    <main role="main" aria-label="Image optimizer interface">
+      <Card>
+        <CardContent>
           <Box
             sx={{
               display: "flex",
+              justifyContent: "space-between",
               alignItems: "center",
-              gap: 1,
+              mb: 2,
             }}
           >
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ fontSize: "0.9rem" }}
-            >
-              Langue :
+            <Typography variant="h5">
+              {t("title")} <small>{t("beta")}</small>
             </Typography>
-            <Select
-              value={i18n.language}
-              onChange={handleLanguageChange}
-              size="small"
-              sx={{
-                minWidth: 120,
-                height: 32,
-                ".MuiSelect-select": {
-                  py: 0.5,
-                  display: "flex",
-                  alignItems: "center",
-                  gap: 1,
-                },
-              }}
-            >
-              <MenuItem
-                value="fr"
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
-                  🇫🇷
-                </Box>
-                Français
-              </MenuItem>
-              <MenuItem
-                value="en"
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
-                  🇬🇧
-                </Box>
-                English
-              </MenuItem>
-              <MenuItem
-                value="es"
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
-                  🇪🇸
-                </Box>
-                Español
-              </MenuItem>
-              <MenuItem
-                value="it"
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
-                  🇮🇹
-                </Box>
-                Italiano
-              </MenuItem>
-              <MenuItem
-                value="hi"
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
-                  🇮🇳
-                </Box>
-                हिंदी
-              </MenuItem>
-              <MenuItem
-                value="ja"
-                sx={{ display: "flex", alignItems: "center", gap: 1 }}
-              >
-                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
-                  🇯🇵
-                </Box>
-                日本語
-              </MenuItem>
-            </Select>
-          </Box>
-        </Box>
-
-        <Paper sx={{ p: 2, mb: 3 }}>
-          <Typography component="div" variant="body2" sx={{ mb: 2 }}>
-            <strong>{t("features.title")}</strong>
-            <ul>
-              <li>{t("features.list.compression")}</li>
-              <li>{t("features.list.faceBlur")}</li>
-              <li>{t("features.list.cropRotate")}</li>
-              <li>{t("features.list.metadata")}</li>
-            </ul>
-          </Typography>
-          <Typography
-            variant="body2"
-            color="primary"
-            sx={{ fontWeight: "medium" }}
-          >
-            {t("localProcessing")}
-          </Typography>
-        </Paper>
-
-        <Box sx={{ mb: 3 }}>
-          <Button
-            variant="contained"
-            component="label"
-            startIcon={<CloudUploadIcon />}
-          >
-            {t("uploadButton")}
-            <input
-              type="file"
-              hidden
-              accept="image/*"
-              onChange={handleImageUpload}
-            />
-          </Button>
-        </Box>
-
-        {originalStats && compressedStats && (
-          <Paper
-            sx={{
-              p: 3,
-              mb: 3,
-              bgcolor: "background.paper",
-              borderRadius: 2,
-              overflow: "hidden",
-            }}
-          >
             <Box
               sx={{
                 display: "flex",
-                flexDirection: { xs: "column", md: "row" },
-                gap: 4,
                 alignItems: "center",
-                position: "relative",
+                gap: 1,
               }}
             >
-              {/* Colonne de gauche - Image originale */}
-              <Box
+              <Typography
+                variant="body2"
+                color="text.secondary"
+                sx={{ fontSize: "0.9rem" }}
+              >
+                Langue :
+              </Typography>
+              <Select
+                value={i18n.language}
+                onChange={handleLanguageChange}
+                size="small"
                 sx={{
-                  flex: 1,
-                  width: "100%",
-                  p: 2,
-                  bgcolor: "#1E1E1E",
-                  borderRadius: 1,
-                  textAlign: "center",
+                  minWidth: 120,
+                  height: 32,
+                  ".MuiSelect-select": {
+                    py: 0.5,
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                  },
                 }}
               >
-                <Typography variant="h6" gutterBottom color="grey.300">
-                  {t("stats.original.title")}
-                </Typography>
-                <Typography variant="h4" color="grey.100" sx={{ mb: 1 }}>
-                  {formatFileSize(originalStats.size)}
-                </Typography>
-                <Typography color="grey.400">
-                  {t("stats.original.dimensions", {
-                    width: originalStats.width,
-                    height: originalStats.height,
-                  })}
-                </Typography>
-              </Box>
-
-              {/* Indicateur central de réduction */}
-              <Box
-                sx={{
-                  position: { xs: "relative", md: "absolute" },
-                  left: { md: "50%" },
-                  transform: { md: "translateX(-50%)" },
-                  zIndex: 2,
-                  width: 180,
-                  height: 180,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {loading ? (
+                <MenuItem
+                  value="fr"
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                >
                   <Box
-                    sx={{
-                      width: "100%",
-                      height: "100%",
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      bgcolor: "#1E1E1E",
-                      borderRadius: "50%",
-                    }}
+                    component="span"
+                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
                   >
-                    <CircularProgress
-                      size={60}
-                      thickness={4}
-                      sx={{ color: "#9DFF20" }}
-                    />
+                    🇫🇷
                   </Box>
-                ) : (
-                  <>
+                  Français
+                </MenuItem>
+                <MenuItem
+                  value="en"
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                >
+                  <Box
+                    component="span"
+                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
+                  >
+                    🇬🇧
+                  </Box>
+                  English
+                </MenuItem>
+                <MenuItem
+                  value="es"
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                >
+                  <Box
+                    component="span"
+                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
+                  >
+                    🇪🇸
+                  </Box>
+                  Español
+                </MenuItem>
+                <MenuItem
+                  value="it"
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                >
+                  <Box
+                    component="span"
+                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
+                  >
+                    🇮🇹
+                  </Box>
+                  Italiano
+                </MenuItem>
+                <MenuItem
+                  value="hi"
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                >
+                  <Box
+                    component="span"
+                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
+                  >
+                    🇮🇳
+                  </Box>
+                  हिंदी
+                </MenuItem>
+                <MenuItem
+                  value="ja"
+                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                >
+                  <Box
+                    component="span"
+                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
+                  >
+                    🇯🇵
+                  </Box>
+                  日本語
+                </MenuItem>
+              </Select>
+            </Box>
+          </Box>
+
+          <Paper sx={{ p: 2, mb: 3 }}>
+            <Typography component="div" variant="body2" sx={{ mb: 2 }}>
+              <strong>{t("features.title")}</strong>
+              <ul>
+                <li>{t("features.list.compression")}</li>
+                <li>{t("features.list.faceBlur")}</li>
+                <li>{t("features.list.cropRotate")}</li>
+                <li>{t("features.list.metadata")}</li>
+              </ul>
+            </Typography>
+            <Typography
+              variant="body2"
+              color="primary"
+              sx={{ fontWeight: "medium" }}
+            >
+              {t("localProcessing")}
+            </Typography>
+          </Paper>
+
+          <Box sx={{ mb: 3 }}>
+            <Button
+              variant="contained"
+              component="label"
+              startIcon={<CloudUploadIcon />}
+            >
+              {t("uploadButton")}
+              <input
+                type="file"
+                hidden
+                accept="image/*"
+                onChange={handleImageUpload}
+              />
+            </Button>
+          </Box>
+
+          {originalStats && compressedStats && (
+            <Paper
+              sx={{
+                p: 3,
+                mb: 3,
+                bgcolor: "background.paper",
+                borderRadius: 2,
+                overflow: "hidden",
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", md: "row" },
+                  gap: 4,
+                  alignItems: "center",
+                  position: "relative",
+                }}
+              >
+                {/* Colonne de gauche - Image originale */}
+                <Box
+                  sx={{
+                    flex: 1,
+                    width: "100%",
+                    p: 2,
+                    bgcolor: "#1E1E1E",
+                    borderRadius: 1,
+                    textAlign: "center",
+                  }}
+                >
+                  <Typography variant="h6" gutterBottom color="grey.300">
+                    {t("stats.original.title")}
+                  </Typography>
+                  <Typography variant="h4" color="grey.100" sx={{ mb: 1 }}>
+                    {formatFileSize(originalStats.size)}
+                  </Typography>
+                  <Typography color="grey.400">
+                    {t("stats.original.dimensions", {
+                      width: originalStats.width,
+                      height: originalStats.height,
+                    })}
+                  </Typography>
+                </Box>
+
+                {/* Indicateur central de réduction */}
+                <Box
+                  sx={{
+                    position: { xs: "relative", md: "absolute" },
+                    left: { md: "50%" },
+                    transform: { md: "translateX(-50%)" },
+                    zIndex: 2,
+                    width: 180,
+                    height: 180,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
+                >
+                  {loading ? (
                     <Box
                       sx={{
                         width: "100%",
                         height: "100%",
-                        position: "absolute",
-                        background: `conic-gradient(
-                          #9DFF20 0deg,
-                          #9DFF20 ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg,
-                          transparent ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg
-                        )`,
-                        borderRadius: "50%",
-                        transform: "rotate(-90deg)",
-                      }}
-                    />
-                    <Box
-                      sx={{
-                        width: "92%",
-                        height: "92%",
-                        bgcolor: "#1E1E1E",
-                        borderRadius: "50%",
-                        position: "relative",
                         display: "flex",
-                        flexDirection: "column",
                         alignItems: "center",
                         justifyContent: "center",
+                        bgcolor: "#1E1E1E",
+                        borderRadius: "50%",
                       }}
                     >
+                      <CircularProgress
+                        size={60}
+                        thickness={4}
+                        sx={{ color: "#9DFF20" }}
+                      />
+                    </Box>
+                  ) : (
+                    <>
+                      <Box
+                        sx={{
+                          width: "100%",
+                          height: "100%",
+                          position: "absolute",
+                          background: `conic-gradient(
+                            #9DFF20 0deg,
+                            #9DFF20 ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg,
+                            transparent ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg
+                          )`,
+                          borderRadius: "50%",
+                          transform: "rotate(-90deg)",
+                        }}
+                      />
+                      <Box
+                        sx={{
+                          width: "92%",
+                          height: "92%",
+                          bgcolor: "#1E1E1E",
+                          borderRadius: "50%",
+                          position: "relative",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                        }}
+                      >
+                        <Typography
+                          variant="h4"
+                          sx={{
+                            fontWeight: "bold",
+                            color: "#9DFF20",
+                            lineHeight: 1,
+                          }}
+                        >
+                          {calculateCompressionRatio(
+                            originalStats,
+                            compressedStats,
+                          )}
+                        </Typography>
+                        <Typography
+                          sx={{
+                            color: "rgba(255,255,255,0.7)",
+                            fontSize: "0.875rem",
+                          }}
+                        >
+                          {t("stats.reduction.label")}
+                        </Typography>
+                      </Box>
+                    </>
+                  )}
+                </Box>
+
+                {/* Colonne de droite - Image compressée */}
+                <Box
+                  sx={{
+                    flex: 1,
+                    width: "100%",
+                    p: 2,
+                    bgcolor: loading ? "#1E1E1E" : "#9DFF20",
+                    borderRadius: 1,
+                    textAlign: "center",
+                    position: "relative",
+                    transition: "background-color 0.3s ease",
+                    "&::before": !loading
+                      ? {
+                          content: '""',
+                          position: "absolute",
+                          left: -100,
+                          top: "50%",
+                          transform: "translateY(-50%)",
+                          width: 100,
+                          height: 100,
+                          background: "#9DFF20",
+                          clipPath: "circle(50% at 100% 50%)",
+                        }
+                      : undefined,
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    gutterBottom
+                    sx={{
+                      color: loading ? "grey.300" : "rgba(0, 0, 0, 0.87)",
+                      transition: "color 0.3s ease",
+                    }}
+                  >
+                    {t("stats.optimized.title")}
+                  </Typography>
+                  {loading ? (
+                    <Box
+                      sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        height: 100,
+                      }}
+                    >
+                      <CircularProgress sx={{ color: "#9DFF20" }} />
+                    </Box>
+                  ) : (
+                    <>
                       <Typography
                         variant="h4"
                         sx={{
+                          color: "rgba(0, 0, 0, 0.87)",
+                          mb: 1,
                           fontWeight: "bold",
-                          color: "#9DFF20",
-                          lineHeight: 1,
                         }}
                       >
-                        {calculateCompressionRatio(
-                          originalStats,
-                          compressedStats,
-                        )}
+                        {formatFileSize(compressedStats.size)}
                       </Typography>
-                      <Typography
-                        sx={{
-                          color: "rgba(255,255,255,0.7)",
-                          fontSize: "0.875rem",
-                        }}
-                      >
-                        {t("stats.reduction.label")}
-                      </Typography>
-                    </Box>
-                  </>
-                )}
-              </Box>
-
-              {/* Colonne de droite - Image compressée */}
-              <Box
-                sx={{
-                  flex: 1,
-                  width: "100%",
-                  p: 2,
-                  bgcolor: loading ? "#1E1E1E" : "#9DFF20",
-                  borderRadius: 1,
-                  textAlign: "center",
-                  position: "relative",
-                  transition: "background-color 0.3s ease",
-                  "&::before": !loading
-                    ? {
-                        content: '""',
-                        position: "absolute",
-                        left: -100,
-                        top: "50%",
-                        transform: "translateY(-50%)",
-                        width: 100,
-                        height: 100,
-                        background: "#9DFF20",
-                        clipPath: "circle(50% at 100% 50%)",
-                      }
-                    : undefined,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{
-                    color: loading ? "grey.300" : "rgba(0, 0, 0, 0.87)",
-                    transition: "color 0.3s ease",
-                  }}
-                >
-                  {t("stats.optimized.title")}
-                </Typography>
-                {loading ? (
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "center",
-                      alignItems: "center",
-                      height: 100,
-                    }}
-                  >
-                    <CircularProgress sx={{ color: "#9DFF20" }} />
-                  </Box>
-                ) : (
-                  <>
-                    <Typography
-                      variant="h4"
-                      sx={{
-                        color: "rgba(0, 0, 0, 0.87)",
-                        mb: 1,
-                        fontWeight: "bold",
-                      }}
-                    >
-                      {formatFileSize(compressedStats.size)}
-                    </Typography>
-                    <Typography sx={{ color: "rgba(0, 0, 0, 0.7)" }}>
-                      {t("stats.optimized.dimensions", {
-                        width: compressedStats.width,
-                        height: compressedStats.height,
-                      })}
-                    </Typography>
-                  </>
-                )}
-              </Box>
-            </Box>
-
-            {!loading && (
-              <Typography
-                variant="body1"
-                sx={{
-                  mt: 3,
-                  textAlign: "center",
-                  color: "#9DFF20",
-                  fontWeight: "bold",
-                  fontSize: "1.1rem",
-                  textShadow: "0 2px 4px rgba(0,0,0,0.2)",
-                  padding: "8px 16px",
-                  borderRadius: "4px",
-                  backgroundColor: "rgba(0,0,0,0.7)",
-                  display: "inline-block",
-                  margin: "0 auto",
-                  marginTop: 3,
-                }}
-              >
-                {parseFloat(
-                  calculateCompressionRatio(originalStats, compressedStats),
-                ) >= 70
-                  ? t("stats.reduction.excellent")
-                  : parseFloat(
-                        calculateCompressionRatio(
-                          originalStats,
-                          compressedStats,
-                        ),
-                      ) >= 40
-                    ? t("stats.reduction.good")
-                    : t("stats.reduction.moderate")}
-              </Typography>
-            )}
-          </Paper>
-        )}
-
-        <Grid container spacing={3} sx={{ mb: 4 }}>
-          <Grid item xs={12}>
-            <Paper
-              sx={{
-                p: { xs: 2, sm: 3 },
-                backgroundColor: "background.default",
-                borderRadius: 2,
-                boxShadow: (theme) => theme.shadows[1],
-                border: (theme) => `1px solid ${theme.palette.divider}`,
-              }}
-            >
-              <Box sx={{ mb: 3 }}>
-                <Typography
-                  variant="h6"
-                  gutterBottom
-                  sx={{
-                    color: "primary.main",
-                    fontWeight: "medium",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    "&::before": {
-                      content: '""',
-                      width: 4,
-                      height: 24,
-                      backgroundColor: "primary.main",
-                      borderRadius: 1,
-                    },
-                  }}
-                >
-                  {t("controls.basic.title")}
-                </Typography>
-              </Box>
-              <Grid container spacing={4}>
-                <Grid item xs={12} md={6}>
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      fontSize: { xs: "0.875rem", sm: "1rem" },
-                      fontWeight: "medium",
-                      color: "text.secondary",
-                      mb: 1.5,
-                    }}
-                  >
-                    {t("controls.quality.label")}
-                  </Typography>
-                  <Slider
-                    value={quality}
-                    onChange={handleQualityChange}
-                    min={0}
-                    max={100}
-                    valueLabelDisplay="auto"
-                    aria-label={t("controls.quality.label")}
-                    sx={{
-                      "& .MuiSlider-valueLabel": {
-                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                      },
-                    }}
-                  />
-                </Grid>
-                <Grid item xs={12} md={6}>
-                  <Typography
-                    gutterBottom
-                    sx={{
-                      fontSize: { xs: "0.875rem", sm: "1rem" },
-                      fontWeight: "medium",
-                      color: "text.secondary",
-                      mb: 1.5,
-                    }}
-                  >
-                    {t("controls.maxWidth.label")}
-                    {originalStats?.width && (
-                      <Typography
-                        component="span"
-                        sx={{
-                          ml: 1,
-                          fontSize: "0.875rem",
-                          color: "text.disabled",
-                        }}
-                      >
-                        {t("controls.maxWidth.max", {
-                          width: originalStats.width,
+                      <Typography sx={{ color: "rgba(0, 0, 0, 0.7)" }}>
+                        {t("stats.optimized.dimensions", {
+                          width: compressedStats.width,
+                          height: compressedStats.height,
                         })}
                       </Typography>
-                    )}
-                  </Typography>
-                  <Slider
-                    value={maxWidth}
-                    onChange={handleMaxWidthChange}
-                    min={100}
-                    max={maxWidthLimit}
-                    step={100}
-                    valueLabelDisplay="auto"
-                    disabled={!originalImage}
-                    aria-label={t("controls.maxWidth.label")}
-                    sx={{
-                      "& .MuiSlider-valueLabel": {
-                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                      },
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Paper>
-          </Grid>
+                    </>
+                  )}
+                </Box>
+              </Box>
 
-          <Grid item xs={12} md={6}>
-            <Paper
-              sx={{
-                p: { xs: 2, sm: 3 },
-                height: "100%",
-                backgroundColor: "background.default",
-                borderRadius: 2,
-                boxShadow: (theme) => theme.shadows[1],
-                border: (theme) => `1px solid ${theme.palette.divider}`,
-                transition: "box-shadow 0.2s ease-in-out",
-                "&:hover": {
-                  boxShadow: (theme) => theme.shadows[2],
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", sm: "row" },
-                  alignItems: { xs: "flex-start", sm: "center" },
-                  gap: { xs: 2, sm: 1 },
-                  mb: 3,
-                }}
-              >
+              {!loading && (
                 <Typography
-                  variant="h6"
+                  variant="body1"
                   sx={{
-                    flexGrow: 1,
-                    mb: { xs: 1, sm: 0 },
-                    color: "primary.main",
-                    fontWeight: "medium",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    "&::before": {
-                      content: '""',
-                      width: 4,
-                      height: 24,
-                      backgroundColor: "primary.main",
-                      borderRadius: 1,
-                    },
+                    mt: 3,
+                    textAlign: "center",
+                    color: "#9DFF20",
+                    fontWeight: "bold",
+                    fontSize: "1.1rem",
+                    textShadow: "0 2px 4px rgba(0,0,0,0.2)",
+                    padding: "8px 16px",
+                    borderRadius: "4px",
+                    backgroundColor: "rgba(0,0,0,0.7)",
+                    display: "inline-block",
+                    margin: "0 auto",
+                    marginTop: 3,
                   }}
                 >
-                  {t("controls.dithering.title")}
+                  {parseFloat(
+                    calculateCompressionRatio(originalStats, compressedStats),
+                  ) >= 70
+                    ? t("stats.reduction.excellent")
+                    : parseFloat(
+                          calculateCompressionRatio(
+                            originalStats,
+                            compressedStats,
+                          ),
+                        ) >= 40
+                      ? t("stats.reduction.good")
+                      : t("stats.reduction.moderate")}
                 </Typography>
-                <FormControlLabel
-                  sx={{
-                    m: 0,
-                    ".MuiFormControlLabel-label": {
-                      fontSize: { xs: "0.875rem", sm: "1rem" },
-                      color: "text.secondary",
-                    },
-                  }}
-                  control={
-                    <Switch
-                      checked={applyStyle}
-                      onChange={handleStyleChange}
-                      aria-label={t("controls.dithering.toggle")}
-                      color="primary"
-                    />
-                  }
-                  label={t("controls.dithering.label")}
-                />
-              </Box>
-              {applyStyle && (
-                <Box sx={{ mt: { xs: 3, sm: 2 } }}>
+              )}
+            </Paper>
+          )}
+
+          <Grid
+            container
+            spacing={3}
+            sx={{ mb: 4 }}
+            role="group"
+            aria-label={t("controls.basic.title")}
+          >
+            <Grid item xs={12}>
+              <Paper
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  backgroundColor: "background.default",
+                  borderRadius: 2,
+                  boxShadow: (theme) => theme.shadows[1],
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
+                }}
+              >
+                <Box sx={{ mb: 3 }}>
                   <Typography
+                    variant="h6"
                     gutterBottom
+                    id="basic-settings-title"
                     sx={{
-                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      color: "primary.main",
                       fontWeight: "medium",
-                      color: "text.secondary",
-                      mb: 1.5,
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      "&::before": {
+                        content: '""',
+                        width: 4,
+                        height: 24,
+                        backgroundColor: "primary.main",
+                        borderRadius: 1,
+                      },
                     }}
                   >
-                    {t("controls.dithering.colors")}
+                    {t("controls.basic.title")}
                   </Typography>
-                  <Slider
-                    value={colorCount}
-                    onChange={handleColorCountChange}
-                    min={2}
-                    max={32}
-                    step={1}
-                    marks={[
-                      { value: 2, label: "2" },
-                      { value: 8, label: "8" },
-                      { value: 16, label: "16" },
-                      { value: 32, label: "32" },
-                    ]}
-                    valueLabelDisplay="auto"
-                    aria-label={t("controls.dithering.colors")}
+                </Box>
+                <Grid
+                  container
+                  spacing={4}
+                  role="group"
+                  aria-labelledby="basic-settings-title"
+                >
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      gutterBottom
+                      id="quality-slider-label"
+                      sx={{
+                        fontSize: { xs: "0.875rem", sm: "1rem" },
+                        fontWeight: "medium",
+                        color: "text.secondary",
+                        mb: 1.5,
+                      }}
+                    >
+                      {t("controls.quality.label")}
+                    </Typography>
+                    <Slider
+                      value={quality}
+                      onChange={handleQualityChange}
+                      min={0}
+                      max={100}
+                      valueLabelDisplay="auto"
+                      aria-labelledby="quality-slider-label"
+                      sx={{
+                        "& .MuiSlider-valueLabel": {
+                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        },
+                      }}
+                    />
+                  </Grid>
+                  <Grid item xs={12} md={6}>
+                    <Typography
+                      gutterBottom
+                      id="max-width-slider-label"
+                      sx={{
+                        fontSize: { xs: "0.875rem", sm: "1rem" },
+                        fontWeight: "medium",
+                        color: "text.secondary",
+                        mb: 1.5,
+                      }}
+                    >
+                      {t("controls.maxWidth.label")}
+                      {originalStats?.width && (
+                        <Typography
+                          component="span"
+                          sx={{
+                            ml: 1,
+                            fontSize: "0.875rem",
+                            color: "text.disabled",
+                          }}
+                        >
+                          {t("controls.maxWidth.max", {
+                            width: originalStats.width,
+                          })}
+                        </Typography>
+                      )}
+                    </Typography>
+                    <Slider
+                      value={maxWidth}
+                      onChange={handleMaxWidthChange}
+                      min={100}
+                      max={maxWidthLimit}
+                      step={100}
+                      valueLabelDisplay="auto"
+                      disabled={!originalImage}
+                      aria-labelledby="max-width-slider-label"
+                      sx={{
+                        "& .MuiSlider-valueLabel": {
+                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        },
+                      }}
+                    />
+                  </Grid>
+                </Grid>
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Paper
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  height: "100%",
+                  backgroundColor: "background.default",
+                  borderRadius: 2,
+                  boxShadow: (theme) => theme.shadows[1],
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
+                  transition: "box-shadow 0.2s ease-in-out",
+                  "&:hover": {
+                    boxShadow: (theme) => theme.shadows[2],
+                  },
+                }}
+                role="region"
+                aria-labelledby="dithering-section-title"
+              >
+                <Box
+                  sx={{
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
+                    gap: { xs: 2, sm: 1 },
+                    mb: 3,
+                  }}
+                >
+                  <Typography
+                    variant="h6"
+                    id="dithering-section-title"
                     sx={{
-                      "& .MuiSlider-markLabel": {
-                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                      },
-                      "& .MuiSlider-valueLabel": {
-                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      flexGrow: 1,
+                      mb: { xs: 1, sm: 0 },
+                      color: "primary.main",
+                      fontWeight: "medium",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      "&::before": {
+                        content: '""',
+                        width: 4,
+                        height: 24,
+                        backgroundColor: "primary.main",
+                        borderRadius: 1,
                       },
                     }}
+                  >
+                    {t("controls.dithering.title")}
+                  </Typography>
+                  <Typography id="settings-description">
+                    Le dithering permet de réduire le nombre de couleurs tout en
+                    préservant la qualité visuelle.
+                  </Typography>
+
+                  <FormControlLabel
+                    sx={{
+                      m: 0,
+                      ".MuiFormControlLabel-label": {
+                        fontSize: { xs: "0.875rem", sm: "1rem" },
+                        color: "text.secondary",
+                      },
+                    }}
+                    control={
+                      <Switch
+                        checked={applyStyle}
+                        onChange={handleStyleChange}
+                        aria-label={t("controls.dithering.toggle")}
+                        inputProps={{
+                          "aria-describedby": "settings-description",
+                        }}
+                      />
+                    }
+                    label={t("controls.dithering.label")}
                   />
                 </Box>
-              )}
-            </Paper>
-          </Grid>
-
-          <Grid item xs={12} md={6}>
-            <Paper
-              sx={{
-                p: { xs: 2, sm: 3 },
-                height: "100%",
-                backgroundColor: "background.default",
-                borderRadius: 2,
-                boxShadow: (theme) => theme.shadows[1],
-                border: (theme) => `1px solid ${theme.palette.divider}`,
-                transition: "box-shadow 0.2s ease-in-out",
-                "&:hover": {
-                  boxShadow: (theme) => theme.shadows[2],
-                },
-              }}
-            >
-              <Box
-                sx={{
-                  display: "flex",
-                  flexDirection: { xs: "column", sm: "row" },
-                  alignItems: { xs: "flex-start", sm: "center" },
-                  gap: { xs: 2, sm: 1 },
-                  mb: 3,
-                }}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{
-                    flexGrow: 1,
-                    mb: { xs: 1, sm: 0 },
-                    color: "primary.main",
-                    fontWeight: "medium",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                    "&::before": {
-                      content: '""',
-                      width: 4,
-                      height: 24,
-                      backgroundColor: "primary.main",
-                      borderRadius: 1,
-                    },
-                  }}
-                >
-                  {t("controls.faceBlur.title")}
-                </Typography>
-                <FormControlLabel
-                  sx={{
-                    m: 0,
-                    ".MuiFormControlLabel-label": {
-                      fontSize: { xs: "0.875rem", sm: "1rem" },
-                      color: "text.secondary",
-                    },
-                  }}
-                  control={
-                    <Switch
-                      checked={applyBlur}
-                      onChange={handleBlurChange}
-                      disabled={!modelsLoaded}
-                      aria-label={t("controls.faceBlur.toggle")}
-                      color="primary"
+                {applyStyle && (
+                  <Box
+                    sx={{ mt: { xs: 3, sm: 2 } }}
+                    role="group"
+                    aria-label={t("controls.dithering.colors")}
+                  >
+                    <Typography
+                      gutterBottom
+                      id="color-count-slider-label"
+                      sx={{
+                        fontSize: { xs: "0.875rem", sm: "1rem" },
+                        fontWeight: "medium",
+                        color: "text.secondary",
+                        mb: 1.5,
+                      }}
+                    >
+                      {t("controls.dithering.colors")}
+                    </Typography>
+                    <Slider
+                      value={colorCount}
+                      onChange={handleColorCountChange}
+                      min={2}
+                      max={32}
+                      step={1}
+                      marks={[
+                        { value: 2, label: "2" },
+                        { value: 8, label: "8" },
+                        { value: 16, label: "16" },
+                        { value: 32, label: "32" },
+                      ]}
+                      valueLabelDisplay="auto"
+                      aria-labelledby="color-count-slider-label"
+                      sx={{
+                        "& .MuiSlider-markLabel": {
+                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        },
+                        "& .MuiSlider-valueLabel": {
+                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        },
+                      }}
                     />
-                  }
-                  label={t("controls.faceBlur.label")}
-                />
-              </Box>
-              {!modelsLoaded && (
-                <Typography
-                  color="text.secondary"
-                  variant="body2"
-                  role="alert"
+                  </Box>
+                )}
+              </Paper>
+            </Grid>
+
+            <Grid item xs={12} md={6}>
+              <Paper
+                sx={{
+                  p: { xs: 2, sm: 3 },
+                  height: "100%",
+                  backgroundColor: "background.default",
+                  borderRadius: 2,
+                  boxShadow: (theme) => theme.shadows[1],
+                  border: (theme) => `1px solid ${theme.palette.divider}`,
+                  transition: "box-shadow 0.2s ease-in-out",
+                  "&:hover": {
+                    boxShadow: (theme) => theme.shadows[2],
+                  },
+                }}
+                role="region"
+                aria-labelledby="face-blur-section-title"
+              >
+                <Box
                   sx={{
-                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                    mt: { xs: 1, sm: 2 },
-                    fontStyle: "italic",
+                    display: "flex",
+                    flexDirection: { xs: "column", sm: "row" },
+                    alignItems: { xs: "flex-start", sm: "center" },
+                    gap: { xs: 2, sm: 1 },
+                    mb: 3,
                   }}
                 >
-                  {t("controls.faceBlur.loading")}
-                </Typography>
-              )}
-            </Paper>
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={2} sx={{ mt: 2 }}>
-          <Grid item xs={12} md={6}>
-            <Typography variant="subtitle1" gutterBottom>
-              {t("stats.original.title")}
-            </Typography>
-            {originalImage && (
-              <Box
-                component="img"
-                src={URL.createObjectURL(originalImage)}
-                sx={{ maxWidth: "100%", height: "auto" }}
-                alt="Original"
-              />
-            )}
-            {metadata && (
-              <Paper sx={{ p: 2, mb: 3 }}>
-                <Typography variant="h6" gutterBottom>
-                  {t("metadata.title")}
-                </Typography>
-                {hasMetadata(metadata) ? (
-                  <Grid container spacing={2}>
-                    {metadata.Make && (
-                      <Grid item xs={12} sm={6}>
-                        <Typography>
-                          <strong>{t("metadata.device")}:</strong>{" "}
-                          {metadata.Make} {metadata.Model}
-                        </Typography>
-                      </Grid>
-                    )}
-                    {metadata.DateTimeOriginal && (
-                      <Grid item xs={12} sm={6}>
-                        <Typography>
-                          <strong>{t("metadata.date")}:</strong>{" "}
-                          {new Date(metadata.DateTimeOriginal).toLocaleString()}
-                        </Typography>
-                      </Grid>
-                    )}
-                    {metadata.ExposureTime && (
-                      <Grid item xs={12} sm={6}>
-                        <Typography>
-                          <strong>{t("metadata.exposure")}:</strong>{" "}
-                          {metadata.ExposureTime}s
-                        </Typography>
-                      </Grid>
-                    )}
-                    {metadata.FNumber && (
-                      <Grid item xs={12} sm={6}>
-                        <Typography>
-                          <strong>{t("metadata.aperture")}:</strong> f/
-                          {metadata.FNumber}
-                        </Typography>
-                      </Grid>
-                    )}
-                    {metadata.FocalLength && (
-                      <Grid item xs={12} sm={6}>
-                        <Typography>
-                          <strong>{t("metadata.focalLength")}:</strong>{" "}
-                          {metadata.FocalLength}mm
-                        </Typography>
-                      </Grid>
-                    )}
-                    {metadata.latitude && metadata.longitude && (
-                      <Grid item xs={12}>
-                        <Typography>
-                          <strong>{t("metadata.location")}:</strong>{" "}
-                          {metadata.latitude.toFixed(6)},{" "}
-                          {metadata.longitude.toFixed(6)}
-                        </Typography>
-                      </Grid>
-                    )}
-                  </Grid>
-                ) : (
+                  <Typography
+                    variant="h6"
+                    id="face-blur-section-title"
+                    sx={{
+                      flexGrow: 1,
+                      mb: { xs: 1, sm: 0 },
+                      color: "primary.main",
+                      fontWeight: "medium",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: 1,
+                      "&::before": {
+                        content: '""',
+                        width: 4,
+                        height: 24,
+                        backgroundColor: "primary.main",
+                        borderRadius: 1,
+                      },
+                    }}
+                  >
+                    {t("controls.faceBlur.title")}
+                  </Typography>
+                  <Typography
+                    id="face-blur-description"
+                    variant="body2"
+                    color="text.secondary"
+                  >
+                    {t("controls.faceBlur.description", {
+                      defaultValue:
+                        "Détecte et floute automatiquement les visages présents dans l'image pour protéger la vie privée.",
+                    })}
+                  </Typography>
+                  <FormControlLabel
+                    sx={{
+                      m: 0,
+                      ".MuiFormControlLabel-label": {
+                        fontSize: { xs: "0.875rem", sm: "1rem" },
+                        color: "text.secondary",
+                      },
+                    }}
+                    control={
+                      <Switch
+                        checked={applyBlur}
+                        onChange={handleBlurChange}
+                        disabled={!modelsLoaded}
+                        aria-label={t("controls.faceBlur.toggle")}
+                        inputProps={{
+                          "aria-describedby": "face-blur-description",
+                        }}
+                      />
+                    }
+                    label={t("controls.faceBlur.label")}
+                  />
+                </Box>
+                {!modelsLoaded && (
                   <Typography
                     color="text.secondary"
-                    sx={{ fontStyle: "italic" }}
+                    variant="body2"
+                    role="alert"
+                    aria-live="polite"
+                    sx={{
+                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      mt: { xs: 1, sm: 2 },
+                      fontStyle: "italic",
+                    }}
                   >
-                    {t("metadata.noData")}
+                    {t("controls.faceBlur.loading")}
                   </Typography>
                 )}
               </Paper>
-            )}
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={6}>
-            <Box sx={{ position: "relative" }}>
+
+          <Grid container spacing={2} sx={{ mt: 2 }}>
+            <Grid item xs={12} md={6}>
               <Typography variant="subtitle1" gutterBottom>
-                {t("stats.optimized.title")}
+                {t("stats.original.title")}
               </Typography>
-              {loading ? (
-                <>
-                  <Box
-                    component="img"
-                    src="/loading-3887_256.gif"
-                    sx={{
-                      maxWidth: "100%",
-                      height: "auto",
-                      display: "block",
-                      margin: "0 auto",
-                    }}
-                    alt="Loading..."
-                  />
-                  <Box sx={{ textAlign: "center", mt: 2 }}>
-                    <Typography
-                      color="text.secondary"
-                      sx={{ fontStyle: "italic", mb: 1 }}
-                    >
-                      {loadingMessage}
-                    </Typography>
-                    {progress.step && (
-                      <Typography
-                        variant="body2"
-                        color="text.secondary"
-                        sx={{ fontFamily: "monospace", fontSize: "0.9em" }}
-                      >
-                        {`${progress.step} : ${Math.round(progress.value)}%`}
-                      </Typography>
-                    )}
-                  </Box>
-                </>
-              ) : (
-                compressedImage && (
-                  <>
-                    {isCropping ? (
-                      <ReactCrop
-                        crop={crop}
-                        onChange={(c: Crop) => setCrop(c)}
-                        aspect={undefined}
-                      >
-                        <img
-                          ref={imageRef}
-                          src={compressedImage}
-                          style={{ maxWidth: "100%" }}
-                          alt="To crop"
-                        />
-                      </ReactCrop>
-                    ) : (
-                      <Box
-                        component="img"
-                        src={compressedImage}
-                        sx={{ maxWidth: "100%", height: "auto" }}
-                        alt="Compressed"
-                      />
-                    )}
+              {originalImage && (
+                <Box
+                  component="img"
+                  src={URL.createObjectURL(originalImage)}
+                  sx={{ maxWidth: "100%", height: "auto" }}
+                  alt="Original"
+                />
+              )}
+              {metadata && (
+                <Paper sx={{ p: 2, mb: 3 }}>
+                  <Typography variant="h6" gutterBottom>
+                    {t("metadata.title")}
+                  </Typography>
+                  {hasMetadata(metadata) ? (
+                    <Grid container spacing={2}>
+                      {metadata.Make && (
+                        <Grid item xs={12} sm={6}>
+                          <Typography>
+                            <strong>{t("metadata.device")}:</strong>{" "}
+                            {metadata.Make} {metadata.Model}
+                          </Typography>
+                        </Grid>
+                      )}
+                      {metadata.DateTimeOriginal && (
+                        <Grid item xs={12} sm={6}>
+                          <Typography>
+                            <strong>{t("metadata.date")}:</strong>{" "}
+                            {new Date(
+                              metadata.DateTimeOriginal,
+                            ).toLocaleString()}
+                          </Typography>
+                        </Grid>
+                      )}
+                      {metadata.ExposureTime && (
+                        <Grid item xs={12} sm={6}>
+                          <Typography>
+                            <strong>{t("metadata.exposure")}:</strong>{" "}
+                            {metadata.ExposureTime}s
+                          </Typography>
+                        </Grid>
+                      )}
+                      {metadata.FNumber && (
+                        <Grid item xs={12} sm={6}>
+                          <Typography>
+                            <strong>{t("metadata.aperture")}:</strong> f/
+                            {metadata.FNumber}
+                          </Typography>
+                        </Grid>
+                      )}
+                      {metadata.FocalLength && (
+                        <Grid item xs={12} sm={6}>
+                          <Typography>
+                            <strong>{t("metadata.focalLength")}:</strong>{" "}
+                            {metadata.FocalLength}mm
+                          </Typography>
+                        </Grid>
+                      )}
+                      {metadata.latitude && metadata.longitude && (
+                        <Grid item xs={12}>
+                          <Typography>
+                            <strong>{t("metadata.location")}:</strong>{" "}
+                            {metadata.latitude.toFixed(6)},{" "}
+                            {metadata.longitude.toFixed(6)}
+                          </Typography>
+                        </Grid>
+                      )}
+                    </Grid>
+                  ) : (
                     <Typography
                       color="text.secondary"
                       sx={{ fontStyle: "italic" }}
                     >
-                      {t("metadataRemoved")}
+                      {t("metadata.noData")}
                     </Typography>
+                  )}
+                </Paper>
+              )}
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Box sx={{ position: "relative" }}>
+                <Typography variant="subtitle1" gutterBottom>
+                  {t("stats.optimized.title")}
+                </Typography>
+                {loading ? (
+                  <>
                     <Box
-                      sx={{
-                        mt: 2,
-                        display: "flex",
-                        gap: 2,
-                        alignItems: "center",
-                      }}
+                      role="status"
+                      aria-live="polite"
+                      aria-busy="true"
+                      aria-label={t("loading.status")}
                     >
-                      <Tooltip title={t("actions.rotate")}>
-                        <IconButton onClick={handleRotation} color="primary">
-                          <RotateRightIcon />
-                        </IconButton>
-                      </Tooltip>
-                      {isCropping ? (
-                        <>
-                          <Button
-                            variant="contained"
-                            color="primary"
-                            onClick={handleCropComplete}
+                      <Box
+                        component="img"
+                        src="/loading-3887_256.gif"
+                        sx={{
+                          maxWidth: "100%",
+                          height: "auto",
+                          display: "block",
+                          margin: "0 auto",
+                        }}
+                        alt={t("loading.imageAlt")}
+                      />
+                      <Box sx={{ textAlign: "center", mt: 2 }}>
+                        <Typography
+                          color="text.secondary"
+                          sx={{ fontStyle: "italic", mb: 1 }}
+                        >
+                          {loadingMessage}
+                        </Typography>
+                        {progress.step && (
+                          <Typography
+                            role="progressbar"
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-valuenow={Math.round(progress.value)}
+                            aria-label={t("loading.progress", {
+                              step: progress.step,
+                            })}
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{ fontFamily: "monospace", fontSize: "0.9em" }}
                           >
-                            {t("actions.crop.apply")}
-                          </Button>
-                          <Button
-                            variant="outlined"
-                            onClick={() => setIsCropping(false)}
-                          >
-                            {t("actions.crop.cancel")}
-                          </Button>
-                        </>
-                      ) : (
-                        <>
-                          <Button
-                            variant="outlined"
-                            onClick={() => setIsCropping(true)}
-                          >
-                            {t("actions.crop.start")}
-                          </Button>
-                          <Button
-                            variant="contained"
-                            startIcon={<DownloadIcon />}
-                            onClick={downloadImage}
-                          >
-                            {t("actions.download")}
-                          </Button>
-                        </>
-                      )}
+                            {`${progress.step} : ${Math.round(progress.value)}%`}
+                          </Typography>
+                        )}
+                      </Box>
                     </Box>
                   </>
-                )
-              )}
-            </Box>
+                ) : (
+                  compressedImage && (
+                    <>
+                      {isCropping ? (
+                        <ReactCrop
+                          crop={crop}
+                          onChange={(c: Crop) => setCrop(c)}
+                          aspect={undefined}
+                        >
+                          <img
+                            ref={imageRef}
+                            src={compressedImage}
+                            style={{ maxWidth: "100%" }}
+                            alt="To crop"
+                          />
+                        </ReactCrop>
+                      ) : (
+                        <Box
+                          component="img"
+                          src={compressedImage}
+                          sx={{ maxWidth: "100%", height: "auto" }}
+                          alt="Compressed"
+                        />
+                      )}
+                      <Typography
+                        color="text.secondary"
+                        sx={{ fontStyle: "italic" }}
+                      >
+                        {t("metadataRemoved")}
+                      </Typography>
+                      <Box
+                        sx={{
+                          mt: 2,
+                          display: "flex",
+                          gap: 2,
+                          alignItems: "center",
+                        }}
+                      >
+                        <Tooltip title={t("actions.rotate")}>
+                          <IconButton onClick={handleRotation} color="primary">
+                            <RotateRightIcon />
+                          </IconButton>
+                        </Tooltip>
+                        {isCropping ? (
+                          <>
+                            <Button
+                              variant="contained"
+                              color="primary"
+                              onClick={handleCropComplete}
+                            >
+                              {t("actions.crop.apply")}
+                            </Button>
+                            <Button
+                              variant="outlined"
+                              onClick={() => setIsCropping(false)}
+                            >
+                              {t("actions.crop.cancel")}
+                            </Button>
+                          </>
+                        ) : (
+                          <>
+                            <Button
+                              variant="outlined"
+                              onClick={() => setIsCropping(true)}
+                            >
+                              {t("actions.crop.start")}
+                            </Button>
+                            <Button
+                              variant="contained"
+                              startIcon={<DownloadIcon />}
+                              onClick={downloadImage}
+                            >
+                              {t("actions.download")}
+                            </Button>
+                          </>
+                        )}
+                      </Box>
+                    </>
+                  )
+                )}
+              </Box>
+            </Grid>
           </Grid>
-        </Grid>
 
-        <Box
-          component="footer"
-          sx={{
-            p: 2,
-            mt: 3,
-            borderTop: 1,
-            borderColor: "divider",
-            textAlign: "center",
-            backgroundColor: "background.paper",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            gap: 1,
-          }}
-        >
-          <Typography variant="body2" color="text.secondary">
-            {t("footer.contributions")}
-            <Link
-              href="https://github.com/Alice-Po/image-ecolo"
-              target="_blank"
-              rel="noopener noreferrer"
-              sx={{ ml: 1 }}
-            >
-              {t("footer.github")}
-            </Link>
-          </Typography>
-          <Typography variant="body2" color="text.secondary">
-            {t("footer.madeIn")}
-          </Typography>
-        </Box>
-      </CardContent>
-      <canvas ref={canvasRef} style={{ display: "none" }} />
-    </Card>
+          <Box
+            component="footer"
+            sx={{
+              p: 2,
+              mt: 3,
+              borderTop: 1,
+              borderColor: "divider",
+              textAlign: "center",
+              backgroundColor: "background.paper",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <Typography variant="body2" color="text.secondary">
+              {t("footer.contributions")}
+              <Link
+                href="https://github.com/Alice-Po/image-ecolo"
+                target="_blank"
+                rel="noopener noreferrer"
+                sx={{ ml: 1 }}
+              >
+                {t("footer.github")}
+              </Link>
+            </Typography>
+            <Typography variant="body2" color="text.secondary">
+              {t("footer.madeIn")}
+            </Typography>
+          </Box>
+        </CardContent>
+        <canvas ref={canvasRef} style={{ display: "none" }} />
+      </Card>
+    </main>
   );
 };
 
