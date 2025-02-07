@@ -54,7 +54,8 @@
             "label": "Blur faces",
             "toggle": "Toggle face blurring",
             "loading": "Loading detection models...",
-            "description": "Automatically detects and blurs faces in the image to protect privacy"
+            "description": "Automatically detects and blurs faces in the image to protect privacy",
+            "manual": "Manual face blurring coming soon! This feature will allow you to precisely select areas to blur."
         }
     },
     "loading": {

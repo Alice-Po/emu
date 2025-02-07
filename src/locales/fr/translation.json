@@ -54,7 +54,8 @@
             "label": "Flouter les visages",
             "toggle": "Activer/désactiver le floutage des visages",
             "loading": "Chargement des modèles de détection...",
-            "description": "Détecte et floute automatiquement les visages présents dans l'image pour protéger la vie privée"
+            "description": "Détecte et floute automatiquement les visages présents dans l'image pour protéger la vie privée",
+            "manual": "Le floutage manuel des visages sera bientôt disponible ! Cette fonctionnalité vous permettra de sélectionner précisément les zones à flouter."
         }
     },
     "loading": {

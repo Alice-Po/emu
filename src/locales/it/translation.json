@@ -54,7 +54,8 @@
             "label": "Sfoca i volti",
             "toggle": "Attiva/disattiva sfocatura volti",
             "loading": "Caricamento modelli di rilevamento...",
-            "description": "Rileva e sfoca automaticamente i volti nell'immagine per proteggere la privacy"
+            "description": "Rileva e sfoca automaticamente i volti nell'immagine per proteggere la privacy",
+            "manual": "La sfocatura manuale dei volti sarà presto disponibile! Questa funzionalità ti permetterà di selezionare con precisione le aree da sfocare."
         }
     },
     "loading": {

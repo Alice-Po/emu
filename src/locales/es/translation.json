@@ -54,7 +54,8 @@
             "label": "Difuminar rostros",
             "toggle": "Alternar difuminado de rostros",
             "loading": "Cargando modelos de detección...",
-            "description": "Detecta y difumina automáticamente los rostros en la imagen para proteger la privacidad"
+            "description": "Detecta y difumina automáticamente los rostros en la imagen para proteger la privacidad",
+            "manual": "¡El difuminado manual de rostros estará disponible pronto! Esta función te permitirá seleccionar con precisión las áreas a difuminar."
         }
     },
     "loading": {

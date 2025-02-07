@@ -1124,6 +1124,32 @@ const ImageOptimizer: React.FC = () => {
                       {t("controls.faceBlur.loading")}
                     </Typography>
                   )}
+                  <Box
+                    sx={{
+                      mt: 2,
+                      p: 1.5,
+                      borderRadius: 1,
+                      bgcolor: "action.hover",
+                      border: "1px dashed",
+                      borderColor: "primary.main",
+                    }}
+                  >
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        color: "text.secondary",
+                        "&::before": {
+                          content: '"🚧"',
+                          fontSize: "1.2em",
+                        },
+                      }}
+                    >
+                      {t("controls.faceBlur.manual")}
+                    </Typography>
+                  </Box>
                 </Box>
               </Paper>
             </Grid>
