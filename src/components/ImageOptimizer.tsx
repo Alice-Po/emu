@@ -419,6 +419,15 @@ const ImageOptimizer: React.FC = () => {
                 </Box>
                 Italiano
               </MenuItem>
+              <MenuItem
+                value="hi"
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
+                  🇮🇳
+                </Box>
+                हिंदी
+              </MenuItem>
             </Select>
           </Box>
         </Box>
