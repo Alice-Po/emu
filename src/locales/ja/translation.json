@@ -29,6 +29,9 @@
         }
     },
     "controls": {
+        "basic": {
+            "title": "基本設定"
+        },
         "quality": {
             "label": "圧縮品質 (%)"
         },
@@ -37,11 +40,16 @@
             "max": "(最大: {{width}}px)"
         },
         "dithering": {
+            "title": "ディザリング効果",
             "label": "ディザリング効果を適用",
-            "colors": "色数"
+            "colors": "色数",
+            "toggle": "ディザリング効果の切り替え"
         },
         "faceBlur": {
-            "label": "顔をぼかす"
+            "title": "顔のぼかし",
+            "label": "顔をぼかす",
+            "toggle": "顔のぼかしの切り替え",
+            "loading": "検出モデルを読み込み中..."
         }
     },
     "loading": {

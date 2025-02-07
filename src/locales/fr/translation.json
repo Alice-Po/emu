@@ -29,6 +29,9 @@
         }
     },
     "controls": {
+        "basic": {
+            "title": "Paramètres de base"
+        },
         "quality": {
             "label": "Qualité de compression (%)"
         },
@@ -37,11 +40,16 @@
             "max": "(max: {{width}}px)"
         },
         "dithering": {
-            "label": "Appliquer l'effet de dithering",
-            "colors": "Nombre de couleurs"
+            "title": "Effet de tramage",
+            "label": "Appliquer l'effet de tramage",
+            "colors": "Nombre de couleurs",
+            "toggle": "Activer/désactiver l'effet de tramage"
         },
         "faceBlur": {
-            "label": "Flouter les visages"
+            "title": "Floutage des visages",
+            "label": "Flouter les visages",
+            "toggle": "Activer/désactiver le floutage des visages",
+            "loading": "Chargement des modèles de détection..."
         }
     },
     "loading": {

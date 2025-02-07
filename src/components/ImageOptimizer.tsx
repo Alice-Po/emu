@@ -712,79 +712,297 @@ const ImageOptimizer: React.FC = () => {
           </Paper>
         )}
 
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={6}>
-            <Typography gutterBottom>{t("controls.quality.label")}</Typography>
-            <Slider
-              value={quality}
-              onChange={handleQualityChange}
-              min={0}
-              max={100}
-              valueLabelDisplay="auto"
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <Typography gutterBottom>
-              {t("controls.maxWidth.label")}
-              {originalStats?.width
-                ? t("controls.maxWidth.max", { width: originalStats.width })
-                : ""}
-            </Typography>
-            <Slider
-              value={maxWidth}
-              onChange={handleMaxWidthChange}
-              min={100}
-              max={maxWidthLimit}
-              step={100}
-              valueLabelDisplay="auto"
-              disabled={!originalImage}
-            />
-          </Grid>
-        </Grid>
-
-        <Grid container spacing={2} alignItems="center" sx={{ mb: 2 }}>
-          <Grid item>
-            <FormControlLabel
-              control={
-                <Switch checked={applyStyle} onChange={handleStyleChange} />
-              }
-              label={t("controls.dithering.label")}
-            />
-          </Grid>
-          {applyStyle && (
-            <>
-              <Grid item xs={12} md={6}>
-                <Typography gutterBottom>
-                  {t("controls.dithering.colors")}
+        <Grid container spacing={3} sx={{ mb: 4 }}>
+          <Grid item xs={12}>
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 3 },
+                backgroundColor: "background.default",
+                borderRadius: 2,
+                boxShadow: (theme) => theme.shadows[1],
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+              }}
+            >
+              <Box sx={{ mb: 3 }}>
+                <Typography
+                  variant="h6"
+                  gutterBottom
+                  sx={{
+                    color: "primary.main",
+                    fontWeight: "medium",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    "&::before": {
+                      content: '""',
+                      width: 4,
+                      height: 24,
+                      backgroundColor: "primary.main",
+                      borderRadius: 1,
+                    },
+                  }}
+                >
+                  {t("controls.basic.title")}
                 </Typography>
-                <Slider
-                  value={colorCount}
-                  onChange={handleColorCountChange}
-                  min={2}
-                  max={32}
-                  step={1}
-                  marks={[
-                    { value: 2, label: "2" },
-                    { value: 8, label: "8" },
-                    { value: 16, label: "16" },
-                    { value: 32, label: "32" },
-                  ]}
-                  valueLabelDisplay="auto"
-                />
+              </Box>
+              <Grid container spacing={4}>
+                <Grid item xs={12} md={6}>
+                  <Typography
+                    gutterBottom
+                    sx={{
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      fontWeight: "medium",
+                      color: "text.secondary",
+                      mb: 1.5,
+                    }}
+                  >
+                    {t("controls.quality.label")}
+                  </Typography>
+                  <Slider
+                    value={quality}
+                    onChange={handleQualityChange}
+                    min={0}
+                    max={100}
+                    valueLabelDisplay="auto"
+                    aria-label={t("controls.quality.label")}
+                    sx={{
+                      "& .MuiSlider-valueLabel": {
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      },
+                    }}
+                  />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                  <Typography
+                    gutterBottom
+                    sx={{
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      fontWeight: "medium",
+                      color: "text.secondary",
+                      mb: 1.5,
+                    }}
+                  >
+                    {t("controls.maxWidth.label")}
+                    {originalStats?.width && (
+                      <Typography
+                        component="span"
+                        sx={{
+                          ml: 1,
+                          fontSize: "0.875rem",
+                          color: "text.disabled",
+                        }}
+                      >
+                        {t("controls.maxWidth.max", {
+                          width: originalStats.width,
+                        })}
+                      </Typography>
+                    )}
+                  </Typography>
+                  <Slider
+                    value={maxWidth}
+                    onChange={handleMaxWidthChange}
+                    min={100}
+                    max={maxWidthLimit}
+                    step={100}
+                    valueLabelDisplay="auto"
+                    disabled={!originalImage}
+                    aria-label={t("controls.maxWidth.label")}
+                    sx={{
+                      "& .MuiSlider-valueLabel": {
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      },
+                    }}
+                  />
+                </Grid>
               </Grid>
-            </>
-          )}
-          <Grid item>
-            <FormControlLabel
-              control={
-                <Switch
-                  checked={applyBlur}
-                  onChange={handleBlurChange}
-                  disabled={!modelsLoaded}
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 3 },
+                height: "100%",
+                backgroundColor: "background.default",
+                borderRadius: 2,
+                boxShadow: (theme) => theme.shadows[1],
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                transition: "box-shadow 0.2s ease-in-out",
+                "&:hover": {
+                  boxShadow: (theme) => theme.shadows[2],
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  gap: { xs: 2, sm: 1 },
+                  mb: 3,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    flexGrow: 1,
+                    mb: { xs: 1, sm: 0 },
+                    color: "primary.main",
+                    fontWeight: "medium",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    "&::before": {
+                      content: '""',
+                      width: 4,
+                      height: 24,
+                      backgroundColor: "primary.main",
+                      borderRadius: 1,
+                    },
+                  }}
+                >
+                  {t("controls.dithering.title")}
+                </Typography>
+                <FormControlLabel
+                  sx={{
+                    m: 0,
+                    ".MuiFormControlLabel-label": {
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      color: "text.secondary",
+                    },
+                  }}
+                  control={
+                    <Switch
+                      checked={applyStyle}
+                      onChange={handleStyleChange}
+                      aria-label={t("controls.dithering.toggle")}
+                      color="primary"
+                    />
+                  }
+                  label={t("controls.dithering.label")}
                 />
-              }
-              label={t("controls.faceBlur.label")}
-            />
+              </Box>
+              {applyStyle && (
+                <Box sx={{ mt: { xs: 3, sm: 2 } }}>
+                  <Typography
+                    gutterBottom
+                    sx={{
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      fontWeight: "medium",
+                      color: "text.secondary",
+                      mb: 1.5,
+                    }}
+                  >
+                    {t("controls.dithering.colors")}
+                  </Typography>
+                  <Slider
+                    value={colorCount}
+                    onChange={handleColorCountChange}
+                    min={2}
+                    max={32}
+                    step={1}
+                    marks={[
+                      { value: 2, label: "2" },
+                      { value: 8, label: "8" },
+                      { value: 16, label: "16" },
+                      { value: 32, label: "32" },
+                    ]}
+                    valueLabelDisplay="auto"
+                    aria-label={t("controls.dithering.colors")}
+                    sx={{
+                      "& .MuiSlider-markLabel": {
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      },
+                      "& .MuiSlider-valueLabel": {
+                        fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                      },
+                    }}
+                  />
+                </Box>
+              )}
+            </Paper>
+          </Grid>
+
+          <Grid item xs={12} md={6}>
+            <Paper
+              sx={{
+                p: { xs: 2, sm: 3 },
+                height: "100%",
+                backgroundColor: "background.default",
+                borderRadius: 2,
+                boxShadow: (theme) => theme.shadows[1],
+                border: (theme) => `1px solid ${theme.palette.divider}`,
+                transition: "box-shadow 0.2s ease-in-out",
+                "&:hover": {
+                  boxShadow: (theme) => theme.shadows[2],
+                },
+              }}
+            >
+              <Box
+                sx={{
+                  display: "flex",
+                  flexDirection: { xs: "column", sm: "row" },
+                  alignItems: { xs: "flex-start", sm: "center" },
+                  gap: { xs: 2, sm: 1 },
+                  mb: 3,
+                }}
+              >
+                <Typography
+                  variant="h6"
+                  sx={{
+                    flexGrow: 1,
+                    mb: { xs: 1, sm: 0 },
+                    color: "primary.main",
+                    fontWeight: "medium",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 1,
+                    "&::before": {
+                      content: '""',
+                      width: 4,
+                      height: 24,
+                      backgroundColor: "primary.main",
+                      borderRadius: 1,
+                    },
+                  }}
+                >
+                  {t("controls.faceBlur.title")}
+                </Typography>
+                <FormControlLabel
+                  sx={{
+                    m: 0,
+                    ".MuiFormControlLabel-label": {
+                      fontSize: { xs: "0.875rem", sm: "1rem" },
+                      color: "text.secondary",
+                    },
+                  }}
+                  control={
+                    <Switch
+                      checked={applyBlur}
+                      onChange={handleBlurChange}
+                      disabled={!modelsLoaded}
+                      aria-label={t("controls.faceBlur.toggle")}
+                      color="primary"
+                    />
+                  }
+                  label={t("controls.faceBlur.label")}
+                />
+              </Box>
+              {!modelsLoaded && (
+                <Typography
+                  color="text.secondary"
+                  variant="body2"
+                  role="alert"
+                  sx={{
+                    fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                    mt: { xs: 1, sm: 2 },
+                    fontStyle: "italic",
+                  }}
+                >
+                  {t("controls.faceBlur.loading")}
+                </Typography>
+              )}
+            </Paper>
           </Grid>
         </Grid>
 

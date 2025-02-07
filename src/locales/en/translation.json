@@ -29,6 +29,9 @@
         }
     },
     "controls": {
+        "basic": {
+            "title": "Basic Settings"
+        },
         "quality": {
             "label": "Compression quality (%)"
         },
@@ -37,11 +40,16 @@
             "max": "(max: {{width}}px)"
         },
         "dithering": {
+            "title": "Dithering Effect",
             "label": "Apply dithering effect",
-            "colors": "Number of colors"
+            "colors": "Number of colors",
+            "toggle": "Toggle dithering effect"
         },
         "faceBlur": {
-            "label": "Blur faces"
+            "title": "Face Blurring",
+            "label": "Blur faces",
+            "toggle": "Toggle face blurring",
+            "loading": "Loading detection models..."
         }
     },
     "loading": {

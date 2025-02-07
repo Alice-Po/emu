@@ -29,6 +29,9 @@
         }
     },
     "controls": {
+        "basic": {
+            "title": "Ajustes básicos"
+        },
         "quality": {
             "label": "Calidad de compresión (%)"
         },
@@ -37,11 +40,16 @@
             "max": "(máx: {{width}}px)"
         },
         "dithering": {
+            "title": "Efecto de tramado",
             "label": "Aplicar efecto de tramado",
-            "colors": "Número de colores"
+            "colors": "Número de colores",
+            "toggle": "Activar/desactivar efecto de tramado"
         },
         "faceBlur": {
-            "label": "Difuminar rostros"
+            "title": "Difuminado de rostros",
+            "label": "Difuminar rostros",
+            "toggle": "Activar/desactivar difuminado de rostros",
+            "loading": "Cargando modelos de detección..."
         }
     },
     "loading": {

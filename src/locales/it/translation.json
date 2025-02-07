@@ -29,6 +29,9 @@
         }
     },
     "controls": {
+        "basic": {
+            "title": "Impostazioni di base"
+        },
         "quality": {
             "label": "Qualità di compressione (%)"
         },
@@ -37,11 +40,16 @@
             "max": "(max: {{width}}px)"
         },
         "dithering": {
+            "title": "Effetto dithering",
             "label": "Applica effetto dithering",
-            "colors": "Numero di colori"
+            "colors": "Numero di colori",
+            "toggle": "Attiva/disattiva effetto dithering"
         },
         "faceBlur": {
-            "label": "Sfoca i volti"
+            "title": "Sfocatura volti",
+            "label": "Sfoca i volti",
+            "toggle": "Attiva/disattiva sfocatura volti",
+            "loading": "Caricamento modelli di rilevamento..."
         }
     },
     "loading": {
