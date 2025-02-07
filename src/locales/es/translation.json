@@ -1,0 +1,78 @@
+{
+    "title": "Optimizador de Imágenes",
+    "beta": "Beta",
+    "features": {
+        "title": "Características:",
+        "list": {
+            "compression": "Compresión inteligente con control de calidad",
+            "faceBlur": "Difuminado automático de rostros",
+            "cropRotate": "Herramientas de recorte y rotación",
+            "metadata": "Lectura y eliminación de metadatos"
+        }
+    },
+    "localProcessing": "✨ Todas las imágenes se procesan localmente en tu navegador - ¡Sin subidas al servidor!",
+    "uploadButton": "Subir una imagen",
+    "stats": {
+        "original": {
+            "title": "Imagen original",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "optimized": {
+            "title": "Imagen optimizada",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "reduction": {
+            "label": "de reducción",
+            "excellent": "¡Excelente optimización! 🎉",
+            "good": "Buena optimización",
+            "moderate": "Optimización moderada"
+        }
+    },
+    "controls": {
+        "quality": {
+            "label": "Calidad de compresión (%)"
+        },
+        "maxWidth": {
+            "label": "Ancho máximo (px)",
+            "max": "(máx: {{width}}px)"
+        },
+        "dithering": {
+            "label": "Aplicar efecto de tramado",
+            "colors": "Número de colores"
+        },
+        "faceBlur": {
+            "label": "Difuminar rostros"
+        }
+    },
+    "loading": {
+        "initial": "Por favor, espera mientras se procesa tu imagen..",
+        "long": "Vale, está tardando un poco más de lo esperado..",
+        "veryLong": "¡Ya casi está!"
+    },
+    "metadata": {
+        "title": "Metadatos de la imagen",
+        "noData": "No hay metadatos disponibles para esta imagen.",
+        "device": "Dispositivo",
+        "date": "Fecha de captura",
+        "exposure": "Tiempo de exposición",
+        "aperture": "Apertura",
+        "focalLength": "Distancia focal",
+        "location": "Ubicación"
+    },
+    "actions": {
+        "rotate": "Rotar imagen",
+        "crop": {
+            "start": "Recortar",
+            "apply": "Aplicar recorte",
+            "cancel": "Cancelar"
+        },
+        "download": "Descargar imagen optimizada"
+    },
+    "footer": {
+        "contributions": "¡Las contribuciones son bienvenidas!",
+        "github": "Ver proyecto en GitHub",
+        "madeIn": "Hecho en Boccagia",
+        "language": "Idioma"
+    },
+    "metadataRemoved": "Los metadatos se han eliminado automáticamente durante el procesamiento."
+}

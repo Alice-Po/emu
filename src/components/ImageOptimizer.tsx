@@ -373,15 +373,43 @@ const ImageOptimizer: React.FC = () => {
               onChange={handleLanguageChange}
               size="small"
               sx={{
-                minWidth: 100,
+                minWidth: 120,
                 height: 32,
                 ".MuiSelect-select": {
                   py: 0.5,
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1,
                 },
               }}
             >
-              <MenuItem value="fr">Français</MenuItem>
-              <MenuItem value="en">English</MenuItem>
+              <MenuItem
+                value="fr"
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
+                  🇫🇷
+                </Box>
+                Français
+              </MenuItem>
+              <MenuItem
+                value="en"
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
+                  🇬🇧
+                </Box>
+                English
+              </MenuItem>
+              <MenuItem
+                value="es"
+                sx={{ display: "flex", alignItems: "center", gap: 1 }}
+              >
+                <Box component="span" sx={{ fontSize: "1.2em", lineHeight: 1 }}>
+                  🇪🇸
+                </Box>
+                Español
+              </MenuItem>
             </Select>
           </Box>
         </Box>
