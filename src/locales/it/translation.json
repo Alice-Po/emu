@@ -30,32 +30,39 @@
     },
     "controls": {
         "basic": {
-            "title": "Impostazioni di base"
+            "title": "Impostazioni di Base"
         },
         "quality": {
-            "label": "Qualità di compressione (%)"
+            "label": "Qualità di compressione (%)",
+            "description": "Regola la qualità di compressione dell'immagine"
         },
         "maxWidth": {
             "label": "Larghezza massima (px)",
-            "max": "(max: {{width}}px)"
+            "max": "(max: {{width}}px)",
+            "description": "Imposta la larghezza massima dell'immagine"
         },
         "dithering": {
-            "title": "Effetto dithering",
+            "title": "Effetto Dithering",
             "label": "Applica effetto dithering",
             "colors": "Numero di colori",
-            "toggle": "Attiva/disattiva effetto dithering"
+            "toggle": "Attiva/disattiva effetto dithering",
+            "description": "Il dithering riduce il numero di colori mantenendo la qualità visiva"
         },
         "faceBlur": {
-            "title": "Sfocatura volti",
+            "title": "Sfocatura Volti",
             "label": "Sfoca i volti",
             "toggle": "Attiva/disattiva sfocatura volti",
-            "loading": "Caricamento modelli di rilevamento..."
+            "loading": "Caricamento modelli di rilevamento...",
+            "description": "Rileva e sfoca automaticamente i volti nell'immagine per proteggere la privacy"
         }
     },
     "loading": {
-        "initial": "Attendi mentre l'immagine viene elaborata..",
-        "long": "Ok, sta richiedendo un po' più del previsto..",
-        "veryLong": "Ci siamo quasi!"
+        "initial": "Attendere mentre l'immagine viene elaborata..",
+        "long": "Ci sta impiegando più tempo del previsto..",
+        "veryLong": "Ci siamo quasi!",
+        "status": "Stato di caricamento",
+        "imageAlt": "Animazione di caricamento",
+        "progress": "Progresso di {{step}}"
     },
     "metadata": {
         "title": "Metadati dell'immagine",
@@ -82,5 +89,16 @@
         "madeIn": "Fatto a Boccagia",
         "language": "Lingua"
     },
-    "metadataRemoved": "I metadati sono stati rimossi automaticamente durante l'elaborazione."
+    "metadataRemoved": "I metadati sono stati rimossi automaticamente durante l'elaborazione.",
+    "image": {
+        "original": {
+            "alt": "Immagine originale"
+        },
+        "compressed": {
+            "alt": "Immagine compressa al {{quality}}% di qualità, dimensioni: {{width}}x{{height}}"
+        },
+        "crop": {
+            "alt": "Immagine da ritagliare"
+        }
+    }
 }

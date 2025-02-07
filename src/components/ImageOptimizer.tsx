@@ -345,6 +345,8 @@ const ImageOptimizer: React.FC = () => {
       <Card>
         <CardContent>
           <Box
+            component="section"
+            aria-labelledby="page-title"
             sx={{
               display: "flex",
               justifyContent: "space-between",
@@ -352,10 +354,19 @@ const ImageOptimizer: React.FC = () => {
               mb: 2,
             }}
           >
-            <Typography variant="h5">
+            <Typography
+              variant="h1"
+              id="page-title"
+              sx={{
+                fontSize: "h3.fontSize",
+                mb: 3,
+              }}
+            >
               {t("title")} <small>{t("beta")}</small>
             </Typography>
             <Box
+              component="section"
+              aria-labelledby="language-section-title"
               sx={{
                 display: "flex",
                 alignItems: "center",
@@ -479,7 +490,11 @@ const ImageOptimizer: React.FC = () => {
             </Typography>
           </Paper>
 
-          <Box sx={{ mb: 3 }}>
+          <Box
+            component="section"
+            aria-labelledby="upload-section-title"
+            sx={{ mb: 3 }}
+          >
             <Button
               variant="contained"
               component="label"
@@ -871,103 +886,115 @@ const ImageOptimizer: React.FC = () => {
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
-                    alignItems: { xs: "flex-start", sm: "center" },
-                    gap: { xs: 2, sm: 1 },
-                    mb: 3,
+                    flexDirection: "column",
+                    gap: { xs: 1, sm: 2 },
                   }}
                 >
-                  <Typography
-                    variant="h6"
-                    id="dithering-section-title"
-                    sx={{
-                      flexGrow: 1,
-                      mb: { xs: 1, sm: 0 },
-                      color: "primary.main",
-                      fontWeight: "medium",
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      "&::before": {
-                        content: '""',
-                        width: 4,
-                        height: 24,
-                        backgroundColor: "primary.main",
-                        borderRadius: 1,
-                      },
-                    }}
-                  >
-                    {t("controls.dithering.title")}
-                  </Typography>
-                  <Typography id="settings-description">
-                    Le dithering permet de réduire le nombre de couleurs tout en
-                    préservant la qualité visuelle.
-                  </Typography>
-
-                  <FormControlLabel
-                    sx={{
-                      m: 0,
-                      ".MuiFormControlLabel-label": {
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                        color: "text.secondary",
-                      },
-                    }}
-                    control={
-                      <Switch
-                        checked={applyStyle}
-                        onChange={handleStyleChange}
-                        aria-label={t("controls.dithering.toggle")}
-                        inputProps={{
-                          "aria-describedby": "settings-description",
-                        }}
-                      />
-                    }
-                    label={t("controls.dithering.label")}
-                  />
-                </Box>
-                {applyStyle && (
                   <Box
-                    sx={{ mt: { xs: 3, sm: 2 } }}
-                    role="group"
-                    aria-label={t("controls.dithering.colors")}
+                    sx={{
+                      display: "flex",
+                      flexDirection: { xs: "column", sm: "row" },
+                      alignItems: { xs: "stretch", sm: "center" },
+                      gap: { xs: 1.5, sm: 2 },
+                      justifyContent: "space-between",
+                    }}
                   >
                     <Typography
-                      gutterBottom
-                      id="color-count-slider-label"
+                      variant="h6"
+                      id="dithering-section-title"
                       sx={{
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
+                        color: "primary.main",
                         fontWeight: "medium",
-                        color: "text.secondary",
-                        mb: 1.5,
+                        fontSize: { xs: "1.25rem", sm: "1.25rem" },
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        "&::before": {
+                          content: '""',
+                          width: 4,
+                          height: { xs: 24, sm: 24 },
+                          backgroundColor: "primary.main",
+                          borderRadius: 1,
+                        },
                       }}
                     >
-                      {t("controls.dithering.colors")}
+                      {t("controls.dithering.title")}
                     </Typography>
-                    <Slider
-                      value={colorCount}
-                      onChange={handleColorCountChange}
-                      min={2}
-                      max={32}
-                      step={1}
-                      marks={[
-                        { value: 2, label: "2" },
-                        { value: 8, label: "8" },
-                        { value: 16, label: "16" },
-                        { value: 32, label: "32" },
-                      ]}
-                      valueLabelDisplay="auto"
-                      aria-labelledby="color-count-slider-label"
+                    <FormControlLabel
                       sx={{
-                        "& .MuiSlider-markLabel": {
-                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                        },
-                        "& .MuiSlider-valueLabel": {
-                          fontSize: { xs: "0.75rem", sm: "0.875rem" },
+                        m: 0,
+                        ml: { xs: 1, sm: 0 },
+                        ".MuiFormControlLabel-label": {
+                          fontSize: { xs: "1rem", sm: "1rem" },
+                          color: "text.secondary",
                         },
                       }}
+                      control={
+                        <Switch
+                          checked={applyStyle}
+                          onChange={handleStyleChange}
+                          aria-label={t("controls.dithering.toggle")}
+                          size="small"
+                        />
+                      }
+                      label={t("controls.dithering.label")}
                     />
                   </Box>
-                )}
+                  <Typography
+                    id="settings-description"
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                      mt: { xs: 0, sm: -1 },
+                    }}
+                  >
+                    {t("controls.dithering.description")}
+                  </Typography>
+                  {applyStyle && (
+                    <Box
+                      sx={{ mt: { xs: 2, sm: 2 } }}
+                      role="group"
+                      aria-label={t("controls.dithering.colors")}
+                    >
+                      <Typography
+                        gutterBottom
+                        id="color-count-slider-label"
+                        sx={{
+                          fontSize: { xs: "1rem", sm: "1rem" },
+                          fontWeight: "medium",
+                          color: "text.secondary",
+                          mb: 1,
+                        }}
+                      >
+                        {t("controls.dithering.colors")}
+                      </Typography>
+                      <Slider
+                        value={colorCount}
+                        onChange={handleColorCountChange}
+                        min={2}
+                        max={32}
+                        step={1}
+                        marks={[
+                          { value: 2, label: "2" },
+                          { value: 8, label: "8" },
+                          { value: 16, label: "16" },
+                          { value: 32, label: "32" },
+                        ]}
+                        valueLabelDisplay="auto"
+                        aria-labelledby="color-count-slider-label"
+                        sx={{
+                          "& .MuiSlider-markLabel": {
+                            fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                          },
+                          "& .MuiSlider-valueLabel": {
+                            fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                          },
+                        }}
+                      />
+                    </Box>
+                  )}
+                </Box>
               </Paper>
             </Grid>
 
@@ -991,81 +1018,87 @@ const ImageOptimizer: React.FC = () => {
                 <Box
                   sx={{
                     display: "flex",
-                    flexDirection: { xs: "column", sm: "row" },
-                    alignItems: { xs: "flex-start", sm: "center" },
-                    gap: { xs: 2, sm: 1 },
-                    mb: 3,
+                    flexDirection: "column",
+                    gap: { xs: 1, sm: 2 },
                   }}
                 >
-                  <Typography
-                    variant="h6"
-                    id="face-blur-section-title"
+                  <Box
                     sx={{
-                      flexGrow: 1,
-                      mb: { xs: 1, sm: 0 },
-                      color: "primary.main",
-                      fontWeight: "medium",
                       display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      "&::before": {
-                        content: '""',
-                        width: 4,
-                        height: 24,
-                        backgroundColor: "primary.main",
-                        borderRadius: 1,
-                      },
+                      flexDirection: { xs: "column", sm: "row" },
+                      alignItems: { xs: "stretch", sm: "center" },
+                      gap: { xs: 1.5, sm: 2 },
+                      justifyContent: "space-between",
                     }}
                   >
-                    {t("controls.faceBlur.title")}
-                  </Typography>
+                    <Typography
+                      variant="h6"
+                      id="face-blur-section-title"
+                      sx={{
+                        color: "primary.main",
+                        fontWeight: "medium",
+                        fontSize: { xs: "1.25rem", sm: "1.25rem" },
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 1,
+                        "&::before": {
+                          content: '""',
+                          width: 4,
+                          height: { xs: 24, sm: 24 },
+                          backgroundColor: "primary.main",
+                          borderRadius: 1,
+                        },
+                      }}
+                    >
+                      {t("controls.faceBlur.title")}
+                    </Typography>
+                    <FormControlLabel
+                      sx={{
+                        m: 0,
+                        ml: { xs: 1, sm: 0 },
+                        ".MuiFormControlLabel-label": {
+                          fontSize: { xs: "1rem", sm: "1rem" },
+                          color: "text.secondary",
+                        },
+                      }}
+                      control={
+                        <Switch
+                          checked={applyBlur}
+                          onChange={handleBlurChange}
+                          disabled={!modelsLoaded}
+                          aria-label={t("controls.faceBlur.toggle")}
+                          size="small"
+                        />
+                      }
+                      label={t("controls.faceBlur.label")}
+                    />
+                  </Box>
                   <Typography
                     id="face-blur-description"
                     variant="body2"
                     color="text.secondary"
-                  >
-                    {t("controls.faceBlur.description", {
-                      defaultValue:
-                        "Détecte et floute automatiquement les visages présents dans l'image pour protéger la vie privée.",
-                    })}
-                  </Typography>
-                  <FormControlLabel
                     sx={{
-                      m: 0,
-                      ".MuiFormControlLabel-label": {
-                        fontSize: { xs: "0.875rem", sm: "1rem" },
-                        color: "text.secondary",
-                      },
+                      fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                      mt: { xs: 0, sm: -1 },
                     }}
-                    control={
-                      <Switch
-                        checked={applyBlur}
-                        onChange={handleBlurChange}
-                        disabled={!modelsLoaded}
-                        aria-label={t("controls.faceBlur.toggle")}
-                        inputProps={{
-                          "aria-describedby": "face-blur-description",
-                        }}
-                      />
-                    }
-                    label={t("controls.faceBlur.label")}
-                  />
+                  >
+                    {t("controls.faceBlur.description")}
+                  </Typography>
+                  {!modelsLoaded && (
+                    <Typography
+                      color="text.secondary"
+                      variant="body2"
+                      role="alert"
+                      aria-live="polite"
+                      sx={{
+                        fontSize: { xs: "0.875rem", sm: "0.875rem" },
+                        fontStyle: "italic",
+                      }}
+                    >
+                      {t("controls.faceBlur.loading")}
+                    </Typography>
+                  )}
                 </Box>
-                {!modelsLoaded && (
-                  <Typography
-                    color="text.secondary"
-                    variant="body2"
-                    role="alert"
-                    aria-live="polite"
-                    sx={{
-                      fontSize: { xs: "0.75rem", sm: "0.875rem" },
-                      mt: { xs: 1, sm: 2 },
-                      fontStyle: "italic",
-                    }}
-                  >
-                    {t("controls.faceBlur.loading")}
-                  </Typography>
-                )}
               </Paper>
             </Grid>
           </Grid>
@@ -1190,6 +1223,7 @@ const ImageOptimizer: React.FC = () => {
                             aria-valuemin={0}
                             aria-valuemax={100}
                             aria-valuenow={Math.round(progress.value)}
+                            aria-valuetext={`${progress.step}: ${Math.round(progress.value)}%`}
                             aria-label={t("loading.progress", {
                               step: progress.step,
                             })}
@@ -1224,7 +1258,11 @@ const ImageOptimizer: React.FC = () => {
                           component="img"
                           src={compressedImage}
                           sx={{ maxWidth: "100%", height: "auto" }}
-                          alt="Compressed"
+                          alt={t("image.compressed.alt", {
+                            width: compressedStats.width,
+                            height: compressedStats.height,
+                            quality: quality,
+                          })}
                         />
                       )}
                       <Typography

@@ -33,29 +33,36 @@
             "title": "基本設定"
         },
         "quality": {
-            "label": "圧縮品質 (%)"
+            "label": "圧縮品質 (%)",
+            "description": "画像の圧縮品質を調整"
         },
         "maxWidth": {
             "label": "最大幅 (px)",
-            "max": "(最大: {{width}}px)"
+            "max": "(最大: {{width}}px)",
+            "description": "画像の最大幅を設定"
         },
         "dithering": {
             "title": "ディザリング効果",
             "label": "ディザリング効果を適用",
             "colors": "色数",
-            "toggle": "ディザリング効果の切り替え"
+            "toggle": "ディザリング効果の切り替え",
+            "description": "視覚的な品質を保ちながら色数を削減"
         },
         "faceBlur": {
             "title": "顔のぼかし",
             "label": "顔をぼかす",
             "toggle": "顔のぼかしの切り替え",
-            "loading": "検出モデルを読み込み中..."
+            "loading": "検出モデルを読み込み中...",
+            "description": "プライバシー保護のため、画像内の顔を自動的に検出してぼかします"
         }
     },
     "loading": {
-        "initial": "画像を処理中です。しばらくお待ちください...",
-        "long": "もう少しお待ちください...",
-        "veryLong": "もうすぐ完了します！"
+        "initial": "画像を処理中です..",
+        "long": "予想より時間がかかっています..",
+        "veryLong": "もう少しです！",
+        "status": "読み込み状態",
+        "imageAlt": "読み込みアニメーション",
+        "progress": "{{step}}の進行状況"
     },
     "metadata": {
         "title": "画像メタデータ",
@@ -82,5 +89,16 @@
         "madeIn": "Boccagiaにて制作",
         "language": "言語"
     },
-    "metadataRemoved": "処理中にメタデータは自動的に削除されました。"
+    "metadataRemoved": "処理中にメタデータは自動的に削除されました。",
+    "image": {
+        "original": {
+            "alt": "元の画像"
+        },
+        "compressed": {
+            "alt": "品質{{quality}}%、サイズ{{width}}x{{height}}の圧縮画像"
+        },
+        "crop": {
+            "alt": "トリミングする画像"
+        }
+    }
 }

@@ -30,32 +30,39 @@
     },
     "controls": {
         "basic": {
-            "title": "Ajustes básicos"
+            "title": "Ajustes Básicos"
         },
         "quality": {
-            "label": "Calidad de compresión (%)"
+            "label": "Calidad de compresión (%)",
+            "description": "Ajusta la calidad de compresión de la imagen"
         },
         "maxWidth": {
             "label": "Ancho máximo (px)",
-            "max": "(máx: {{width}}px)"
+            "max": "(máx: {{width}}px)",
+            "description": "Establece el ancho máximo de la imagen"
         },
         "dithering": {
-            "title": "Efecto de tramado",
+            "title": "Efecto de Tramado",
             "label": "Aplicar efecto de tramado",
             "colors": "Número de colores",
-            "toggle": "Activar/desactivar efecto de tramado"
+            "toggle": "Alternar efecto de tramado",
+            "description": "El tramado reduce el número de colores mientras preserva la calidad visual"
         },
         "faceBlur": {
-            "title": "Difuminado de rostros",
+            "title": "Difuminado de Rostros",
             "label": "Difuminar rostros",
-            "toggle": "Activar/desactivar difuminado de rostros",
-            "loading": "Cargando modelos de detección..."
+            "toggle": "Alternar difuminado de rostros",
+            "loading": "Cargando modelos de detección...",
+            "description": "Detecta y difumina automáticamente los rostros en la imagen para proteger la privacidad"
         }
     },
     "loading": {
-        "initial": "Por favor, espera mientras se procesa tu imagen..",
-        "long": "Vale, está tardando un poco más de lo esperado..",
-        "veryLong": "¡Ya casi está!"
+        "initial": "Por favor espere mientras se procesa su imagen..",
+        "long": "Está tomando más tiempo de lo esperado..",
+        "veryLong": "¡Ya casi está!",
+        "status": "Estado de carga",
+        "imageAlt": "Animación de carga",
+        "progress": "Progreso de {{step}}"
     },
     "metadata": {
         "title": "Metadatos de la imagen",
@@ -82,5 +89,16 @@
         "madeIn": "Hecho en Boccagia",
         "language": "Idioma"
     },
-    "metadataRemoved": "Los metadatos se han eliminado automáticamente durante el procesamiento."
+    "metadataRemoved": "Los metadatos se han eliminado automáticamente durante el procesamiento.",
+    "image": {
+        "original": {
+            "alt": "Imagen original"
+        },
+        "compressed": {
+            "alt": "Imagen comprimida al {{quality}}% de calidad, dimensiones: {{width}}x{{height}}"
+        },
+        "crop": {
+            "alt": "Imagen para recortar"
+        }
+    }
 }

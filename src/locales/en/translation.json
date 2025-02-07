@@ -33,29 +33,36 @@
             "title": "Basic Settings"
         },
         "quality": {
-            "label": "Compression quality (%)"
+            "label": "Compression quality (%)",
+            "description": "Adjust the image compression quality"
         },
         "maxWidth": {
             "label": "Maximum width (px)",
-            "max": "(max: {{width}}px)"
+            "max": "(max: {{width}}px)",
+            "description": "Set the maximum width of the image"
         },
         "dithering": {
             "title": "Dithering Effect",
             "label": "Apply dithering effect",
             "colors": "Number of colors",
-            "toggle": "Toggle dithering effect"
+            "toggle": "Toggle dithering effect",
+            "description": "Dithering reduces the number of colors while preserving visual quality"
         },
         "faceBlur": {
             "title": "Face Blurring",
             "label": "Blur faces",
             "toggle": "Toggle face blurring",
-            "loading": "Loading detection models..."
+            "loading": "Loading detection models...",
+            "description": "Automatically detects and blurs faces in the image to protect privacy"
         }
     },
     "loading": {
         "initial": "Please wait while your image is being processed..",
         "long": "Ok, it's taking a bit longer than expected..",
-        "veryLong": "Almost there!"
+        "veryLong": "Almost there!",
+        "status": "Loading status",
+        "imageAlt": "Loading animation",
+        "progress": "Progress of {{step}}"
     },
     "metadata": {
         "title": "Image metadata",
@@ -82,5 +89,16 @@
         "madeIn": "Made in Boccagia",
         "language": "Language"
     },
-    "metadataRemoved": "Metadata has been automatically removed during processing."
+    "metadataRemoved": "Metadata has been automatically removed during processing.",
+    "image": {
+        "original": {
+            "alt": "Original image"
+        },
+        "compressed": {
+            "alt": "Compressed image at {{quality}}% quality, dimensions: {{width}}x{{height}}"
+        },
+        "crop": {
+            "alt": "Image to crop"
+        }
+    }
 }

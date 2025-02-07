@@ -33,29 +33,36 @@
             "title": "Paramètres de base"
         },
         "quality": {
-            "label": "Qualité de compression (%)"
+            "label": "Qualité de compression (%)",
+            "description": "Ajustez la qualité de compression de l'image"
         },
         "maxWidth": {
             "label": "Largeur maximale (px)",
-            "max": "(max: {{width}}px)"
+            "max": "(max: {{width}}px)",
+            "description": "Définissez la largeur maximale de l'image"
         },
         "dithering": {
             "title": "Effet de tramage",
             "label": "Appliquer l'effet de tramage",
             "colors": "Nombre de couleurs",
-            "toggle": "Activer/désactiver l'effet de tramage"
+            "toggle": "Activer/désactiver l'effet de tramage",
+            "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle"
         },
         "faceBlur": {
             "title": "Floutage des visages",
             "label": "Flouter les visages",
             "toggle": "Activer/désactiver le floutage des visages",
-            "loading": "Chargement des modèles de détection..."
+            "loading": "Chargement des modèles de détection...",
+            "description": "Détecte et floute automatiquement les visages présents dans l'image pour protéger la vie privée"
         }
     },
     "loading": {
         "initial": "Patience, votre image est en cours de traitement..",
         "long": "Ok c'est vrai que c'est un peu long..",
-        "veryLong": "Ca vient ! Ca vient !"
+        "veryLong": "Ca vient ! Ca vient !",
+        "status": "État du chargement",
+        "imageAlt": "Animation de chargement",
+        "progress": "Progression de {{step}}"
     },
     "metadata": {
         "title": "Métadonnées de l'image",
@@ -82,5 +89,16 @@
         "madeIn": "Made in Boccagia",
         "language": "Langue"
     },
-    "metadataRemoved": "Les metadonnées ont été automatiquement supprimées pendant le traitement."
+    "metadataRemoved": "Les metadonnées ont été automatiquement supprimées pendant le traitement.",
+    "image": {
+        "original": {
+            "alt": "Image originale"
+        },
+        "compressed": {
+            "alt": "Image compressée à {{quality}}% de qualité, dimensions : {{width}}x{{height}}"
+        },
+        "crop": {
+            "alt": "Image à recadrer"
+        }
+    }
 }
