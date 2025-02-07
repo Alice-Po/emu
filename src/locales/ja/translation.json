@@ -1,0 +1,78 @@
+{
+    "title": "画像最適化ツール",
+    "beta": "ベータ版",
+    "features": {
+        "title": "機能一覧：",
+        "list": {
+            "compression": "品質管理付きスマート圧縮",
+            "faceBlur": "顔自動ぼかし処理",
+            "cropRotate": "トリミング・回転ツール",
+            "metadata": "メタデータの読み取りと削除"
+        }
+    },
+    "localProcessing": "✨ すべての画像はブラウザ内で処理されます - サーバーへのアップロードはありません！",
+    "uploadButton": "画像をアップロード",
+    "stats": {
+        "original": {
+            "title": "元の画像",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "optimized": {
+            "title": "最適化された画像",
+            "dimensions": "{{width}} × {{height}}px"
+        },
+        "reduction": {
+            "label": "削減率",
+            "excellent": "最適化が完了しました！ ✨",
+            "good": "良好な最適化です",
+            "moderate": "適度な最適化です"
+        }
+    },
+    "controls": {
+        "quality": {
+            "label": "圧縮品質 (%)"
+        },
+        "maxWidth": {
+            "label": "最大幅 (px)",
+            "max": "(最大: {{width}}px)"
+        },
+        "dithering": {
+            "label": "ディザリング効果を適用",
+            "colors": "色数"
+        },
+        "faceBlur": {
+            "label": "顔をぼかす"
+        }
+    },
+    "loading": {
+        "initial": "画像を処理中です。しばらくお待ちください...",
+        "long": "もう少しお待ちください...",
+        "veryLong": "もうすぐ完了します！"
+    },
+    "metadata": {
+        "title": "画像メタデータ",
+        "noData": "この画像にはメタデータがありません。",
+        "device": "デバイス",
+        "date": "撮影日時",
+        "exposure": "露出時間",
+        "aperture": "絞り値",
+        "focalLength": "焦点距離",
+        "location": "位置情報"
+    },
+    "actions": {
+        "rotate": "画像を回転",
+        "crop": {
+            "start": "トリミング",
+            "apply": "トリミングを適用",
+            "cancel": "キャンセル"
+        },
+        "download": "最適化された画像をダウンロード"
+    },
+    "footer": {
+        "contributions": "コントリビューション歓迎！",
+        "github": "GitHubでプロジェクトを見る",
+        "madeIn": "Boccagiaにて制作",
+        "language": "言語"
+    },
+    "metadataRemoved": "処理中にメタデータは自動的に削除されました。"
+}
