@@ -72,8 +72,8 @@ const ImageOptimizer: React.FC = () => {
 
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
-  const [applyStyle, setApplyStyle] = useState<boolean>(true);
-  const [colorCount, setColorCount] = useState<number>(8);
+  const [applyStyle, setApplyStyle] = useState<boolean>(false);
+  const [colorCount, setColorCount] = useState<number>(32);
   const [applyBlur, setApplyBlur] = useState<boolean>(false);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
   const [rotation, setRotation] = useState<number>(0);
