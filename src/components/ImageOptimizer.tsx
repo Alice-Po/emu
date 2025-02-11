@@ -26,7 +26,6 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
-  Link,
   MenuItem,
   Paper,
   Select,
@@ -49,6 +48,7 @@ import {
   getCroppedImg,
   hasMetadata,
 } from "../utils/imageUtils";
+import Footer from "./Footer";
 
 /**
  * Main ImageOptimizer component that handles all image processing operations
@@ -1436,38 +1436,10 @@ const ImageOptimizer: React.FC = () => {
             </Grid>
           </Grid>
 
-          <Box
-            component="footer"
-            sx={{
-              p: 2,
-              mt: 3,
-              borderTop: 1,
-              borderColor: "divider",
-              textAlign: "center",
-              backgroundColor: "background.paper",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              {t("footer.contributions")}
-              <Link
-                href="https://github.com/Alice-Po/image-ecolo"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ ml: 1 }}
-              >
-                {t("footer.github")}
-              </Link>
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t("footer.madeIn")}
-            </Typography>
-          </Box>
+          <Footer />
+
+          <canvas ref={canvasRef} style={{ display: "none" }} />
         </CardContent>
-        <canvas ref={canvasRef} style={{ display: "none" }} />
       </Card>
     </main>
   );
