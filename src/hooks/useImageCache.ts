@@ -1,20 +1,8 @@
 import { useCallback, useRef } from "react";
-
-interface ProcessingOptions {
-  quality: number;
-  maxWidth: number;
-  applyDithering: boolean;
-  applyBlur: boolean;
-  ditheringColorCount: number;
-  rotation?: number;
-}
-
-interface ProcessingCache {
-  pointContainer: any;
-  imageData: ImageData | null;
-  lastOptions: ProcessingOptions | null;
-  paletteCache: Map<string, any>;
-}
+import {
+  ProcessingCache,
+  ProcessingOptions,
+} from "../types/ImageOptimizer.types";
 
 /**
  * Custom hook to manage image processing cache

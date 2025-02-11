@@ -1,5 +1,5 @@
 /**
- * Interface pour les statistiques d'une image
+ * Image Statistics Interface
  */
 export interface ImageStats {
   size: number;
@@ -8,7 +8,7 @@ export interface ImageStats {
 }
 
 /**
- * Interface pour les métadonnées EXIF d'une image
+ * EXIF Metadata Interface
  */
 export interface ImageMetadata {
   Make?: string;
@@ -23,7 +23,7 @@ export interface ImageMetadata {
 }
 
 /**
- * Interface pour les dimensions d'une image
+ * Image Dimensions Interface
  */
 export interface ImageDimensions {
   width: number;
@@ -31,7 +31,7 @@ export interface ImageDimensions {
 }
 
 /**
- * Interface pour les options de compression
+ * Compression Options Interface
  */
 export interface CompressionOptions {
   maxSizeMB: number;
@@ -41,7 +41,7 @@ export interface CompressionOptions {
 }
 
 /**
- * Interface pour la zone de floutage
+ * Blur Area Interface
  */
 export interface BlurArea {
   x: number;
@@ -51,24 +51,62 @@ export interface BlurArea {
 }
 
 /**
- * Interface pour le cache de la palette
+ * Processing Options Interface
  */
-export interface PaletteCache {
-  imageHash: string; // Un identifiant unique pour l'image
-  colorCount: number;
-  palette: any; // Le type exact dépend de image-q
+export interface ProcessingOptions {
+  /** Quality level for compression (0-100) */
+  quality: number;
+  /** Maximum width for the processed image */
+  maxWidth: number;
+  /** Whether to apply dithering effect */
+  applyDithering: boolean;
+  /** Whether to apply face blur effect */
+  applyBlur: boolean;
+  /** Number of colors to use in dithering (2-32) */
+  ditheringColorCount: number;
+  /** Optional rotation angle in degrees */
+  rotation?: number;
 }
 
 /**
- * Interface pour les contrôles de dithering
+ * Processing Cache Interface
+ */
+export interface ProcessingCache {
+  /** Container for image point data */
+  pointContainer: any;
+  /** Current image data being processed */
+  imageData: ImageData | null;
+  /** Last used processing options */
+  lastOptions: ProcessingOptions | null;
+  /** Cache for color palettes */
+  paletteCache: Map<string, any>;
+}
+
+/**
+ * Progress State Interface
+ */
+export interface ProgressState {
+  /** Current processing step description */
+  step: string;
+  /** Progress value (0-100) */
+  value: number;
+}
+
+/**
+ * Dithering Controls Props Interface
  */
 export interface DitheringControlsProps {
-  /** État d'activation du dithering */
+  /** Whether dithering is enabled */
   applyDithering: boolean;
-  /** Nombre de couleurs pour le dithering */
+  /** Number of colors for dithering */
   ditheringColorCount: number;
-  /** Callback appelé lors du changement d'état du dithering */
+  /** Callback for dithering state change */
   onDitheringChange: (value: boolean) => void;
-  /** Callback appelé lors du changement du nombre de couleurs du dithering */
+  /** Callback for color count change */
   onDitheringColorCountChange: (value: number) => void;
 }
+
+/**
+ * Progress Callback Type
+ */
+export type ProgressCallback = (step: string, value: number) => void;

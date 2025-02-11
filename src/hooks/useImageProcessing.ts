@@ -1,18 +1,11 @@
 import { utils } from "image-q";
 import { RefObject } from "react";
+import {
+  ProcessingCache,
+  ProgressCallback,
+} from "../types/ImageOptimizer.types";
 import { useDithering } from "./useDithering";
 import { useFaceBlur } from "./useFaceBlur";
-
-/**
- * Interface for the processing cache
- * Stores intermediate results and options to optimize processing
- */
-interface ProcessingCache {
-  pointContainer: any;
-  imageData: ImageData | null;
-  lastOptions: any;
-  paletteCache: Map<string, any>;
-}
 
 /**
  * Custom hook for handling image processing operations
@@ -48,7 +41,7 @@ export const useImageProcessing = () => {
     colorCount = 8,
     rotation = 0,
     cache?: ProcessingCache,
-    onProgress?: (step: string, value: number) => void,
+    onProgress?: ProgressCallback,
   ): Promise<Blob> => {
     console.log("Processing started:", {
       shouldApplyStyle,

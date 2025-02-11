@@ -1,27 +1,14 @@
 import imageCompression from "browser-image-compression";
 import { useCallback, useRef, useState } from "react";
-import { ImageMetadata, ImageStats } from "../types/ImageOptimizer.types";
+import {
+  ImageMetadata,
+  ImageStats,
+  ProcessingOptions,
+  ProgressState,
+} from "../types/ImageOptimizer.types";
 import { extractMetadata, getImageDimensions } from "../utils/imageUtils";
 import { useImageCache } from "./useImageCache";
 import { useImageProcessing } from "./useImageProcessing";
-
-/**
- * Interface defining the options for image processing
- */
-interface ProcessingOptions {
-  /** Quality level for compression (0-100) */
-  quality: number;
-  /** Maximum width for the processed image */
-  maxWidth: number;
-  /** Whether to apply dithering effect */
-  applyDithering: boolean;
-  /** Whether to apply face blur effect */
-  applyBlur: boolean;
-  /** Number of colors to use in dithering (2-32) */
-  ditheringColorCount: number;
-  /** Optional rotation angle in degrees */
-  rotation?: number;
-}
 
 /**
  * Custom hook for managing image processing state and operations
@@ -30,10 +17,7 @@ interface ProcessingOptions {
 export const useImageProcessor = () => {
   // Loading and progress state
   const [loading, setLoading] = useState(false);
-  const [progress, setProgress] = useState<{
-    step: string;
-    value: number;
-  }>({
+  const [progress, setProgress] = useState<ProgressState>({
     step: "",
     value: 0,
   });
