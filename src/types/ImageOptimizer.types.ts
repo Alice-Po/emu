@@ -59,6 +59,16 @@ export interface PaletteCache {
 }
 
 /**
+ * Interface for processing cache
+ */
+export interface ProcessingCache {
+  pointContainer: any;
+  imageData: ImageData | null;
+  lastOptions: any;
+  paletteCache: Map<string, any>;
+}
+
+/**
  * Interface for dithering controls
  */
 export interface DitheringControlsProps {
