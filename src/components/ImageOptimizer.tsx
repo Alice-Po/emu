@@ -45,6 +45,7 @@ import {
   getCroppedImg,
   hasMetadata,
 } from "../utils/imageUtils";
+import FeaturesDescription from "./FeaturesDescription";
 import Footer from "./Footer";
 import LanguageSelector from "./LanguageSelector";
 
@@ -385,24 +386,7 @@ const ImageOptimizer: React.FC = () => {
             <LanguageSelector />
           </Box>
 
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography component="div" variant="body2" sx={{ mb: 2 }}>
-              <strong>{t("features.title")}</strong>
-              <ul>
-                <li>{t("features.list.compression")}</li>
-                <li>{t("features.list.faceBlur")}</li>
-                <li>{t("features.list.cropRotate")}</li>
-                <li>{t("features.list.metadata")}</li>
-              </ul>
-            </Typography>
-            <Typography
-              variant="body2"
-              color="primary"
-              sx={{ fontWeight: "medium" }}
-            >
-              {t("localProcessing")}
-            </Typography>
-          </Paper>
+          <FeaturesDescription />
 
           <Box
             component="section"
