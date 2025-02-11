@@ -10,9 +10,9 @@ import {
 interface ProcessingOptions {
   quality: number;
   maxWidth: number;
-  applyStyle: boolean;
+  applyDithering: boolean;
   applyBlur: boolean;
-  colorCount: number;
+  ditheringColorCount: number;
   rotation?: number;
 }
 
@@ -65,12 +65,14 @@ export const useImageProcessor = () => {
       return true;
 
     // Si le style est activé/désactivé
-    if (currentOptions.applyStyle !== cache.lastOptions.applyStyle) return true;
+    if (currentOptions.applyDithering !== cache.lastOptions.applyDithering)
+      return true;
 
     // Si le style est activé et que les options de style ont changé
     if (
-      currentOptions.applyStyle &&
-      currentOptions.colorCount !== cache.lastOptions.colorCount
+      currentOptions.applyDithering &&
+      currentOptions.ditheringColorCount !==
+        cache.lastOptions.ditheringColorCount
     )
       return true;
 
@@ -100,12 +102,12 @@ export const useImageProcessor = () => {
           console.log("Utilisation du cache pour le traitement");
           const processedBlob = await processImageWhithStyle(
             file,
-            options.applyStyle,
+            options.applyDithering,
             options.quality,
             options.applyBlur,
             true,
             canvasRef,
-            options.colorCount,
+            options.ditheringColorCount,
             options.rotation || 0,
             processingCache.current,
             (step: string, value: number) => {
@@ -162,12 +164,12 @@ export const useImageProcessor = () => {
 
         const processedBlob = await processImageWhithStyle(
           compressedFile,
-          options.applyStyle,
+          options.applyDithering,
           options.quality,
           options.applyBlur,
           true,
           canvasRef,
-          options.colorCount,
+          options.ditheringColorCount,
           options.rotation || 0,
           processingCache.current,
           (step: string, value: number) => {

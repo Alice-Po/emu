@@ -58,3 +58,17 @@ export interface PaletteCache {
   colorCount: number;
   palette: any; // Le type exact dépend de image-q
 }
+
+/**
+ * Interface pour les contrôles de dithering
+ */
+export interface DitheringControlsProps {
+  /** État d'activation du dithering */
+  applyDithering: boolean;
+  /** Nombre de couleurs pour le dithering */
+  ditheringColorCount: number;
+  /** Callback appelé lors du changement d'état du dithering */
+  onDitheringChange: (value: boolean) => void;
+  /** Callback appelé lors du changement du nombre de couleurs du dithering */
+  onDitheringColorCountChange: (value: number) => void;
+}

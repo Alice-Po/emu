@@ -45,6 +45,7 @@ import {
   getCroppedImg,
   hasMetadata,
 } from "../utils/imageUtils";
+import DitheringControls from "./DitheringControls";
 import FeaturesDescription from "./FeaturesDescription";
 import Footer from "./Footer";
 import LanguageSelector from "./LanguageSelector";
@@ -71,8 +72,8 @@ const ImageOptimizer: React.FC = () => {
 
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
-  const [applyStyle, setApplyStyle] = useState<boolean>(false);
-  const [colorCount, setColorCount] = useState<number>(8);
+  const [applyDithering, setApplyDithering] = useState<boolean>(false);
+  const [ditheringColorCount, setDitheringColorCount] = useState<number>(32);
   const [applyBlur, setApplyBlur] = useState<boolean>(false);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
   const [rotation, setRotation] = useState<number>(0);
@@ -106,9 +107,9 @@ const ImageOptimizer: React.FC = () => {
       const options = {
         quality,
         maxWidth,
-        applyStyle,
+        applyDithering: applyDithering,
         applyBlur,
-        colorCount,
+        ditheringColorCount: ditheringColorCount,
         [params.name]: params.value,
       };
 
@@ -151,12 +152,12 @@ const ImageOptimizer: React.FC = () => {
    * @param {Event} _event - The event object (unused)
    * @param {number | number[]} newValue - The new color count value
    */
-  const handleColorCountChange = (
+  const handleDitheringColorCountChange = (
     _event: Event,
     newValue: number | number[],
   ) => {
     const value = newValue as number;
-    setColorCount(value);
+    setDitheringColorCount(value);
     debouncedProcessWithParams({ name: "colorCount", value });
   };
 
@@ -166,16 +167,18 @@ const ImageOptimizer: React.FC = () => {
    *
    * @param {React.ChangeEvent<HTMLInputElement>} event - The change event
    */
-  const handleStyleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDitheringChange = (
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) => {
     const value = event.target.checked;
-    setApplyStyle(value);
+    setApplyDithering(value);
     if (originalImage) {
       processImage(originalImage, {
         quality,
         maxWidth,
-        applyStyle: value,
+        applyDithering: value,
         applyBlur,
-        colorCount,
+        ditheringColorCount: ditheringColorCount,
       });
     }
   };
@@ -193,9 +196,9 @@ const ImageOptimizer: React.FC = () => {
       processImage(originalImage, {
         quality,
         maxWidth,
-        applyStyle,
+        applyDithering: applyDithering,
         applyBlur: value,
-        colorCount,
+        ditheringColorCount: ditheringColorCount,
       });
     }
   };
@@ -227,9 +230,9 @@ const ImageOptimizer: React.FC = () => {
     await processImage(originalImage, {
       quality,
       maxWidth,
-      applyStyle,
+      applyDithering: applyDithering,
       applyBlur,
-      colorCount,
+      ditheringColorCount: ditheringColorCount,
       rotation: newRotation,
     });
   };
@@ -250,9 +253,9 @@ const ImageOptimizer: React.FC = () => {
       await processImage(croppedFile, {
         quality,
         maxWidth,
-        applyStyle,
+        applyDithering: applyDithering,
         applyBlur,
-        colorCount,
+        ditheringColorCount: ditheringColorCount,
       });
 
       setIsCropping(false);
@@ -335,9 +338,9 @@ const ImageOptimizer: React.FC = () => {
     await processImage(file, {
       quality,
       maxWidth,
-      applyStyle,
+      applyDithering: applyDithering,
       applyBlur,
-      colorCount,
+      ditheringColorCount: ditheringColorCount,
     });
   };
 
@@ -785,135 +788,29 @@ const ImageOptimizer: React.FC = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Paper
-                sx={{
-                  p: { xs: 2, sm: 3 },
-                  height: "100%",
-                  backgroundColor: "background.default",
-                  borderRadius: 2,
-                  boxShadow: (theme) => theme.shadows[1],
-                  border: (theme) => `1px solid ${theme.palette.divider}`,
-                  transition: "box-shadow 0.2s ease-in-out",
-                  "&:hover": {
-                    boxShadow: (theme) => theme.shadows[2],
-                  },
+              <DitheringControls
+                applyDithering={applyDithering}
+                ditheringColorCount={ditheringColorCount}
+                onDitheringChange={(value: boolean) => {
+                  setApplyDithering(value);
+                  if (originalImage) {
+                    processImage(originalImage, {
+                      quality,
+                      maxWidth,
+                      applyDithering: value,
+                      applyBlur,
+                      ditheringColorCount: ditheringColorCount,
+                    });
+                  }
                 }}
-                role="region"
-                aria-labelledby="dithering-section-title"
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: { xs: 1, sm: 2 },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      alignItems: { xs: "stretch", sm: "center" },
-                      gap: { xs: 1.5, sm: 2 },
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography
-                      variant="h2"
-                      id="dithering-section-title"
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: "medium",
-                        fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        "&::before": {
-                          content: '""',
-                          width: 4,
-                          height: { xs: 24, sm: 24 },
-                          backgroundColor: "primary.main",
-                          borderRadius: 1,
-                        },
-                      }}
-                    >
-                      {t("controls.dithering.title")}
-                    </Typography>
-                    <FormControlLabel
-                      sx={{
-                        m: 0,
-                        ml: { xs: 1, sm: 0 },
-                        ".MuiFormControlLabel-label": {
-                          fontSize: { xs: "1rem", sm: "1rem" },
-                          color: "text.secondary",
-                        },
-                      }}
-                      control={
-                        <Switch
-                          checked={applyStyle}
-                          onChange={handleStyleChange}
-                          aria-label={t("controls.dithering.toggle")}
-                          size="small"
-                        />
-                      }
-                      label={t("controls.dithering.label")}
-                    />
-                  </Box>
-                  <Typography
-                    id="settings-description"
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                      mt: { xs: 0, sm: -1 },
-                    }}
-                  >
-                    {t("controls.dithering.description")}
-                  </Typography>
-                  {applyStyle && (
-                    <Box
-                      sx={{ mt: { xs: 2, sm: 2 } }}
-                      role="group"
-                      aria-label={t("controls.dithering.colors")}
-                    >
-                      <Typography
-                        gutterBottom
-                        id="color-count-slider-label"
-                        sx={{
-                          fontSize: { xs: "1rem", sm: "1rem" },
-                          fontWeight: "medium",
-                          color: "text.secondary",
-                          mb: 1,
-                        }}
-                      >
-                        {t("controls.dithering.colors")}
-                      </Typography>
-                      <Slider
-                        value={colorCount}
-                        onChange={handleColorCountChange}
-                        min={2}
-                        max={32}
-                        step={1}
-                        marks={[
-                          { value: 2, label: "2" },
-                          { value: 8, label: "8" },
-                          { value: 16, label: "16" },
-                          { value: 32, label: "32" },
-                        ]}
-                        valueLabelDisplay="auto"
-                        aria-labelledby="color-count-slider-label"
-                        sx={{
-                          "& .MuiSlider-markLabel": {
-                            fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                          },
-                          "& .MuiSlider-valueLabel": {
-                            fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                          },
-                        }}
-                      />
-                    </Box>
-                  )}
-                </Box>
-              </Paper>
+                onDitheringColorCountChange={(value: number) => {
+                  setDitheringColorCount(value);
+                  debouncedProcessWithParams({
+                    name: "ditheringColorCount",
+                    value,
+                  });
+                }}
+              />
             </Grid>
 
             <Grid item xs={12} md={6}>
