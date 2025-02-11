@@ -26,10 +26,7 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
-  MenuItem,
   Paper,
-  Select,
-  SelectChangeEvent,
   Slider,
   Switch,
   Tooltip,
@@ -49,13 +46,14 @@ import {
   hasMetadata,
 } from "../utils/imageUtils";
 import Footer from "./Footer";
+import LanguageSelector from "./LanguageSelector";
 
 /**
  * Main ImageOptimizer component that handles all image processing operations
  * @returns {JSX.Element} The rendered component
  */
 const ImageOptimizer: React.FC = () => {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const {
     loading,
     progress,
@@ -360,10 +358,6 @@ const ImageOptimizer: React.FC = () => {
     }
   }, [originalStats?.width]);
 
-  const handleLanguageChange = (event: SelectChangeEvent) => {
-    i18n.changeLanguage(event.target.value);
-  };
-
   return (
     <main role="main" aria-label="Image optimizer interface">
       <Card>
@@ -388,117 +382,7 @@ const ImageOptimizer: React.FC = () => {
             >
               {t("title")} <small>{t("beta")}</small>
             </Typography>
-            <Box
-              component="section"
-              aria-labelledby="language-section-title"
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              <Typography
-                variant="h2"
-                id="language-section-title"
-                sx={{
-                  fontSize: "0.9rem",
-                  color: "text.secondary",
-                  fontWeight: "medium",
-                }}
-              >
-                {t("language")}
-              </Typography>
-              <Select
-                value={i18n.language}
-                onChange={handleLanguageChange}
-                size="small"
-                aria-label={t("language")}
-                title={t("language")}
-                sx={{
-                  minWidth: 120,
-                  height: 32,
-                  ".MuiSelect-select": {
-                    py: 0.5,
-                    display: "flex",
-                    alignItems: "center",
-                    gap: 1,
-                  },
-                }}
-              >
-                <MenuItem
-                  value="fr"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇫🇷
-                  </Box>
-                  Français
-                </MenuItem>
-                <MenuItem
-                  value="en"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇬🇧
-                  </Box>
-                  English
-                </MenuItem>
-                <MenuItem
-                  value="es"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇪🇸
-                  </Box>
-                  Español
-                </MenuItem>
-                <MenuItem
-                  value="it"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇮🇹
-                  </Box>
-                  Italiano
-                </MenuItem>
-                <MenuItem
-                  value="hi"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇮🇳
-                  </Box>
-                  हिंदी
-                </MenuItem>
-                <MenuItem
-                  value="ja"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇯🇵
-                  </Box>
-                  日本語
-                </MenuItem>
-              </Select>
-            </Box>
+            <LanguageSelector />
           </Box>
 
           <Paper sx={{ p: 2, mb: 3 }}>
