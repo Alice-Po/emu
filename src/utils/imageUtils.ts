@@ -1,16 +1,11 @@
-import * as exifr from "exifr";
 import * as faceapi from "face-api.js";
 import { utils } from "image-q";
 import { Crop } from "react-image-crop";
 import { useDithering } from "../hooks/useDithering";
-import {
-  ImageDimensions,
-  ImageMetadata,
-  ImageStats,
-} from "../types/ImageOptimizer.types";
+import { ImageDimensions, ImageStats } from "../types/ImageOptimizer.types";
 
 /**
- * Convertit une taille en bytes en format lisible
+ * Converts a size in bytes to a readable format
  */
 export const formatFileSize = (bytes: number): string => {
   if (bytes === 0) return "0 B";
@@ -21,14 +16,7 @@ export const formatFileSize = (bytes: number): string => {
 };
 
 /**
- * Vérifie si l'objet metadata contient des données
- */
-export const hasMetadata = (metadata: ImageMetadata): boolean => {
-  return Object.values(metadata).some((value) => value !== undefined);
-};
-
-/**
- * Récupère les dimensions d'une image
+ * Gets the dimensions of an image
  */
 export const getImageDimensions = (
   file: File | Blob,
@@ -43,42 +31,7 @@ export const getImageDimensions = (
 };
 
 /**
- * Extrait les métadonnées EXIF d'une image
- */
-export const extractMetadata = async (file: File): Promise<ImageMetadata> => {
-  try {
-    const exif = await exifr.parse(file, {
-      pick: [
-        "Make",
-        "Model",
-        "DateTimeOriginal",
-        "ExposureTime",
-        "FNumber",
-        "ISO",
-        "FocalLength",
-        "latitude",
-        "longitude",
-      ],
-    });
-    return {
-      Make: exif?.Make,
-      Model: exif?.Model,
-      DateTimeOriginal: exif?.DateTimeOriginal,
-      ExposureTime: exif?.ExposureTime,
-      FNumber: exif?.FNumber,
-      ISO: exif?.ISO,
-      FocalLength: exif?.FocalLength,
-      latitude: exif?.latitude,
-      longitude: exif?.longitude,
-    };
-  } catch (error) {
-    console.error("Erreur lors de la lecture des métadonnées:", error);
-    return {};
-  }
-};
-
-/**
- * Calcule le ratio de compression entre l'image originale et compressée
+ * Calculates the compression ratio between original and compressed image
  */
 export const calculateCompressionRatio = (
   originalStats: ImageStats,
@@ -91,7 +44,7 @@ export const calculateCompressionRatio = (
 };
 
 /**
- * Recadre une image selon les dimensions spécifiées
+ * Crops an image according to specified dimensions
  */
 export const getCroppedImg = async (
   image: HTMLImageElement,

@@ -6,7 +6,7 @@ import {
   ProcessingOptions,
   ProgressState,
 } from "../types/ImageOptimizer.types";
-import { extractMetadata, getImageDimensions } from "../utils/imageUtils";
+import { getImageDimensions } from "../utils/imageUtils";
 import { useImageCache } from "./useImageCache";
 import { useImageProcessing } from "./useImageProcessing";
 
