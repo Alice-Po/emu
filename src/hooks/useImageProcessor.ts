@@ -1,4 +1,3 @@
-import imageCompression from "browser-image-compression";
 import { useCallback, useRef, useState } from "react";
 import {
   ImageStats,
@@ -7,6 +6,7 @@ import {
 } from "../types/ImageOptimizer.types";
 import { getImageDimensions } from "../utils/imageUtils";
 import { useImageCache } from "./useImageCache";
+import { useImageCompression } from "./useImageCompression";
 import { useImageProcessing } from "./useImageProcessing";
 
 /**
@@ -33,6 +33,38 @@ export const useImageProcessor = () => {
   // Hooks for processing and caching
   const { processImageWithStyle } = useImageProcessing();
   const { cache, shouldReprocess, updateCache, clearCache } = useImageCache();
+  const { compressImage } = useImageCompression();
+
+  /**
+   * Updates the progress state with a new step and value
+   */
+  const updateProgress = useCallback((step: string, value: number) => {
+    setProgress({ step, value });
+  }, []);
+
+  /**
+   * Converts a blob to a data URL and updates the compressed image state
+   */
+  const updateCompressedImage = useCallback(async (blob: Blob) => {
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setCompressedImage(reader.result as string);
+      setLoading(false);
+    };
+    reader.readAsDataURL(blob);
+  }, []);
+
+  /**
+   * Updates the compressed stats with the dimensions and size of a blob
+   */
+  const updateCompressedStats = useCallback(async (blob: Blob) => {
+    const dimensions = await getImageDimensions(blob);
+    setCompressedStats({
+      size: blob.size,
+      width: dimensions.width,
+      height: dimensions.height,
+    });
+  }, []);
 
   /**
    * Main function to process an image with given options
@@ -44,10 +76,7 @@ export const useImageProcessor = () => {
       if (!file) return;
 
       setLoading(true);
-      setProgress({
-        step: "Initialization...",
-        value: 0,
-      });
+      updateProgress("Initialization...", 0);
 
       try {
         // Check if we can reuse the cache
@@ -63,29 +92,13 @@ export const useImageProcessor = () => {
             options.ditheringColorCount,
             options.rotation || 0,
             cache,
-            (step: string, value: number) => {
-              setProgress({
-                step,
-                value,
-              });
-            },
+            updateProgress,
           );
 
-          // Update compressed stats
-          const compressedDimensions = await getImageDimensions(processedBlob);
-          setCompressedStats({
-            size: processedBlob.size,
-            width: compressedDimensions.width,
-            height: compressedDimensions.height,
-          });
-
-          // Convert to data URL for display
-          const reader = new FileReader();
-          reader.onloadend = () => {
-            setCompressedImage(reader.result as string);
-            setLoading(false);
-          };
-          reader.readAsDataURL(processedBlob);
+          await Promise.all([
+            updateCompressedStats(processedBlob),
+            updateCompressedImage(processedBlob),
+          ]);
           return;
         }
 
@@ -100,15 +113,15 @@ export const useImageProcessor = () => {
           height: dimensions.height,
         });
 
-        // Configure and apply initial compression
-        const compressionOptions = {
-          maxSizeMB: 1,
-          maxWidthOrHeight: options.maxWidth,
-          useWebWorker: true,
-          quality: options.quality / 100,
-        };
+        updateProgress("Compressing image...", 0);
 
-        const compressedFile = await imageCompression(file, compressionOptions);
+        // Apply initial compression
+        const compressedFile = await compressImage(file, {
+          quality: options.quality,
+          maxWidth: options.maxWidth,
+        });
+
+        updateProgress("Compressing image...", 50);
 
         // Update cache with new processing options
         updateCache(options);
@@ -124,38 +137,30 @@ export const useImageProcessor = () => {
           options.ditheringColorCount,
           options.rotation || 0,
           cache,
-          (step: string, value: number) => {
-            setProgress({
-              step,
-              value,
-            });
-          },
+          updateProgress,
         );
 
-        // Update final stats and display
-        const compressedDimensions = await getImageDimensions(processedBlob);
-        setCompressedStats({
-          size: processedBlob.size,
-          width: compressedDimensions.width,
-          height: compressedDimensions.height,
-        });
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          setCompressedImage(reader.result as string);
-          setLoading(false);
-        };
-        reader.readAsDataURL(processedBlob);
+        await Promise.all([
+          updateCompressedStats(processedBlob),
+          updateCompressedImage(processedBlob),
+        ]);
       } catch (error) {
         console.error("Error during processing:", error);
         setLoading(false);
-        setProgress({
-          step: "",
-          value: 0,
-        });
+        updateProgress("", 0);
       }
     },
-    [originalImage, processImageWithStyle, shouldReprocess, updateCache, cache],
+    [
+      originalImage,
+      processImageWithStyle,
+      shouldReprocess,
+      updateCache,
+      cache,
+      compressImage,
+      updateProgress,
+      updateCompressedStats,
+      updateCompressedImage,
+    ],
   );
 
   /**
