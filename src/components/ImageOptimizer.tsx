@@ -63,11 +63,10 @@ const ImageOptimizer: React.FC = () => {
     compressedImage,
     originalStats,
     compressedStats,
-    metadata,
     canvasRef,
     processImage,
     setOriginalImage,
-    reset,
+    clearCache,
   } = useImageProcessor();
 
   const [quality, setQuality] = useState<number>(75);

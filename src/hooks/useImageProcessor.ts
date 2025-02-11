@@ -1,179 +1,166 @@
-import { useCallback, useRef, useState } from "react";
+import { utils } from "image-q";
+import { useState } from "react";
 import {
   ImageStats,
   ProcessingOptions,
   ProgressState,
 } from "../types/ImageOptimizer.types";
 import { getImageDimensions } from "../utils/imageUtils";
+import { useCanvasOperations } from "./useCanvasOperations";
+import { useDithering } from "./useDithering";
+import { useFaceBlur } from "./useFaceBlur";
 import { useImageCache } from "./useImageCache";
-import { useImageCompression } from "./useImageCompression";
-import { useImageProcessing } from "./useImageProcessing";
 
 /**
- * Custom hook for managing image processing state and operations
- * Handles image compression, effects application, and caching
+ * Hook to handle image processing
+ * Uses useCanvasOperations for canvas manipulation
  */
 export const useImageProcessor = () => {
-  // Loading and progress state
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<ProgressState>({
     step: "",
     value: 0,
   });
-
-  // Image states
   const [originalImage, setOriginalImage] = useState<File | null>(null);
   const [compressedImage, setCompressedImage] = useState<string | null>(null);
   const [originalStats, setOriginalStats] = useState<ImageStats | null>(null);
   const [compressedStats, setCompressedStats] = useState<ImageStats | null>(
     null,
   );
-  const canvasRef = useRef<HTMLCanvasElement>(null);
 
-  // Hooks for processing and caching
-  const { processImageWithStyle } = useImageProcessing();
+  const { canvasRef, setupCanvas, createBlobFromCanvas } =
+    useCanvasOperations();
   const { cache, shouldReprocess, updateCache, clearCache } = useImageCache();
-  const { compressImage } = useImageCompression();
+  const { applyDitheringEffect } = useDithering();
+  const { blurFaces } = useFaceBlur();
 
-  /**
-   * Updates the progress state with a new step and value
-   */
-  const updateProgress = useCallback((step: string, value: number) => {
+  const updateProgress = (step: string, value: number) => {
     setProgress({ step, value });
-  }, []);
+  };
 
-  /**
-   * Converts a blob to a data URL and updates the compressed image state
-   */
-  const updateCompressedImage = useCallback(async (blob: Blob) => {
-    const reader = new FileReader();
-    reader.onloadend = () => {
-      setCompressedImage(reader.result as string);
-      setLoading(false);
-    };
-    reader.readAsDataURL(blob);
-  }, []);
-
-  /**
-   * Updates the compressed stats with the dimensions and size of a blob
-   */
-  const updateCompressedStats = useCallback(async (blob: Blob) => {
-    const dimensions = await getImageDimensions(blob);
-    setCompressedStats({
-      size: blob.size,
+  const getImageStats = async (file: File | Blob): Promise<ImageStats> => {
+    const dimensions = await getImageDimensions(file);
+    return {
+      size: file.size,
       width: dimensions.width,
       height: dimensions.height,
-    });
-  }, []);
+    };
+  };
 
   /**
-   * Main function to process an image with given options
-   * Handles both cached and full processing paths
+   * Applies image effects (dithering and blur)
    */
-  const processImage = useCallback(
-    async (file: File, options: ProcessingOptions) => {
-      console.log("Processing options:", options);
-      if (!file) return;
+  const applyImageEffects = async (
+    canvas: HTMLCanvasElement,
+    ctx: CanvasRenderingContext2D,
+    imageData: ImageData,
+    options: ProcessingOptions,
+  ): Promise<ImageData> => {
+    let currentImageData = imageData;
 
+    // Apply dithering if enabled
+    if (options.applyDithering) {
+      updateProgress("Preparing dithering", 0);
+      currentImageData = await applyDitheringEffect(
+        currentImageData,
+        options.ditheringColorCount,
+        cache,
+        updateProgress,
+      );
+      ctx.putImageData(currentImageData, 0, 0);
+    }
+
+    // Apply face blur if enabled
+    if (options.applyBlur) {
+      updateProgress("Detecting faces", 0);
+      await blurFaces(canvas, ctx);
+      updateProgress("Face blurring complete", 100);
+
+      if (cache && options.applyDithering) {
+        currentImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+        cache.imageData = currentImageData;
+        cache.pointContainer = utils.PointContainer.fromUint8Array(
+          currentImageData.data,
+          currentImageData.width,
+          currentImageData.height,
+        );
+        cache.lastOptions = {
+          colorCount: options.ditheringColorCount,
+          rotation: options.rotation,
+          applyBlur: options.applyBlur,
+        };
+      }
+    }
+
+    return currentImageData;
+  };
+
+  const processImage = async (file: File, options: ProcessingOptions) => {
+    try {
       setLoading(true);
-      updateProgress("Initialization...", 0);
+      updateProgress("Starting image processing", 0);
 
-      try {
-        // Check if we can reuse the cache
-        if (!shouldReprocess(options, file, originalImage)) {
-          console.log("Using cache for processing");
-          const processedBlob = await processImageWithStyle(
-            file,
-            options.applyDithering,
-            options.quality,
-            options.applyBlur,
-            true,
-            canvasRef,
-            options.ditheringColorCount,
-            options.rotation || 0,
-            cache,
-            updateProgress,
-          );
+      // Update original image stats
+      const stats = await getImageStats(file);
+      setOriginalStats(stats);
 
-          await Promise.all([
-            updateCompressedStats(processedBlob),
-            updateCompressedImage(processedBlob),
-          ]);
+      // Check if we can reuse the cache
+      if (!shouldReprocess(options, file, originalImage)) {
+        updateProgress("Using cached version", 50);
+        if (cache.imageData) {
+          const canvas = canvasRef.current;
+          if (!canvas) throw new Error("Canvas not initialized");
+          const ctx = canvas.getContext("2d");
+          if (!ctx) throw new Error("Could not get canvas context");
+
+          canvas.width = cache.imageData.width;
+          canvas.height = cache.imageData.height;
+          ctx.putImageData(cache.imageData, 0, 0);
+
+          const blob = await createBlobFromCanvas(canvas, options.quality);
+          const compressedStats = await getImageStats(blob);
+          setCompressedStats(compressedStats);
+          setCompressedImage(URL.createObjectURL(blob));
+          updateProgress("Processing complete", 100);
           return;
         }
-
-        // Full processing path when cache cannot be used
-        console.log("Starting new full processing");
-        const dimensions = await getImageDimensions(file);
-
-        // Set original image stats
-        setOriginalStats({
-          size: file.size,
-          width: dimensions.width,
-          height: dimensions.height,
-        });
-
-        updateProgress("Compressing image...", 0);
-
-        // Apply initial compression
-        const compressedFile = await compressImage(file, {
-          quality: options.quality,
-          maxWidth: options.maxWidth,
-        });
-
-        updateProgress("Compressing image...", 50);
-
-        // Update cache with new processing options
-        updateCache(options);
-
-        // Apply additional processing effects
-        const processedBlob = await processImageWithStyle(
-          compressedFile,
-          options.applyDithering,
-          options.quality,
-          options.applyBlur,
-          true,
-          canvasRef,
-          options.ditheringColorCount,
-          options.rotation || 0,
-          cache,
-          updateProgress,
-        );
-
-        await Promise.all([
-          updateCompressedStats(processedBlob),
-          updateCompressedImage(processedBlob),
-        ]);
-      } catch (error) {
-        console.error("Error during processing:", error);
-        setLoading(false);
-        updateProgress("", 0);
       }
-    },
-    [
-      originalImage,
-      processImageWithStyle,
-      shouldReprocess,
-      updateCache,
-      cache,
-      compressImage,
-      updateProgress,
-      updateCompressedStats,
-      updateCompressedImage,
-    ],
-  );
 
-  /**
-   * Resets all state and clears the cache
-   */
-  const reset = useCallback(() => {
-    setOriginalImage(null);
-    setCompressedImage(null);
-    setOriginalStats(null);
-    setCompressedStats(null);
-    setLoading(false);
-    clearCache();
-  }, [clearCache]);
+      // Create image and canvas
+      const img = new Image();
+      img.src = URL.createObjectURL(file);
+      await new Promise((resolve) => (img.onload = resolve));
+
+      const canvas = canvasRef.current;
+      if (!canvas) throw new Error("Canvas not initialized");
+      const ctx = canvas.getContext("2d");
+      if (!ctx) throw new Error("Could not get canvas context");
+
+      // Setup canvas and apply rotation
+      const imageData = setupCanvas(canvas, ctx, img, options.rotation);
+
+      // Apply effects (dithering and blur)
+      await applyImageEffects(canvas, ctx, imageData, options);
+
+      // Update cache with new options
+      updateCache(options);
+
+      // Create final blob
+      updateProgress("Finalizing image", 90);
+      const blob = await createBlobFromCanvas(canvas, options.quality);
+      const compressedStats = await getImageStats(blob);
+
+      // Update states
+      setCompressedStats(compressedStats);
+      setCompressedImage(URL.createObjectURL(blob));
+      updateProgress("Processing complete", 100);
+    } catch (error) {
+      console.error("Error processing image:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return {
     loading,
@@ -185,7 +172,6 @@ export const useImageProcessor = () => {
     canvasRef,
     processImage,
     setOriginalImage,
-    reset,
     clearCache,
   };
 };
