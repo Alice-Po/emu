@@ -72,7 +72,7 @@ const ImageOptimizer: React.FC = () => {
 
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
-  const [applyStyle, setApplyStyle] = useState<boolean>(true);
+  const [applyStyle, setApplyStyle] = useState<boolean>(false);
   const [colorCount, setColorCount] = useState<number>(8);
   const [applyBlur, setApplyBlur] = useState<boolean>(false);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
@@ -90,6 +90,7 @@ const ImageOptimizer: React.FC = () => {
     "Patience, votre image est en cours de traitement..",
   );
   const [maxWidthLimit, setMaxWidthLimit] = useState<number>(3840);
+  const loadingSectionRef = useRef<HTMLDivElement>(null);
 
   /**
    * Debounced function that handles parameter changes for image processing
@@ -305,6 +306,20 @@ const ImageOptimizer: React.FC = () => {
     };
   }, [loading, t]);
 
+  const scrollToLoadingSection = () => {
+    if (loadingSectionRef.current) {
+      const yOffset = -100;
+      const element = loadingSectionRef.current;
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: y,
+        behavior: "smooth",
+      });
+    }
+  };
+
   /**
    * Handles initial image upload
    * Sets the original image and triggers initial processing
@@ -326,6 +341,15 @@ const ImageOptimizer: React.FC = () => {
       colorCount,
     });
   };
+
+  // Add effect to handle scroll when loading state changes
+  useEffect(() => {
+    if (loading && loadingSectionRef.current) {
+      setTimeout(() => {
+        scrollToLoadingSection();
+      }, 100);
+    }
+  }, [loading]);
 
   useEffect(() => {
     if (originalStats?.width) {
@@ -1264,10 +1288,19 @@ const ImageOptimizer: React.FC = () => {
                 {loading ? (
                   <>
                     <Box
+                      ref={loadingSectionRef}
                       role="status"
                       aria-live="polite"
                       aria-busy="true"
                       aria-label={t("loading.status")}
+                      sx={{
+                        minHeight: "300px",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        my: 4,
+                      }}
                     >
                       <Box
                         component="img"
