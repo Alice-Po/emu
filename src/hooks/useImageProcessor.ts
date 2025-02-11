@@ -1,7 +1,6 @@
 import imageCompression from "browser-image-compression";
 import { useCallback, useRef, useState } from "react";
 import {
-  ImageMetadata,
   ImageStats,
   ProcessingOptions,
   ProgressState,
@@ -29,7 +28,6 @@ export const useImageProcessor = () => {
   const [compressedStats, setCompressedStats] = useState<ImageStats | null>(
     null,
   );
-  const [metadata, setMetadata] = useState<ImageMetadata | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   // Hooks for processing and caching
@@ -93,13 +91,9 @@ export const useImageProcessor = () => {
 
         // Full processing path when cache cannot be used
         console.log("Starting new full processing");
-        const [dimensions, imageMetadata] = await Promise.all([
-          getImageDimensions(file),
-          extractMetadata(file),
-        ]);
+        const dimensions = await getImageDimensions(file);
 
-        // Set original image metadata and stats
-        setMetadata(imageMetadata);
+        // Set original image stats
         setOriginalStats({
           size: file.size,
           width: dimensions.width,
@@ -172,7 +166,6 @@ export const useImageProcessor = () => {
     setCompressedImage(null);
     setOriginalStats(null);
     setCompressedStats(null);
-    setMetadata(null);
     setLoading(false);
     clearCache();
   }, [clearCache]);
@@ -184,7 +177,6 @@ export const useImageProcessor = () => {
     compressedImage,
     originalStats,
     compressedStats,
-    metadata,
     canvasRef,
     processImage,
     setOriginalImage,

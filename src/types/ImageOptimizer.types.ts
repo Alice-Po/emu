@@ -81,3 +81,23 @@ export interface DitheringControlsProps {
   /** Callback called when dithering color count changes */
   onDitheringColorCountChange: (value: number) => void;
 }
+
+/**
+ * Interface for image processing options
+ */
+export interface ProcessingOptions {
+  quality: number;
+  maxWidth: number;
+  applyDithering: boolean;
+  applyBlur: boolean;
+  ditheringColorCount: number;
+  rotation?: number;
+}
+
+/**
+ * Interface for progress state during processing
+ */
+export interface ProgressState {
+  step: string;
+  value: number;
+}
