@@ -91,6 +91,30 @@
         "madeIn": "Boccagiaにて制作"
     },
     "metadataRemoved": "処理中にメタデータは自動的に削除されました。",
+    "processInfo": {
+        "title": "適用された処理",
+        "compression": "品質{{quality}}%で圧縮 ({{ratio}}%削減、{{originalSize}}から{{newSize}}へ)",
+        "resize": "{{originalWidth}}x{{originalHeight}}pxから{{newWidth}}x{{newHeight}}pxにリサイズ",
+        "dithering": "{{colors}}色でディザリング効果を適用",
+        "faceBlur": "顔の自動ぼかしを適用",
+        "rotation": "{{degrees}}°回転",
+        "metadata": "メタデータの削除"
+    },
+    "processing": {
+        "steps": {
+            "starting": "画像処理を開始中",
+            "usingCache": "キャッシュバージョンを使用中",
+            "finalizing": "画像を仕上げ中",
+            "complete": "処理が完了しました"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "キャッシュされたカラーパレットを使用中",
+            "creatingPalette": "カラーパレットを作成中",
+            "applying": "ディザリング効果を適用中"
+        }
+    },
     "image": {
         "original": {
             "alt": "元の画像"

@@ -1,4 +1,5 @@
 import { applyPalette, buildPalette, utils } from "image-q";
+import { useTranslation } from "react-i18next";
 
 interface DitheringCache {
   paletteCache: Map<string, any>;
@@ -10,6 +11,8 @@ interface DitheringCache {
  * @returns Functions and utilities for applying dithering effect
  */
 export const useDithering = () => {
+  const { t } = useTranslation();
+
   /**
    * Generates a simple hash of the image for caching purposes.
    * This hash is used as a key to store and retrieve color palettes from the cache.
@@ -61,19 +64,19 @@ export const useDithering = () => {
         palette = cache.paletteCache.get(cacheKey);
 
         if (palette) {
-          onProgress?.("Using cached palette", 100);
+          onProgress?.(t("dithering.steps.usingCache"), 100);
         }
       }
 
       // Create a new palette if necessary
       if (!palette) {
-        onProgress?.("Creating palette", 0);
+        onProgress?.(t("dithering.steps.creatingPalette"), 0);
         palette = await buildPalette([pointContainer], {
           colorDistanceFormula: "euclidean",
           paletteQuantization: "neuquant",
           colors: colors,
           onProgress: (progress: number) => {
-            onProgress?.("Creating palette", progress);
+            onProgress?.(t("dithering.steps.creatingPalette"), progress);
           },
         });
 
@@ -90,12 +93,12 @@ export const useDithering = () => {
       }
 
       // Apply the palette to the image with dithering
-      onProgress?.("Applying dithering", 0);
+      onProgress?.(t("dithering.steps.applying"), 0);
       const outPointContainer = await applyPalette(pointContainer, palette, {
         colorDistanceFormula: "euclidean",
         imageQuantization: "floyd-steinberg",
         onProgress: (progress: number) => {
-          onProgress?.("Applying dithering", progress);
+          onProgress?.(t("dithering.steps.applying"), progress);
         },
       });
 

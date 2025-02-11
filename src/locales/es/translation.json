@@ -91,6 +91,30 @@
         "madeIn": "Hecho en Boccagia"
     },
     "metadataRemoved": "Los metadatos se han eliminado automáticamente durante el procesamiento.",
+    "processInfo": {
+        "title": "Procesos Aplicados",
+        "compression": "Compresión al {{quality}}% de calidad ({{ratio}}% de reducción, de {{originalSize}} a {{newSize}})",
+        "resize": "Redimensionado de {{originalWidth}}x{{originalHeight}}px a {{newWidth}}x{{newHeight}}px",
+        "dithering": "Efecto de tramado aplicado con {{colors}} colores",
+        "faceBlur": "Difuminado automático de rostros aplicado",
+        "rotation": "Rotación de {{degrees}}°",
+        "metadata": "Eliminación de metadatos"
+    },
+    "processing": {
+        "steps": {
+            "starting": "Iniciando procesamiento de imagen",
+            "usingCache": "Usando versión en caché",
+            "finalizing": "Finalizando imagen",
+            "complete": "Procesamiento completado"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "Usando paleta de colores en caché",
+            "creatingPalette": "Creando paleta de colores",
+            "applying": "Aplicando efecto de tramado"
+        }
+    },
     "image": {
         "original": {
             "alt": "Imagen original"

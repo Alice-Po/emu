@@ -91,6 +91,30 @@
         "madeIn": "Fatto a Boccagia"
     },
     "metadataRemoved": "I metadati sono stati rimossi automaticamente durante l'elaborazione.",
+    "processInfo": {
+        "title": "Processi Applicati",
+        "compression": "Compressione al {{quality}}% di qualità ({{ratio}}% di riduzione, da {{originalSize}} a {{newSize}})",
+        "resize": "Ridimensionamento da {{originalWidth}}x{{originalHeight}}px a {{newWidth}}x{{newHeight}}px",
+        "dithering": "Effetto dithering applicato con {{colors}} colori",
+        "faceBlur": "Sfocatura automatica dei volti applicata",
+        "rotation": "Rotazione di {{degrees}}°",
+        "metadata": "Rimozione dei metadati"
+    },
+    "processing": {
+        "steps": {
+            "starting": "Avvio elaborazione immagine",
+            "usingCache": "Utilizzo versione in cache",
+            "finalizing": "Finalizzazione immagine",
+            "complete": "Elaborazione completata"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "Utilizzo della palette di colori in cache",
+            "creatingPalette": "Creazione della palette di colori",
+            "applying": "Applicazione dell'effetto dithering"
+        }
+    },
     "image": {
         "original": {
             "alt": "Immagine originale"

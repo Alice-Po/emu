@@ -91,6 +91,30 @@
         "madeIn": "बोकाजिया में निर्मित"
     },
     "metadataRemoved": "प्रसंस्करण के दौरान मेटाडेटा स्वचालित रूप से हटा दिया गया है।",
+    "processInfo": {
+        "title": "लागू की गई प्रक्रियाएं",
+        "compression": "{{quality}}% गुणवत्ता पर कंप्रेशन ({{ratio}}% कमी, {{originalSize}} से {{newSize}} तक)",
+        "resize": "{{originalWidth}}x{{originalHeight}}px से {{newWidth}}x{{newHeight}}px तक आकार बदला गया",
+        "dithering": "{{colors}} रंगों के साथ डिथरिंग प्रभाव लागू किया गया",
+        "faceBlur": "स्वचालित चेहरा धुंधलाकरण लागू किया गया",
+        "rotation": "{{degrees}}° का घूर्णन",
+        "metadata": "मेटाडेटा हटाया गया"
+    },
+    "processing": {
+        "steps": {
+            "starting": "छवि प्रसंस्करण प्रारंभ हो रहा है",
+            "usingCache": "कैश किया गया संस्करण उपयोग कर रहे हैं",
+            "finalizing": "छवि को अंतिम रूप दिया जा रहा है",
+            "complete": "प्रसंस्करण पूर्ण हुआ"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "कैश की गई रंग पैलेट का उपयोग",
+            "creatingPalette": "रंग पैलेट बनाई जा रही है",
+            "applying": "डिथरिंग प्रभाव लागू किया जा रहा है"
+        }
+    },
     "image": {
         "original": {
             "alt": "मूल छवि"

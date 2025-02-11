@@ -1,5 +1,6 @@
 import { utils } from "image-q";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 import {
   ImageStats,
   ProcessingOptions,
@@ -16,6 +17,7 @@ import { useImageCache } from "./useImageCache";
  * Uses useCanvasOperations for canvas manipulation
  */
 export const useImageProcessor = () => {
+  const { t } = useTranslation();
   const [loading, setLoading] = useState(false);
   const [progress, setProgress] = useState<ProgressState>({
     step: "",
@@ -98,7 +100,7 @@ export const useImageProcessor = () => {
   const processImage = async (file: File, options: ProcessingOptions) => {
     try {
       setLoading(true);
-      updateProgress("Starting image processing", 0);
+      updateProgress(t("processing.steps.starting"), 0);
 
       // Update original image stats
       const stats = await getImageStats(file);
@@ -106,7 +108,7 @@ export const useImageProcessor = () => {
 
       // Check if we can reuse the cache
       if (!shouldReprocess(options, file, originalImage)) {
-        updateProgress("Using cached version", 50);
+        updateProgress(t("processing.steps.usingCache"), 50);
         if (cache.imageData) {
           const canvas = canvasRef.current;
           if (!canvas) throw new Error("Canvas not initialized");
@@ -121,7 +123,7 @@ export const useImageProcessor = () => {
           const compressedStats = await getImageStats(blob);
           setCompressedStats(compressedStats);
           setCompressedImage(URL.createObjectURL(blob));
-          updateProgress("Processing complete", 100);
+          updateProgress(t("processing.steps.complete"), 100);
           return;
         }
       }
@@ -146,14 +148,14 @@ export const useImageProcessor = () => {
       updateCache(options);
 
       // Create final blob
-      updateProgress("Finalizing image", 90);
+      updateProgress(t("processing.steps.finalizing"), 90);
       const blob = await createBlobFromCanvas(canvas, options.quality);
       const compressedStats = await getImageStats(blob);
 
       // Update states
       setCompressedStats(compressedStats);
       setCompressedImage(URL.createObjectURL(blob));
-      updateProgress("Processing complete", 100);
+      updateProgress(t("processing.steps.complete"), 100);
     } catch (error) {
       console.error("Error processing image:", error);
       throw error;
