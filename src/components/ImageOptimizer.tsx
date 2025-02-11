@@ -158,7 +158,7 @@ const ImageOptimizer: React.FC = () => {
   ) => {
     const value = newValue as number;
     setDitheringColorCount(value);
-    debouncedProcessWithParams({ name: "colorCount", value });
+    debouncedProcessWithParams({ name: "ditheringColorCount", value });
   };
 
   /**
