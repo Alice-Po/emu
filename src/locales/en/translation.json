@@ -47,7 +47,26 @@
             "label": "Apply dithering effect",
             "colors": "Number of colors",
             "toggle": "Toggle dithering effect",
-            "description": "Dithering reduces the number of colors while preserving visual quality"
+            "description": "Dithering reduces the number of colors while preserving visual quality",
+            "algorithm": "Dithering algorithm",
+            "quality": "Dithering quality",
+            "serpentine": "Serpentine mode (better quality)",
+            "qualityLevels": {
+                "low": "Low (faster)",
+                "medium": "Medium (balanced)",
+                "high": "High (best quality)"
+            },
+            "algorithms": {
+                "FloydSteinberg": "Floyd-Steinberg (Standard)",
+                "FalseFloydSteinberg": "False Floyd-Steinberg (Faster)",
+                "Stucki": "Stucki (High quality)",
+                "Atkinson": "Atkinson (Retro style)",
+                "Jarvis": "Jarvis (Detailed)",
+                "Burkes": "Burkes (Balanced)",
+                "Sierra": "Sierra (Smooth)",
+                "TwoSierra": "Two-Row Sierra (Lighter)",
+                "SierraLite": "Sierra Lite (Minimal)"
+            }
         },
         "faceBlur": {
             "title": "Face Blurring",

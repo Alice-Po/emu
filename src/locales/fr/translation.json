@@ -47,7 +47,26 @@
             "label": "Appliquer l'effet de tramage",
             "colors": "Nombre de couleurs",
             "toggle": "Activer/désactiver l'effet de tramage",
-            "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle"
+            "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle",
+            "algorithm": "Algorithme de tramage",
+            "quality": "Qualité du tramage",
+            "serpentine": "Mode serpentin (meilleure qualité)",
+            "qualityLevels": {
+                "low": "Basse (plus rapide)",
+                "medium": "Moyenne (équilibrée)",
+                "high": "Haute (meilleure qualité)"
+            },
+            "algorithms": {
+                "FloydSteinberg": "Floyd-Steinberg (Standard)",
+                "FalseFloydSteinberg": "False Floyd-Steinberg (Plus rapide)",
+                "Stucki": "Stucki (Haute qualité)",
+                "Atkinson": "Atkinson (Style rétro)",
+                "Jarvis": "Jarvis (Détaillé)",
+                "Burkes": "Burkes (Équilibré)",
+                "Sierra": "Sierra (Doux)",
+                "TwoSierra": "Two-Row Sierra (Plus léger)",
+                "SierraLite": "Sierra Lite (Minimal)"
+            }
         },
         "faceBlur": {
             "title": "Floutage des visages",

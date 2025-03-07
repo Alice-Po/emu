@@ -62,13 +62,29 @@ export const useImageProcessor = () => {
 
     // Apply dithering if enabled
     if (options.applyDithering) {
+      console.log("=== IMAGE PROCESSOR DEBUG ===");
+      console.log("Dithering options received:", {
+        ditheringOptions: options.ditheringOptions,
+        applyDithering: options.applyDithering,
+        // Autres options disponibles
+        ...options,
+      });
+
       updateProgress("Preparing dithering", 0);
       currentImageData = await applyDitheringEffect(
         currentImageData,
-        options.ditheringColorCount,
+        options.ditheringOptions,
         cache,
         updateProgress,
       );
+      console.log("Dithering effect applied, checking result:", {
+        width: currentImageData.width,
+        height: currentImageData.height,
+        dataLength: currentImageData.data.length,
+        sampleData: Array.from(currentImageData.data.slice(0, 40)),
+      });
+      console.log("=== END IMAGE PROCESSOR DEBUG ===");
+
       ctx.putImageData(currentImageData, 0, 0);
     }
 
@@ -87,7 +103,7 @@ export const useImageProcessor = () => {
           currentImageData.height,
         );
         cache.lastOptions = {
-          colorCount: options.ditheringColorCount,
+          ditheringOptions: options.ditheringOptions,
           rotation: options.rotation,
           applyBlur: options.applyBlur,
         };

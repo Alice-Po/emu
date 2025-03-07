@@ -64,22 +64,36 @@ export interface PaletteCache {
 export interface ProcessingCache {
   pointContainer: any;
   imageData: ImageData | null;
-  lastOptions: any;
+  lastOptions: ProcessingOptions | null;
   paletteCache: Map<string, any>;
+  quantizer: any;
+  imageHash: string | null;
 }
 
 /**
  * Interface for dithering controls
  */
+export type DitheringAlgorithm =
+  | "FloydSteinberg"
+  | "FalseFloydSteinberg"
+  | "Stucki"
+  | "Atkinson"
+  | "Jarvis"
+  | "Burkes"
+  | "Sierra"
+  | "TwoSierra"
+  | "SierraLite";
+
+export interface DitheringOptions {
+  algorithm: DitheringAlgorithm;
+  serpentine: boolean;
+  colors: number;
+  quality: "low" | "medium" | "high";
+}
+
 export interface DitheringControlsProps {
-  /** Dithering activation state */
   applyDithering: boolean;
-  /** Number of colors for dithering */
-  ditheringColorCount: number;
-  /** Callback called when dithering state changes */
-  onDitheringChange: (value: boolean) => void;
-  /** Callback called when dithering color count changes */
-  onDitheringColorCountChange: (value: number) => void;
+  onDitheringChange: (apply: boolean) => void;
 }
 
 /**
@@ -90,7 +104,6 @@ export interface ProcessingOptions {
   maxWidth: number;
   applyDithering: boolean;
   applyBlur: boolean;
-  ditheringColorCount: number;
   rotation?: number;
 }
 

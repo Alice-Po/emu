@@ -2,7 +2,6 @@ import {
   Box,
   FormControlLabel,
   Paper,
-  Slider,
   Switch,
   Typography,
 } from "@mui/material";
@@ -15,9 +14,7 @@ import { DitheringControlsProps } from "../types/ImageOptimizer.types";
  */
 const DitheringControls: React.FC<DitheringControlsProps> = ({
   applyDithering,
-  ditheringColorCount,
   onDitheringChange,
-  onDitheringColorCountChange,
 }) => {
   const { t } = useTranslation();
 
@@ -25,13 +22,6 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     onDitheringChange(event.target.checked);
-  };
-
-  const handleDitheringColorCountChange = (
-    _event: Event,
-    newValue: number | number[],
-  ) => {
-    onDitheringColorCountChange(newValue as number);
   };
 
   return (
@@ -43,10 +33,6 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
         borderRadius: 2,
         boxShadow: (theme) => theme.shadows[1],
         border: (theme) => `1px solid ${theme.palette.divider}`,
-        transition: "box-shadow 0.2s ease-in-out",
-        "&:hover": {
-          boxShadow: (theme) => theme.shadows[2],
-        },
       }}
       role="region"
       aria-labelledby="dithering-section-title"
@@ -109,7 +95,6 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
           />
         </Box>
         <Typography
-          id="settings-description"
           variant="body2"
           color="text.secondary"
           sx={{
@@ -119,49 +104,6 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
         >
           {t("controls.dithering.description")}
         </Typography>
-        {applyDithering && (
-          <Box
-            sx={{ mt: { xs: 2, sm: 2 } }}
-            role="group"
-            aria-label={t("controls.dithering.colors")}
-          >
-            <Typography
-              gutterBottom
-              id="color-count-slider-label"
-              sx={{
-                fontSize: { xs: "1rem", sm: "1rem" },
-                fontWeight: "medium",
-                color: "text.secondary",
-                mb: 1,
-              }}
-            >
-              {t("controls.dithering.colors")}
-            </Typography>
-            <Slider
-              value={ditheringColorCount}
-              onChange={handleDitheringColorCountChange}
-              min={2}
-              max={32}
-              step={1}
-              marks={[
-                { value: 2, label: "2" },
-                { value: 8, label: "8" },
-                { value: 16, label: "16" },
-                { value: 32, label: "32" },
-              ]}
-              valueLabelDisplay="auto"
-              aria-labelledby="color-count-slider-label"
-              sx={{
-                "& .MuiSlider-markLabel": {
-                  fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                },
-                "& .MuiSlider-valueLabel": {
-                  fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                },
-              }}
-            />
-          </Box>
-        )}
       </Box>
     </Paper>
   );

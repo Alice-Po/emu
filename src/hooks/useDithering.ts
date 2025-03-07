@@ -1,13 +1,23 @@
-import { applyPalette, buildPalette, utils } from "image-q";
 import { useTranslation } from "react-i18next";
+import { DitheringOptions } from "../types/ImageOptimizer.types";
+
+/// <reference path="../types/rgbquant.d.ts" />
 
 interface DitheringCache {
-  paletteCache: Map<string, any>;
+  quantizer: any;
+  imageHash: string | null;
+  imageData?: ImageData | null;
+  pointContainer?: any;
+  lastOptions?: {
+    colorCount: number;
+    rotation?: number;
+    applyBlur: boolean;
+  };
 }
 
 /**
- * Custom hook to handle dithering effect on images.
- * Provides functionality for color reduction and dithering using the Floyd-Steinberg algorithm.
+ * Custom hook to handle dithering effect on images using RgbQuant.js.
+ * Provides functionality for color quantization and dithering with various algorithms.
  * @returns Functions and utilities for applying dithering effect
  */
 export const useDithering = () => {
@@ -15,7 +25,6 @@ export const useDithering = () => {
 
   /**
    * Generates a simple hash of the image for caching purposes.
-   * This hash is used as a key to store and retrieve color palettes from the cache.
    * @param imageData The image data to generate hash from
    * @returns A string representing the image hash
    */
@@ -29,93 +38,106 @@ export const useDithering = () => {
   };
 
   /**
-   * Applies dithering effect to an image using color quantization and Floyd-Steinberg dithering.
-   * The function can use a cached palette if available to improve performance.
-   *
+   * Convertit ImageData en tableau de pixels RGB
+   * @param imageData Les données de l'image à convertir
+   * @returns Un tableau de pixels [r,g,b,r,g,b,...]
+   */
+  const imageDataToPixels = (imageData: ImageData): Uint8Array => {
+    console.log("Converting ImageData to pixels array", {
+      width: imageData.width,
+      height: imageData.height,
+      totalPixels: imageData.width * imageData.height,
+    });
+
+    const pixels = new Uint8Array(imageData.width * imageData.height * 3);
+    let j = 0;
+    for (let i = 0; i < imageData.data.length; i += 4) {
+      pixels[j] = imageData.data[i]; // R
+      pixels[j + 1] = imageData.data[i + 1]; // G
+      pixels[j + 2] = imageData.data[i + 2]; // B
+      j += 3;
+    }
+    return pixels;
+  };
+
+  /**
+   * Applies dithering effect to an image using RgbQuant color quantization.
    * @param imageData The image data to process
-   * @param numColors Number of colors to use in the reduced palette (between 2 and 32)
-   * @param cache Optional cache to store and retrieve color palettes
+   * @param options The dithering options
+   * @param cache Optional cache to store and reuse the quantizer
    * @param onProgress Optional callback to track processing progress
    * @returns New image data with the dithering effect applied
    */
   const applyDitheringEffect = async (
     imageData: ImageData,
-    numColors = 32,
+    _options: DitheringOptions,
     cache?: DitheringCache,
     onProgress?: (step: string, value: number) => void,
   ): Promise<ImageData> => {
-    // Verify that the number of colors is in the valid range
-    const colors = Math.max(2, Math.min(32, numColors));
-
-    // Create a point container for the source image
-    const pointContainer = utils.PointContainer.fromUint8Array(
-      imageData.data,
-      imageData.width,
-      imageData.height,
-    );
-
     try {
-      let palette;
+      console.log("=== DITHERING DEBUG ===");
 
-      // Check if a palette exists in the cache
-      if (cache?.paletteCache) {
-        const imageHash = generateImageHash(imageData);
-        const cacheKey = `${imageHash}-${colors}`;
-        palette = cache.paletteCache.get(cacheKey);
+      const RgbQuant = (await import("rgbquant")).default;
 
-        if (palette) {
-          onProgress?.(t("dithering.steps.usingCache"), 100);
-        }
-      }
+      let quantizer = cache?.quantizer;
+      const currentHash = generateImageHash(imageData);
 
-      // Create a new palette if necessary
-      if (!palette) {
+      // Create new quantizer if cache is invalid
+      if (!quantizer || cache?.imageHash !== currentHash) {
         onProgress?.(t("dithering.steps.creatingPalette"), 0);
-        palette = await buildPalette([pointContainer], {
-          colorDistanceFormula: "euclidean",
-          paletteQuantization: "neuquant",
-          colors: colors,
-          onProgress: (progress: number) => {
-            onProgress?.(t("dithering.steps.creatingPalette"), progress);
-          },
+        console.log("Creating new quantizer with default options");
+
+        // Utiliser les options par défaut de RgbQuant
+        quantizer = new RgbQuant({
+          colors: 16,
+          method: 2,
+          dithKern: "FloydSteinberg",
+          dithSerp: true,
         });
 
-        // Cache the new palette
-        if (cache?.paletteCache && palette) {
-          const imageHash = generateImageHash(imageData);
-          const cacheKey = `${imageHash}-${colors}`;
-          cache.paletteCache.set(cacheKey, palette);
+        // Convertir l'image en format approprié et l'échantillonner
+        const pixels = imageDataToPixels(imageData);
+        quantizer.sample(pixels);
+        onProgress?.(t("dithering.steps.creatingPalette"), 50);
+
+        // Construire la palette
+        quantizer.palette(true);
+        onProgress?.(t("dithering.steps.creatingPalette"), 100);
+
+        // Update cache if available
+        if (cache) {
+          cache.quantizer = quantizer;
+          cache.imageHash = currentHash;
+          console.log("Cache updated");
         }
+      } else {
+        console.log("Using cached quantizer");
+        onProgress?.(t("dithering.steps.usingCache"), 100);
       }
 
-      if (!palette) {
-        throw new Error("Palette creation failed");
-      }
-
-      // Apply the palette to the image with dithering
       onProgress?.(t("dithering.steps.applying"), 0);
-      const outPointContainer = await applyPalette(pointContainer, palette, {
-        colorDistanceFormula: "euclidean",
-        imageQuantization: "floyd-steinberg",
-        onProgress: (progress: number) => {
-          onProgress?.(t("dithering.steps.applying"), progress);
-        },
-      });
+      console.log("Starting reduction");
 
-      if (!outPointContainer) {
-        throw new Error("Palette application failed");
+      // Appliquer le dithering
+      const pixels = imageDataToPixels(imageData);
+      const reduced = quantizer.reduce(pixels);
+
+      // Convertir le résultat en ImageData
+      const newImageData = new ImageData(imageData.width, imageData.height);
+      let j = 0;
+      for (let i = 0; i < reduced.length; i += 3) {
+        newImageData.data[j] = reduced[i]; // R
+        newImageData.data[j + 1] = reduced[i + 1]; // G
+        newImageData.data[j + 2] = reduced[i + 2]; // B
+        newImageData.data[j + 3] = 255; // A
+        j += 4;
       }
 
-      // Convert the result to ImageData
-      const uint8array = outPointContainer.toUint8Array();
-      return new ImageData(
-        new Uint8ClampedArray(uint8array),
-        imageData.width,
-        imageData.height,
-      );
+      onProgress?.(t("dithering.steps.applying"), 100);
+      return newImageData;
     } catch (error) {
-      console.error("Error applying dithering:", error);
-      return imageData; // Return original image in case of error
+      console.error("Error in dithering process:", error);
+      return imageData;
     }
   };
 

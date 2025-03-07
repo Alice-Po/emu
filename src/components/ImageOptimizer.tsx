@@ -51,6 +51,7 @@ import Footer from "./Footer";
 import ImageMetadataDisplay from "./ImageMetadataDisplay";
 import LanguageSelector from "./LanguageSelector";
 import { ThemeToggle } from "./ThemeToggle";
+import { DitheringOptions } from "../types/ImageOptimizer.types";
 
 interface ImageOptimizerProps {
   onThemeChange: (mode: "light" | "dark") => void;
@@ -78,7 +79,6 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
   const [applyDithering, setApplyDithering] = useState<boolean>(false);
-  const [ditheringColorCount, setDitheringColorCount] = useState<number>(32);
   const [applyBlur, setApplyBlur] = useState<boolean>(false);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
   const [rotation, setRotation] = useState<number>(0);
@@ -112,9 +112,9 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
       const options = {
         quality,
         maxWidth,
-        applyDithering: applyDithering,
+        applyDithering,
         applyBlur,
-        ditheringColorCount: ditheringColorCount,
+        rotation,
         [params.name]: params.value,
       };
 
@@ -151,31 +151,12 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
   };
 
   /**
-   * Handles changes to the color count slider for dithering effect
-   * Updates the colorCount state and triggers debounced image processing
-   *
-   * @param {Event} _event - The event object (unused)
-   * @param {number | number[]} newValue - The new color count value
-   */
-  const handleDitheringColorCountChange = (
-    _event: Event,
-    newValue: number | number[],
-  ) => {
-    const value = newValue as number;
-    setDitheringColorCount(value);
-    debouncedProcessWithParams({ name: "ditheringColorCount", value });
-  };
-
-  /**
    * Handles toggling of the dithering effect
    * Immediately processes the image with the new style setting
    *
    * @param {React.ChangeEvent<HTMLInputElement>} event - The change event
    */
-  const handleDitheringChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const value = event.target.checked;
+  const handleDitheringChange = (value: boolean) => {
     setApplyDithering(value);
     if (originalImage) {
       processImage(originalImage, {
@@ -183,7 +164,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
         maxWidth,
         applyDithering: value,
         applyBlur,
-        ditheringColorCount: ditheringColorCount,
+        rotation,
       });
     }
   };
@@ -203,7 +184,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
         maxWidth,
         applyDithering: applyDithering,
         applyBlur: value,
-        ditheringColorCount: ditheringColorCount,
+        rotation,
       });
     }
   };
@@ -235,9 +216,8 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
     await processImage(originalImage, {
       quality,
       maxWidth,
-      applyDithering: applyDithering,
+      applyDithering,
       applyBlur,
-      ditheringColorCount: ditheringColorCount,
       rotation: newRotation,
     });
   };
@@ -258,9 +238,9 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
       await processImage(croppedFile, {
         quality,
         maxWidth,
-        applyDithering: applyDithering,
+        applyDithering,
         applyBlur,
-        ditheringColorCount: ditheringColorCount,
+        rotation,
       });
 
       setIsCropping(false);
@@ -343,9 +323,9 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
     await processImage(file, {
       quality,
       maxWidth,
-      applyDithering: applyDithering,
+      applyDithering,
       applyBlur,
-      ditheringColorCount: ditheringColorCount,
+      rotation,
     });
   };
 
@@ -447,33 +427,34 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                     flex: 1,
                     width: "100%",
                     p: 2,
-                    bgcolor: "#1E1E1E",
+                    bgcolor: "background.paper",
                     borderRadius: 1,
                     textAlign: "center",
+                    border: 1,
+                    borderColor: "divider",
                   }}
                 >
                   <Typography
-                    color="grey.300"
                     variant="h2"
                     gutterBottom
                     sx={{
-                      transition: "color 0.3s ease",
                       fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
+                      color: "text.primary",
                     }}
                   >
                     {t("stats.original.title")}
                   </Typography>
                   <Typography
                     variant="h3"
-                    color="grey.100"
                     sx={{
                       mb: 1,
                       fontSize: { xs: "h4.fontSize", sm: "h4.fontSize" },
+                      color: "text.primary",
                     }}
                   >
                     {formatFileSize(originalStats.size)}
                   </Typography>
-                  <Typography color="grey.400">
+                  <Typography color="text.secondary">
                     {t("stats.original.dimensions", {
                       width: originalStats.width,
                       height: originalStats.height,
@@ -503,14 +484,16 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        bgcolor: "#1E1E1E",
+                        bgcolor: "background.paper",
                         borderRadius: "50%",
+                        border: 1,
+                        borderColor: "divider",
                       }}
                     >
                       <CircularProgress
                         size={60}
                         thickness={4}
-                        sx={{ color: "#9DFF20" }}
+                        color="primary"
                       />
                     </Box>
                   ) : (
@@ -520,9 +503,9 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                           width: "100%",
                           height: "100%",
                           position: "absolute",
-                          background: `conic-gradient(
-                            #9DFF20 0deg,
-                            #9DFF20 ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg,
+                          background: (theme) => `conic-gradient(
+                            ${theme.palette.primary.main} 0deg,
+                            ${theme.palette.primary.main} ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg,
                             transparent ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg
                           )`,
                           borderRadius: "50%",
@@ -533,20 +516,22 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                         sx={{
                           width: "92%",
                           height: "92%",
-                          bgcolor: "#1E1E1E",
+                          bgcolor: "background.paper",
                           borderRadius: "50%",
                           position: "relative",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
                           justifyContent: "center",
+                          border: 1,
+                          borderColor: "divider",
                         }}
                       >
                         <Typography
                           variant="h4"
                           sx={{
                             fontWeight: "bold",
-                            color: "#9DFF20",
+                            color: "primary.main",
                             lineHeight: 1,
                           }}
                         >
@@ -557,7 +542,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                         </Typography>
                         <Typography
                           sx={{
-                            color: "rgba(255,255,255,0.7)",
+                            color: "text.secondary",
                             fontSize: "0.875rem",
                           }}
                         >
@@ -574,7 +559,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                     flex: 1,
                     width: "100%",
                     p: 2,
-                    bgcolor: loading ? "#1E1E1E" : "#9DFF20",
+                    bgcolor: loading ? "background.paper" : "primary.main",
                     borderRadius: 1,
                     textAlign: "center",
                     position: "relative",
@@ -588,7 +573,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                           transform: "translateY(-50%)",
                           width: 100,
                           height: 100,
-                          background: "#9DFF20",
+                          bgcolor: "primary.main",
                           clipPath: "circle(50% at 100% 50%)",
                         }
                       : undefined,
@@ -598,7 +583,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                     variant="h3"
                     gutterBottom
                     sx={{
-                      color: loading ? "grey.300" : "rgba(0, 0, 0, 0.87)",
+                      color: loading ? "text.primary" : "primary.contrastText",
                       transition: "color 0.3s ease",
                       fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
                     }}
@@ -614,21 +599,21 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                         height: 100,
                       }}
                     >
-                      <CircularProgress sx={{ color: "#9DFF20" }} />
+                      <CircularProgress color="primary" />
                     </Box>
                   ) : (
                     <>
                       <Typography
                         variant="h4"
                         sx={{
-                          color: "rgba(0, 0, 0, 0.87)",
+                          color: "primary.contrastText",
                           mb: 1,
                           fontWeight: "bold",
                         }}
                       >
                         {formatFileSize(compressedStats.size)}
                       </Typography>
-                      <Typography sx={{ color: "rgba(0, 0, 0, 0.7)" }}>
+                      <Typography sx={{ color: "primary.contrastText" }}>
                         {t("stats.optimized.dimensions", {
                           width: compressedStats.width,
                           height: compressedStats.height,
@@ -645,13 +630,12 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                   sx={{
                     mt: 3,
                     textAlign: "center",
-                    color: "#9DFF20",
+                    color: "primary.main",
                     fontWeight: "bold",
                     fontSize: "1.1rem",
-                    textShadow: "0 2px 4px rgba(0,0,0,0.2)",
                     padding: "8px 16px",
                     borderRadius: "4px",
-                    backgroundColor: "rgba(0,0,0,0.7)",
+                    bgcolor: "action.hover",
                     display: "inline-block",
                     margin: "0 auto",
                     marginTop: 3,
@@ -798,26 +782,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
             <Grid item xs={12} md={6}>
               <DitheringControls
                 applyDithering={applyDithering}
-                ditheringColorCount={ditheringColorCount}
-                onDitheringChange={(value: boolean) => {
-                  setApplyDithering(value);
-                  if (originalImage) {
-                    processImage(originalImage, {
-                      quality,
-                      maxWidth,
-                      applyDithering: value,
-                      applyBlur,
-                      ditheringColorCount: ditheringColorCount,
-                    });
-                  }
-                }}
-                onDitheringColorCountChange={(value: number) => {
-                  setDitheringColorCount(value);
-                  debouncedProcessWithParams({
-                    name: "ditheringColorCount",
-                    value,
-                  });
-                }}
+                onDitheringChange={handleDitheringChange}
               />
             </Grid>
 
@@ -1183,15 +1148,6 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                                 })}
                               </Typography>
                             )}
-
-                          {/* Dithering info */}
-                          {applyDithering && (
-                            <Typography component="li" sx={{ mb: 1 }}>
-                              {t("processInfo.dithering", {
-                                colors: ditheringColorCount,
-                              })}
-                            </Typography>
-                          )}
 
                           {/* Face blur info */}
                           {applyBlur && (
