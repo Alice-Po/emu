@@ -8,7 +8,7 @@
             "compression": "Compression intelligente avec contrôle de la qualité",
             "faceBlur": "Floutage automatique des visages",
             "cropRotate": "Outils de recadrage et rotation",
-            "metadata": "Lecture et effacement des meta-données"
+            "metadata": "Lecture et effacement des métadonnées"
         }
     },
     "localProcessing": "✨ Toutes les images sont traitées localement dans votre navigateur - Aucun envoi sur un serveur !",
@@ -61,7 +61,7 @@
     "loading": {
         "initial": "Patience, votre image est en cours de traitement..",
         "long": "Ok c'est vrai que c'est un peu long..",
-        "veryLong": "Ca vient ! Ca vient !",
+        "veryLong": "Ça vient ! Ça vient !",
         "status": "État du chargement",
         "imageAlt": "Animation de chargement",
         "progress": "Progression de {{step}}"
@@ -90,7 +90,7 @@
         "github": "Voir le projet sur GitHub",
         "madeIn": "Made in Boccagia"
     },
-    "metadataRemoved": "Les metadonnées ont été automatiquement supprimées pendant le traitement.",
+    "metadataRemoved": "Les métadonnées ont été automatiquement supprimées pendant le traitement.",
     "processInfo": {
         "title": "Traitements appliqués",
         "compression": "Compression à {{quality}}% de qualité ({{ratio}}% de réduction, de {{originalSize}} à {{newSize}})",
@@ -125,5 +125,7 @@
         "crop": {
             "alt": "Image à recadrer"
         }
-    }
+    },
+    "switchToDark": "Passer au thème sombre",
+    "switchToLight": "Passer au thème clair"
 }

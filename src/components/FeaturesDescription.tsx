@@ -1,28 +1,29 @@
-import { Paper, Typography } from "@mui/material";
+import { Box, List, ListItem, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 /**
  * Component that displays the main features of the application
  * @returns {JSX.Element} The FeaturesDescription component
  */
-const FeaturesDescription: React.FC = () => {
+const FeaturesDescription = () => {
   const { t } = useTranslation();
 
   return (
-    <Paper sx={{ p: 2, mb: 3 }}>
-      <Typography component="div" variant="body2" sx={{ mb: 2 }}>
-        <strong>{t("features.title")}</strong>
-        <ul>
-          <li>{t("features.list.compression")}</li>
-          <li>{t("features.list.faceBlur")}</li>
-          <li>{t("features.list.cropRotate")}</li>
-          <li>{t("features.list.metadata")}</li>
-        </ul>
+    <Box component="section" sx={{ mb: 4 }}>
+      <Typography variant="h2" gutterBottom sx={{ fontSize: "h6.fontSize" }}>
+        {t("features.title")}
       </Typography>
-      <Typography variant="body2" color="primary" sx={{ fontWeight: "medium" }}>
+      <List>
+        {Object.keys(t("features.list", { returnObjects: true })).map((key) => (
+          <ListItem key={key} sx={{ py: 0.5 }}>
+            <Typography>{t(`features.list.${key}`)}</Typography>
+          </ListItem>
+        ))}
+      </List>
+      <Typography className="localProcessing">
         {t("localProcessing")}
       </Typography>
-    </Paper>
+    </Box>
   );
 };
 

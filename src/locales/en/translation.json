@@ -125,5 +125,7 @@
         "crop": {
             "alt": "Image to crop"
         }
-    }
+    },
+    "switchToDark": "Switch to dark theme",
+    "switchToLight": "Switch to light theme"
 }

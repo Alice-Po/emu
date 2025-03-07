@@ -28,6 +28,7 @@ import {
   IconButton,
   Paper,
   Slider,
+  Stack,
   Switch,
   Tooltip,
   Typography,
@@ -49,12 +50,17 @@ import FeaturesDescription from "./FeaturesDescription";
 import Footer from "./Footer";
 import ImageMetadataDisplay from "./ImageMetadataDisplay";
 import LanguageSelector from "./LanguageSelector";
+import { ThemeToggle } from "./ThemeToggle";
+
+interface ImageOptimizerProps {
+  onThemeChange: (mode: "light" | "dark") => void;
+}
 
 /**
  * Main ImageOptimizer component that handles all image processing operations
  * @returns {JSX.Element} The rendered component
  */
-const ImageOptimizer: React.FC = () => {
+const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
   const { t } = useTranslation();
   const {
     loading,
@@ -385,7 +391,10 @@ const ImageOptimizer: React.FC = () => {
             >
               {t("title")} <small>{t("beta")}</small>
             </Typography>
-            <LanguageSelector />
+            <Stack direction="row" spacing={2} alignItems="center">
+              <ThemeToggle onThemeChange={onThemeChange} />
+              <LanguageSelector />
+            </Stack>
           </Box>
 
           <FeaturesDescription />

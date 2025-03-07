@@ -1,46 +1,53 @@
-import { createTheme, ThemeOptions } from '@mui/material/styles';
+import { createTheme, ThemeOptions } from "@mui/material/styles";
 
-const themeOptions: ThemeOptions = {
+const getThemeOptions = (mode: "light" | "dark"): ThemeOptions => ({
   palette: {
-    mode: 'dark',
+    mode,
     primary: {
-      main: '#9DFF20',
+      main: mode === "light" ? "#2E7D32" : "#9DFF20",
+      contrastText: mode === "light" ? "#FFFFFF" : "#000000",
     },
     background: {
-      default: '#121212',
-      paper: '#1E1E1E',
+      default: mode === "light" ? "#FFFFFF" : "#121212",
+      paper: mode === "light" ? "#F5F5F5" : "#1E1E1E",
     },
     text: {
-      primary: '#ffffff',
-      secondary: 'rgba(255, 255, 255, 0.7)',
+      primary: mode === "light" ? "#000000" : "#FFFFFF",
+      secondary:
+        mode === "light" ? "rgba(0, 0, 0, 0.7)" : "rgba(255, 255, 255, 0.7)",
     },
-    divider: 'rgba(255, 255, 255, 0.12)',
+    divider:
+      mode === "light" ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)",
     action: {
-      active: '#ffffff',
-      hover: 'rgba(255, 255, 255, 0.08)',
-      selected: 'rgba(255, 255, 255, 0.16)',
-      disabled: 'rgba(255, 255, 255, 0.3)',
-      disabledBackground: 'rgba(255, 255, 255, 0.12)',
+      active: mode === "light" ? "#000000" : "#FFFFFF",
+      hover:
+        mode === "light" ? "rgba(0, 0, 0, 0.08)" : "rgba(255, 255, 255, 0.08)",
+      selected:
+        mode === "light" ? "rgba(0, 0, 0, 0.16)" : "rgba(255, 255, 255, 0.16)",
+      disabled:
+        mode === "light" ? "rgba(0, 0, 0, 0.3)" : "rgba(255, 255, 255, 0.3)",
+      disabledBackground:
+        mode === "light" ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)",
     },
   },
   components: {
     MuiCssBaseline: {
       styleOverrides: {
-        'html, body': {
-          backgroundColor: '#121212',
-          color: '#ffffff',
-          minHeight: '100vh',
+        "html, body": {
+          backgroundColor: mode === "light" ? "#FFFFFF" : "#121212",
+          color: mode === "light" ? "#000000" : "#FFFFFF",
+          minHeight: "100vh",
           margin: 0,
           padding: 0,
         },
-        '*': {
-          boxSizing: 'border-box',
+        "*": {
+          boxSizing: "border-box",
         },
-        '#root': {
-          backgroundColor: '#121212',
-          minHeight: '100vh',
-        }
-      }
+        "#root": {
+          backgroundColor: mode === "light" ? "#FFFFFF" : "#121212",
+          minHeight: "100vh",
+        },
+      },
     },
     MuiPaper: {
       defaultProps: {
@@ -48,10 +55,10 @@ const themeOptions: ThemeOptions = {
       },
       styleOverrides: {
         root: {
-          backgroundColor: '#1E1E1E',
-          color: '#ffffff',
-        }
-      }
+          backgroundColor: mode === "light" ? "#F5F5F5" : "#1E1E1E",
+          color: mode === "light" ? "#000000" : "#FFFFFF",
+        },
+      },
     },
     MuiCard: {
       defaultProps: {
@@ -59,37 +66,67 @@ const themeOptions: ThemeOptions = {
       },
       styleOverrides: {
         root: {
-          backgroundColor: '#1E1E1E',
-          color: '#ffffff',
-        }
-      }
+          backgroundColor: mode === "light" ? "#F5F5F5" : "#1E1E1E",
+          color: mode === "light" ? "#000000" : "#FFFFFF",
+        },
+      },
     },
     MuiAppBar: {
       styleOverrides: {
         root: {
-          backgroundColor: '#1E1E1E',
-        }
-      }
+          backgroundColor: mode === "light" ? "#F5F5F5" : "#1E1E1E",
+        },
+      },
     },
     MuiButton: {
       styleOverrides: {
         root: {
-          color: '#ffffff',
-        }
-      }
+          color: "inherit",
+        },
+        contained: {
+          color: mode === "light" ? "#FFFFFF" : "#000000",
+          backgroundColor: mode === "light" ? "#2E7D32" : "#9DFF20",
+          "&:hover": {
+            backgroundColor: mode === "light" ? "#1B5E20" : "#7FCC19",
+          },
+        },
+        outlined: {
+          borderColor: mode === "light" ? "#2E7D32" : "#9DFF20",
+          color: mode === "light" ? "#2E7D32" : "#9DFF20",
+          "&:hover": {
+            borderColor: mode === "light" ? "#1B5E20" : "#7FCC19",
+            backgroundColor:
+              mode === "light"
+                ? "rgba(46, 125, 50, 0.08)"
+                : "rgba(157, 255, 32, 0.08)",
+          },
+        },
+      },
     },
     MuiSwitch: {
       styleOverrides: {
         root: {
-          '& .MuiSwitch-track': {
-            backgroundColor: '#333333',
-          }
-        }
-      }
-    }
-  }
-};
+          "& .MuiSwitch-track": {
+            backgroundColor: mode === "light" ? "#CCCCCC" : "#333333",
+          },
+        },
+      },
+    },
+    MuiTypography: {
+      styleOverrides: {
+        root: {
+          "&.localProcessing": {
+            color: mode === "light" ? "#2E7D32" : "#B4FF52",
+            fontWeight: 500,
+          },
+        },
+      },
+    },
+  },
+});
 
-const theme = createTheme(themeOptions);
+export const createAppTheme = (mode: "light" | "dark") =>
+  createTheme(getThemeOptions(mode));
 
-export default theme; 
+// Export a default theme (will be overridden by the ThemeProvider)
+export default createAppTheme("light");

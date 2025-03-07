@@ -3,7 +3,7 @@
     "beta": "Beta",
     "language": "Lingua",
     "features": {
-        "title": "Caratteristiche:",
+        "title": "Funzionalità:",
         "list": {
             "compression": "Compressione intelligente con controllo della qualità",
             "faceBlur": "Sfocatura automatica dei volti",
@@ -31,7 +31,7 @@
     },
     "controls": {
         "basic": {
-            "title": "Impostazioni di Base"
+            "title": "Impostazioni di base"
         },
         "quality": {
             "label": "Qualità di compressione (%)",
@@ -43,24 +43,24 @@
             "description": "Imposta la larghezza massima dell'immagine"
         },
         "dithering": {
-            "title": "Effetto Dithering",
+            "title": "Effetto dithering",
             "label": "Applica effetto dithering",
             "colors": "Numero di colori",
             "toggle": "Attiva/disattiva effetto dithering",
             "description": "Il dithering riduce il numero di colori mantenendo la qualità visiva"
         },
         "faceBlur": {
-            "title": "Sfocatura Volti",
+            "title": "Sfocatura volti",
             "label": "Sfoca i volti",
             "toggle": "Attiva/disattiva sfocatura volti",
             "loading": "Caricamento modelli di rilevamento...",
             "description": "Rileva e sfoca automaticamente i volti nell'immagine per proteggere la privacy",
-            "manual": "La sfocatura manuale dei volti sarà presto disponibile! Questa funzionalità ti permetterà di selezionare con precisione le aree da sfocare."
+            "manual": "Sfocatura manuale dei volti in arrivo! Questa funzione ti permetterà di selezionare con precisione le aree da sfocare."
         }
     },
     "loading": {
-        "initial": "Attendere mentre l'immagine viene elaborata..",
-        "long": "Ci sta impiegando più tempo del previsto..",
+        "initial": "Attendi mentre la tua immagine viene elaborata..",
+        "long": "Ok, sta richiedendo un po' più del previsto..",
         "veryLong": "Ci siamo quasi!",
         "status": "Stato di caricamento",
         "imageAlt": "Animazione di caricamento",
@@ -70,7 +70,7 @@
         "title": "Metadati dell'immagine",
         "noData": "Nessun metadato disponibile per questa immagine.",
         "device": "Dispositivo",
-        "date": "Data di scatto",
+        "date": "Data scatto",
         "exposure": "Tempo di esposizione",
         "aperture": "Apertura",
         "focalLength": "Lunghezza focale",
@@ -88,11 +88,11 @@
     "footer": {
         "contributions": "I contributi sono benvenuti!",
         "github": "Vedi progetto su GitHub",
-        "madeIn": "Fatto a Boccagia"
+        "madeIn": "Made in Boccagia"
     },
     "metadataRemoved": "I metadati sono stati rimossi automaticamente durante l'elaborazione.",
     "processInfo": {
-        "title": "Processi Applicati",
+        "title": "Processi applicati",
         "compression": "Compressione al {{quality}}% di qualità ({{ratio}}% di riduzione, da {{originalSize}} a {{newSize}})",
         "resize": "Ridimensionamento da {{originalWidth}}x{{originalHeight}}px a {{newWidth}}x{{newHeight}}px",
         "dithering": "Effetto dithering applicato con {{colors}} colori",
@@ -110,9 +110,9 @@
     },
     "dithering": {
         "steps": {
-            "usingCache": "Utilizzo della palette di colori in cache",
-            "creatingPalette": "Creazione della palette di colori",
-            "applying": "Applicazione dell'effetto dithering"
+            "usingCache": "Utilizzo palette colori in cache",
+            "creatingPalette": "Creazione palette colori",
+            "applying": "Applicazione effetto dithering"
         }
     },
     "image": {
@@ -125,5 +125,7 @@
         "crop": {
             "alt": "Immagine da ritagliare"
         }
-    }
+    },
+    "switchToDark": "Passa al tema scuro",
+    "switchToLight": "Passa al tema chiaro"
 }

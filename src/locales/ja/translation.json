@@ -1,17 +1,17 @@
 {
     "title": "画像最適化ツール",
-    "beta": "ベータ版",
+    "beta": "ベータ",
     "language": "言語",
     "features": {
-        "title": "機能一覧：",
+        "title": "機能：",
         "list": {
-            "compression": "品質管理付きスマート圧縮",
-            "faceBlur": "顔自動ぼかし処理",
-            "cropRotate": "トリミング・回転ツール",
+            "compression": "品質制御付きスマート圧縮",
+            "faceBlur": "顔の自動ぼかし",
+            "cropRotate": "切り抜きと回転ツール",
             "metadata": "メタデータの読み取りと削除"
         }
     },
-    "localProcessing": "✨ すべての画像はブラウザ内で処理されます - サーバーへのアップロードはありません！",
+    "localProcessing": "✨ すべての画像はブラウザ上でローカルに処理されます - サーバーへのアップロードはありません！",
     "uploadButton": "画像をアップロード",
     "stats": {
         "original": {
@@ -24,9 +24,9 @@
         },
         "reduction": {
             "label": "削減率",
-            "excellent": "最適化が完了しました！ ✨",
-            "good": "良好な最適化です",
-            "moderate": "適度な最適化です"
+            "excellent": "優れた最適化！🎉",
+            "good": "良好な最適化",
+            "moderate": "適度な最適化"
         }
     },
     "controls": {
@@ -47,19 +47,19 @@
             "label": "ディザリング効果を適用",
             "colors": "色数",
             "toggle": "ディザリング効果の切り替え",
-            "description": "視覚的な品質を保ちながら色数を削減"
+            "description": "ディザリングは視覚的品質を保ちながら色数を削減します"
         },
         "faceBlur": {
             "title": "顔のぼかし",
             "label": "顔をぼかす",
-            "toggle": "顔のぼかしの切り替え",
+            "toggle": "顔のぼかしを切り替え",
             "loading": "検出モデルを読み込み中...",
             "description": "プライバシー保護のため、画像内の顔を自動的に検出してぼかします",
-            "manual": "手動での顔のぼかし機能が近日公開予定！この機能では、ぼかしたい部分を正確に選択できるようになります。"
+            "manual": "手動の顔ぼかし機能が近日公開！この機能では、ぼかす領域を正確に選択できます。"
         }
     },
     "loading": {
-        "initial": "画像を処理中です..",
+        "initial": "画像を処理中です、お待ちください..",
         "long": "予想より時間がかかっています..",
         "veryLong": "もう少しです！",
         "status": "読み込み状態",
@@ -79,16 +79,16 @@
     "actions": {
         "rotate": "画像を回転",
         "crop": {
-            "start": "トリミング",
-            "apply": "トリミングを適用",
+            "start": "切り抜き",
+            "apply": "切り抜きを適用",
             "cancel": "キャンセル"
         },
         "download": "最適化された画像をダウンロード"
     },
     "footer": {
-        "contributions": "コントリビューション歓迎！",
+        "contributions": "貢献歓迎！",
         "github": "GitHubでプロジェクトを見る",
-        "madeIn": "Boccagiaにて制作"
+        "madeIn": "Made in Boccagia"
     },
     "metadataRemoved": "処理中にメタデータは自動的に削除されました。",
     "processInfo": {
@@ -102,15 +102,15 @@
     },
     "processing": {
         "steps": {
-            "starting": "画像処理を開始中",
-            "usingCache": "キャッシュバージョンを使用中",
+            "starting": "画像処理を開始",
+            "usingCache": "キャッシュバージョンを使用",
             "finalizing": "画像を仕上げ中",
-            "complete": "処理が完了しました"
+            "complete": "処理完了"
         }
     },
     "dithering": {
         "steps": {
-            "usingCache": "キャッシュされたカラーパレットを使用中",
+            "usingCache": "キャッシュされたカラーパレットを使用",
             "creatingPalette": "カラーパレットを作成中",
             "applying": "ディザリング効果を適用中"
         }
@@ -120,10 +120,12 @@
             "alt": "元の画像"
         },
         "compressed": {
-            "alt": "品質{{quality}}%、サイズ{{width}}x{{height}}の圧縮画像"
+            "alt": "品質{{quality}}%で圧縮された画像、サイズ：{{width}}x{{height}}"
         },
         "crop": {
-            "alt": "トリミングする画像"
+            "alt": "切り抜く画像"
         }
-    }
+    },
+    "switchToDark": "ダークテーマに切り替え",
+    "switchToLight": "ライトテーマに切り替え"
 }
