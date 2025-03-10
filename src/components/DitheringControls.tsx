@@ -2,12 +2,15 @@ import {
   Box,
   FormControlLabel,
   Paper,
+  Slider,
   Switch,
   Typography,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DitheringControlsProps } from "../types/ImageOptimizer.types";
-
+import { useDithering } from "../hooks/useDithering";
+import ColorPalette from "./ColorPalette";
+import { useEffect } from "react";
 /**
  * Component that handles dithering controls for image processing
  * @returns {JSX.Element} The DitheringControls component
@@ -15,13 +18,31 @@ import { DitheringControlsProps } from "../types/ImageOptimizer.types";
 const DitheringControls: React.FC<DitheringControlsProps> = ({
   applyDithering,
   onDitheringChange,
+  colorCount,
+  onColorCountChange,
 }) => {
   const { t } = useTranslation();
+  // const { currentPalette } = useDithering();
+  // Créer une instance unique du hook
+  const ditheringHook = useDithering();
+
+  // Utiliser useEffect pour surveiller les changements
+  useEffect(() => {
+    console.log("DitheringControls - Hook instance:", ditheringHook);
+    console.log(
+      "DitheringControls - Current Palette:",
+      ditheringHook.currentPalette,
+    );
+  }, [ditheringHook.currentPalette]);
 
   const handleDitheringToggle = (
     event: React.ChangeEvent<HTMLInputElement>,
   ) => {
     onDitheringChange(event.target.checked);
+  };
+
+  const handleColorCountChange = (_event: Event, value: number | number[]) => {
+    onColorCountChange(value as number);
   };
 
   return (
@@ -104,6 +125,44 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
         >
           {t("controls.dithering.description")}
         </Typography>
+
+        {applyDithering && (
+          <>
+            <Box sx={{ mt: 2 }}>
+              <Typography
+                gutterBottom
+                id="color-count-slider-label"
+                sx={{
+                  fontSize: { xs: "1rem", sm: "1rem" },
+                  fontWeight: "medium",
+                  color: "text.secondary",
+                  mb: 1,
+                }}
+              >
+                {t("controls.dithering.colors")}
+              </Typography>
+              <Slider
+                value={colorCount}
+                onChange={handleColorCountChange}
+                min={2}
+                max={32}
+                step={1}
+                marks={[
+                  { value: 2, label: "2" },
+                  { value: 8, label: "8" },
+                  { value: 16, label: "16" },
+                  { value: 32, label: "32" },
+                ]}
+                valueLabelDisplay="auto"
+                aria-labelledby="color-count-slider-label"
+              />
+            </Box>
+            {console.log("currentPalette", ditheringHook.currentPalette)}
+            {ditheringHook.currentPalette.length > 0 && (
+              <ColorPalette colors={ditheringHook.currentPalette} />
+            )}
+          </>
+        )}
       </Box>
     </Paper>
   );

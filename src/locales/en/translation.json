@@ -46,6 +46,7 @@
             "title": "Dithering Effect",
             "label": "Apply dithering effect",
             "colors": "Number of colors",
+            "palette": "Color palette",
             "toggle": "Toggle dithering effect",
             "description": "Dithering reduces the number of colors while preserving visual quality",
             "algorithm": "Dithering algorithm",

@@ -1,6 +1,5 @@
 import { useCallback, useRef } from "react";
 import {
-  DitheringOptions,
   ProcessingCache,
   ProcessingOptions,
 } from "../types/ImageOptimizer.types";
@@ -18,19 +17,6 @@ export const useImageCache = () => {
     quantizer: null,
     imageHash: null,
   });
-
-  const areDitheringOptionsEqual = (
-    options1?: DitheringOptions,
-    options2?: DitheringOptions,
-  ): boolean => {
-    if (!options1 || !options2) return false;
-    return (
-      options1.algorithm === options2.algorithm &&
-      options1.serpentine === options2.serpentine &&
-      options1.colors === options2.colors &&
-      options1.quality === options2.quality
-    );
-  };
 
   /**
    * Determines if an image needs to be reprocessed based on current options
@@ -75,15 +61,12 @@ export const useImageCache = () => {
         return true;
       }
 
-      // If dithering is enabled and options have changed
+      // If dithering is enabled and color count has changed
       if (
         currentOptions.applyDithering &&
-        !areDitheringOptionsEqual(
-          currentOptions.ditheringOptions,
-          cache.lastOptions.ditheringOptions,
-        )
+        currentOptions.colorCount !== cache.lastOptions.colorCount
       ) {
-        console.log("Dithering options changed, reprocessing needed");
+        console.log("Color count changed, reprocessing needed");
         return true;
       }
 

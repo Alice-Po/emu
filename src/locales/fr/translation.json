@@ -46,6 +46,7 @@
             "title": "Effet de tramage",
             "label": "Appliquer l'effet de tramage",
             "colors": "Nombre de couleurs",
+            "palette": "Palette de couleurs",
             "toggle": "Activer/désactiver l'effet de tramage",
             "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle",
             "algorithm": "Algorithme de tramage",

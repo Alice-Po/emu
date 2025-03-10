@@ -46,6 +46,7 @@
             "title": "Efecto de tramado",
             "label": "Aplicar efecto de tramado",
             "colors": "Número de colores",
+            "palette": "Paleta de colores",
             "toggle": "Activar/desactivar efecto de tramado",
             "description": "El tramado reduce el número de colores manteniendo la calidad visual"
         },

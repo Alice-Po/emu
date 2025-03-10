@@ -46,6 +46,7 @@
             "title": "Effetto dithering",
             "label": "Applica effetto dithering",
             "colors": "Numero di colori",
+            "palette": "Palette dei colori",
             "toggle": "Attiva/disattiva effetto dithering",
             "description": "Il dithering riduce il numero di colori mantenendo la qualità visiva"
         },

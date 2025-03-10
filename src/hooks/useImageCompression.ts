@@ -21,11 +21,16 @@ export const useImageCompression = () => {
         maxWidth: number;
       },
     ) => {
+      const isPngWithTransparency = file.type === "image/png";
+
       const compressionOptions: CompressionOptions = {
         maxSizeMB: 1,
         maxWidthOrHeight: options.maxWidth,
         useWebWorker: true,
         quality: options.quality / 100,
+        fileType: isPngWithTransparency ? "image/png" : undefined,
+        initialQuality: isPngWithTransparency ? 1 : options.quality / 100,
+        alwaysKeepResolution: isPngWithTransparency, // Garder la résolution pour PNG
       };
 
       try {

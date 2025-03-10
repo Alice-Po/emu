@@ -79,6 +79,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
   const [applyDithering, setApplyDithering] = useState<boolean>(false);
+  const [colorCount, setColorCount] = useState<number>(16);
   const [applyBlur, setApplyBlur] = useState<boolean>(false);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
   const [rotation, setRotation] = useState<number>(0);
@@ -115,6 +116,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
         applyDithering,
         applyBlur,
         rotation,
+        colorCount,
         [params.name]: params.value,
       };
 
@@ -165,6 +167,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
         applyDithering: value,
         applyBlur,
         rotation,
+        colorCount,
       });
     }
   };
@@ -185,6 +188,27 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
         applyDithering: applyDithering,
         applyBlur: value,
         rotation,
+        colorCount,
+      });
+    }
+  };
+
+  /**
+   * Handles changes to the color count
+   * Updates the colorCount state and triggers debounced image processing
+   *
+   * @param {number} value - The new color count value
+   */
+  const handleColorCountChange = (value: number) => {
+    setColorCount(value);
+    if (originalImage && applyDithering) {
+      processImage(originalImage, {
+        quality,
+        maxWidth,
+        applyDithering,
+        applyBlur,
+        rotation,
+        colorCount: value,
       });
     }
   };
@@ -219,6 +243,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
       applyDithering,
       applyBlur,
       rotation: newRotation,
+      colorCount,
     });
   };
 
@@ -241,6 +266,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
         applyDithering,
         applyBlur,
         rotation,
+        colorCount,
       });
 
       setIsCropping(false);
@@ -326,6 +352,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
       applyDithering,
       applyBlur,
       rotation,
+      colorCount,
     });
   };
 
@@ -783,6 +810,8 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
               <DitheringControls
                 applyDithering={applyDithering}
                 onDitheringChange={handleDitheringChange}
+                colorCount={colorCount}
+                onColorCountChange={handleColorCountChange}
               />
             </Grid>
 

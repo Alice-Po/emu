@@ -84,3 +84,17 @@ export const getCroppedImg = async (
     );
   });
 };
+
+/**
+ * Generates a simple hash of the image for caching purposes.
+ * @param imageData The image data to generate hash from
+ * @returns A string representing the image hash
+ */
+export const generateImageHash = (imageData: ImageData): string => {
+  const step = Math.max(1, Math.floor(imageData.data.length / 1000));
+  let hash = "";
+  for (let i = 0; i < imageData.data.length; i += step) {
+    hash += imageData.data[i].toString(16);
+  }
+  return hash;
+};

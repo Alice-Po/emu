@@ -1,3 +1,5 @@
+import { RgbColor } from "../hooks/useDithering";
+
 /**
  * Interface for image statistics
  */
@@ -37,6 +39,9 @@ export interface CompressionOptions {
   maxWidthOrHeight: number;
   useWebWorker: boolean;
   quality: number;
+  fileType?: string;
+  initialQuality?: number;
+  alwaysKeepResolution?: boolean;
 }
 
 /**
@@ -56,6 +61,21 @@ export interface PaletteCache {
   imageHash: string; // A unique identifier for the image
   colorCount: number;
   palette: any; // The exact type depends on image-q
+}
+
+/**
+ * Interface for dithering cache
+ */
+export interface DitheringCache {
+  quantizer: any;
+  imageHash: string | null;
+  imageData?: ImageData | null;
+  pointContainer?: any;
+  lastOptions?: {
+    colorCount: number;
+    rotation?: number;
+    applyBlur: boolean;
+  };
 }
 
 /**
@@ -94,6 +114,9 @@ export interface DitheringOptions {
 export interface DitheringControlsProps {
   applyDithering: boolean;
   onDitheringChange: (apply: boolean) => void;
+  colorCount: number;
+  onColorCountChange: (count: number) => void;
+  currentPalette: RgbColor[];
 }
 
 /**
@@ -105,6 +128,7 @@ export interface ProcessingOptions {
   applyDithering: boolean;
   applyBlur: boolean;
   rotation?: number;
+  colorCount: number;
 }
 
 /**
@@ -113,4 +137,27 @@ export interface ProcessingOptions {
 export interface ProgressState {
   step: string;
   value: number;
+}
+
+export interface DitheringCache {
+  quantizer: any;
+  imageHash: string | null;
+  imageData?: ImageData | null;
+  pointContainer?: any;
+  lastOptions?: {
+    colorCount: number;
+    rotation?: number;
+    applyBlur: boolean;
+  };
+}
+
+export interface RgbColor {
+  r: number;
+  g: number;
+  b: number;
+}
+
+interface BlobOptions {
+  quality: number;
+  mimeType: string;
 }

@@ -42,18 +42,43 @@ export const useCanvasOperations = () => {
    * Creates a blob from the canvas
    */
   const createBlobFromCanvas = useCallback(
-    (canvas: HTMLCanvasElement, quality: number): Promise<Blob> => {
+    (
+      canvas: HTMLCanvasElement,
+      options: {
+        mimeType: string;
+        quality: number;
+      },
+    ): Promise<Blob> => {
+      console.log("Creating blob with options:", options);
+
       return new Promise((resolve) => {
-        canvas.toBlob(
-          (blob) => {
-            if (!blob) {
-              throw new Error("Canvas is empty");
-            }
-            resolve(blob);
-          },
-          "image/jpeg",
-          quality / 100,
-        );
+        try {
+          const isPNG = options.mimeType === "image/png";
+
+          // Vérifier si le type est supporté
+          const supportedTypes = ["image/jpeg", "image/png", "image/webp"];
+          const finalType = supportedTypes.includes(options.mimeType)
+            ? options.mimeType
+            : "image/jpeg";
+
+          console.log("Using mime type:", finalType);
+
+          canvas.toBlob(
+            (blob) => {
+              if (!blob) {
+                reject(new Error("Failed to create blob"));
+                return;
+              }
+              console.log("Created blob type:", blob.type);
+              resolve(blob);
+            },
+            finalType,
+            isPNG ? undefined : options.quality / 100,
+          );
+        } catch (error) {
+          console.error("Error in createBlobFromCanvas:", error);
+          reject(error);
+        }
       });
     },
     [],
