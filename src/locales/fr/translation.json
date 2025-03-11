@@ -112,7 +112,9 @@
         "github": "Voir le projet sur GitHub",
         "madeIn": "Made in Boccagia",
         "aboutEmu": "À propos d'Emu",
-        "description": "Emu est d'abord un projet d'apprentissage mais son évolution est guidée par son utilité réelle. Contributions bienvenues : suggestions, signalement de bugs ou retours d'expérience. Merci de participer à son amélioration."
+        "description": "Emu est d'abord un projet d'apprentissage mais son évolution est guidée par son utilité réelle. Contributions bienvenues : suggestions, signalement de bugs ou retours d'expérience. Merci de participer à son amélioration.",
+        "reportBug": "Signaler un bug",
+        "contribute": "Contribuer"
     },
     "contact": {
         "title": "Contactez-nous",
