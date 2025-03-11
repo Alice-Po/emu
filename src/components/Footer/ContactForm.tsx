@@ -9,6 +9,7 @@ import {
   Box,
   Snackbar,
   Alert,
+  InputBase,
 } from "@mui/material";
 import EmailIcon from "@mui/icons-material/Email";
 import { useTranslation } from "react-i18next";
@@ -22,6 +23,24 @@ const ContactButton = () => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const form = event.currentTarget;
+    const formData = new FormData(form);
+
+    const honeypotValue = formData.get("website");
+    if (honeypotValue) {
+      setStatus("success");
+      setShowAlert(true);
+      setOpen(false);
+      return;
+    }
+
+    const timestamp = form.getAttribute("data-timestamp");
+    const submitTime = Date.now();
+    if (timestamp && submitTime - parseInt(timestamp) < 3000) {
+      // submission to quick for human
+      setStatus("error");
+      setShowAlert(true);
+      return;
+    }
 
     try {
       const response = await fetch("https://formspree.io/f/mjkbnlaz", {
@@ -71,9 +90,33 @@ const ContactButton = () => {
           Envoyer un message
         </DialogTitle>
 
-        <Box component="form" onSubmit={handleSubmit}>
+        <Box
+          component="form"
+          onSubmit={handleSubmit}
+          data-timestamp={Date.now()}
+        >
           <DialogContent>
             <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+              {/* honeypot */}
+              <InputBase
+                name="website"
+                type="text"
+                autoComplete="off"
+                tabIndex={-1}
+                sx={{
+                  position: "absolute",
+                  top: "-9999px",
+                  left: "-9999px",
+                  height: 0,
+                  width: 0,
+                  padding: 0,
+                  border: "none",
+                  opacity: 0,
+                  pointerEvents: "none",
+                }}
+                aria-hidden="true"
+              />
+
               <TextField
                 required
                 id="email"
