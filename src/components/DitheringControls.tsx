@@ -8,9 +8,8 @@ import {
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { DitheringControlsProps } from "../types/ImageOptimizer.types";
-import { useDithering } from "../hooks/useDithering";
 import ColorPalette from "./ColorPalette";
-import { useEffect } from "react";
+
 /**
  * Component that handles dithering controls for image processing
  * @returns {JSX.Element} The DitheringControls component
@@ -20,20 +19,9 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
   onDitheringChange,
   colorCount,
   onColorCountChange,
+  currentPalette,
 }) => {
   const { t } = useTranslation();
-  // const { currentPalette } = useDithering();
-  // Créer une instance unique du hook
-  const ditheringHook = useDithering();
-
-  // Utiliser useEffect pour surveiller les changements
-  useEffect(() => {
-    console.log("DitheringControls - Hook instance:", ditheringHook);
-    console.log(
-      "DitheringControls - Current Palette:",
-      ditheringHook.currentPalette,
-    );
-  }, [ditheringHook.currentPalette]);
 
   const handleDitheringToggle = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -157,9 +145,8 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
                 aria-labelledby="color-count-slider-label"
               />
             </Box>
-            {console.log("currentPalette", ditheringHook.currentPalette)}
-            {ditheringHook.currentPalette.length > 0 && (
-              <ColorPalette colors={ditheringHook.currentPalette} />
+            {currentPalette && currentPalette.length > 0 && (
+              <ColorPalette colors={currentPalette} />
             )}
           </>
         )}

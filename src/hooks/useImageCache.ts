@@ -28,21 +28,13 @@ export const useImageCache = () => {
       originalImage: File | null,
     ): boolean => {
       const cache = processingCache.current;
-      console.log("=== CACHE DEBUG ===");
-      console.log("Checking if reprocessing needed:", {
-        currentOptions,
-        cacheOptions: cache.lastOptions,
-        fileChanged: !originalImage || file !== originalImage,
-      });
 
       if (!cache.lastOptions) {
-        console.log("No cached options, reprocessing needed");
         return true;
       }
 
       // If file has changed, we need to reprocess
       if (!originalImage || file !== originalImage) {
-        console.log("File changed, reprocessing needed");
         return true;
       }
 
@@ -51,13 +43,11 @@ export const useImageCache = () => {
         currentOptions.maxWidth !== cache.lastOptions.maxWidth ||
         currentOptions.quality !== cache.lastOptions.quality
       ) {
-        console.log("Compression options changed, reprocessing needed");
         return true;
       }
 
       // If dithering is toggled
       if (currentOptions.applyDithering !== cache.lastOptions.applyDithering) {
-        console.log("Dithering toggle changed, reprocessing needed");
         return true;
       }
 
@@ -66,24 +56,18 @@ export const useImageCache = () => {
         currentOptions.applyDithering &&
         currentOptions.colorCount !== cache.lastOptions.colorCount
       ) {
-        console.log("Color count changed, reprocessing needed");
         return true;
       }
 
       // If rotation has changed
       if (currentOptions.rotation !== cache.lastOptions.rotation) {
-        console.log("Rotation changed, reprocessing needed");
         return true;
       }
 
       // If blur effect has changed
       if (currentOptions.applyBlur !== cache.lastOptions.applyBlur) {
-        console.log("Blur effect changed, reprocessing needed");
         return true;
       }
-
-      console.log("No changes detected, using cache");
-      console.log("=== END CACHE DEBUG ===");
       return false;
     },
     [],
@@ -93,7 +77,6 @@ export const useImageCache = () => {
    * Updates the cache with new processing options
    */
   const updateCache = useCallback((options: ProcessingOptions) => {
-    console.log("Updating cache with options:", options);
     processingCache.current.lastOptions = { ...options };
   }, []);
 

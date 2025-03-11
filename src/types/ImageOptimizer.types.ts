@@ -151,12 +151,6 @@ export interface DitheringCache {
   };
 }
 
-export interface RgbColor {
-  r: number;
-  g: number;
-  b: number;
-}
-
 interface BlobOptions {
   quality: number;
   mimeType: string;

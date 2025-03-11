@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { generateImageHash } from "../utils/imageUtils";
 import { RgbColor, DitheringCache } from "../types/ImageOptimizer.types";
 
@@ -12,11 +12,6 @@ export const useDithering = () => {
   const { t } = useTranslation();
 
   const [currentPalette, setCurrentPalette] = useState<RgbColor[]>([]);
-
-  // Ajouter un useEffect pour déboguer
-  useEffect(() => {
-    console.log("currentPalette updated in hook:", currentPalette);
-  }, [currentPalette]);
 
   /**
    * Applies dithering effect to an image using RgbQuant color quantization.

@@ -52,6 +52,7 @@ import ImageMetadataDisplay from "./ImageMetadataDisplay";
 import LanguageSelector from "./LanguageSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { DitheringOptions } from "../types/ImageOptimizer.types";
+import { useDithering } from "../hooks/useDithering";
 
 interface ImageOptimizerProps {
   onThemeChange: (mode: "light" | "dark") => void;
@@ -74,7 +75,10 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
     processImage,
     setOriginalImage,
     clearCache,
+    currentPalette,
   } = useImageProcessor();
+  const { applyDitheringEffect, currentPalette: ditheringPalette } =
+    useDithering();
 
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
@@ -812,6 +816,7 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                 onDitheringChange={handleDitheringChange}
                 colorCount={colorCount}
                 onColorCountChange={handleColorCountChange}
+                currentPalette={currentPalette}
               />
             </Grid>
 

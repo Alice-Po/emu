@@ -35,7 +35,7 @@ export const useImageProcessor = () => {
   const { canvasRef, setupCanvas, createBlobFromCanvas } =
     useCanvasOperations();
   const { cache, shouldReprocess, updateCache, clearCache } = useImageCache();
-  const { applyDitheringEffect } = useDithering();
+  const { applyDitheringEffect, currentPalette } = useDithering();
   const { blurFaces } = useFaceBlur();
 
   const updateProgress = (step: string, value: number) => {
@@ -219,5 +219,6 @@ export const useImageProcessor = () => {
     processImage,
     setOriginalImage,
     clearCache,
+    currentPalette,
   };
 };

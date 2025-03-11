@@ -123,6 +123,7 @@
     "processing": {
         "steps": {
             "starting": "Starting image processing",
+            "compression": "Compressing image",
             "usingCache": "Using cached version",
             "finalizing": "Finalizing image",
             "complete": "Processing complete"

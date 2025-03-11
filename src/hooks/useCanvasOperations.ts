@@ -49,8 +49,6 @@ export const useCanvasOperations = () => {
         quality: number;
       },
     ): Promise<Blob> => {
-      console.log("Creating blob with options:", options);
-
       return new Promise((resolve) => {
         try {
           const isPNG = options.mimeType === "image/png";
@@ -61,15 +59,12 @@ export const useCanvasOperations = () => {
             ? options.mimeType
             : "image/jpeg";
 
-          console.log("Using mime type:", finalType);
-
           canvas.toBlob(
             (blob) => {
               if (!blob) {
                 reject(new Error("Failed to create blob"));
                 return;
               }
-              console.log("Created blob type:", blob.type);
               resolve(blob);
             },
             finalType,

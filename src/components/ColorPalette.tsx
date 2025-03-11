@@ -1,44 +1,21 @@
 import { Box, Paper, Typography } from "@mui/material";
-import { RgbColor } from "../hooks/useDithering";
 import { useTranslation } from "react-i18next";
-
-interface ColorPaletteProps {
-  colors: RgbColor[];
-}
+import { useDithering } from "../hooks/useDithering";
 
 const ColorPalette: React.FC<ColorPaletteProps> = ({ colors }) => {
   const { t } = useTranslation();
 
-  if (colors.length === 0) return null;
-
   return (
-    <Paper
-      sx={{
-        p: 2,
-        mt: 2,
-        backgroundColor: "background.default",
-        borderRadius: 2,
-        boxShadow: (theme) => theme.shadows[1],
-        border: (theme) => `1px solid ${theme.palette.divider}`,
-      }}
-    >
+    <Box>
       <Typography
-        variant="h2"
+        variant="h3"
         sx={{
           color: "primary.main",
-          fontWeight: "medium",
           fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
           mb: 1,
           display: "flex",
           alignItems: "center",
           gap: 1,
-          "&::before": {
-            content: '""',
-            width: 4,
-            height: { xs: 24, sm: 24 },
-            backgroundColor: "primary.main",
-            borderRadius: 1,
-          },
         }}
       >
         {t("controls.dithering.palette")}
@@ -46,28 +23,31 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ colors }) => {
       <Box
         sx={{
           display: "flex",
-          gap: 0.5,
+          flexWrap: "wrap",
+          gap: 0.3,
           p: 1,
           backgroundColor: "background.paper",
           borderRadius: 1,
           border: (theme) => `1px solid ${theme.palette.divider}`,
+          maxWidth: "100%",
         }}
       >
         {colors.map((color, index) => (
           <Box
             key={index}
             sx={{
-              width: 20,
-              height: 20,
+              width: 15,
+              height: 15,
+              flexGrow: 0,
+              flexShrink: 0,
               backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
               borderRadius: 0.5,
-              flexGrow: 1,
             }}
             title={`RGB(${color.r}, ${color.g}, ${color.b})`}
           />
         ))}
       </Box>
-    </Paper>
+    </Box>
   );
 };
 
