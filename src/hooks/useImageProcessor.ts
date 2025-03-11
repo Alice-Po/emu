@@ -11,7 +11,7 @@ import { useDithering } from "./useDithering";
 import { useFaceBlur } from "./useFaceBlur";
 import { useImageCache } from "./useImageCache";
 import { useImageCompression } from "./useImageCompression";
-import { utils } from "face-api.js";
+import { generateImageHash } from "../utils/imageUtils";
 /**
  * Hook to handle image processing
  * Uses useCanvasOperations for canvas manipulation
@@ -77,17 +77,7 @@ export const useImageProcessor = () => {
 
       if (cache && options.applyDithering) {
         currentImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        cache.imageData = currentImageData;
-        cache.pointContainer = utils.PointContainer.fromUint8Array(
-          currentImageData.data,
-          currentImageData.width,
-          currentImageData.height,
-        );
-        cache.lastOptions = {
-          colorCount: options.colorCount,
-          rotation: options.rotation,
-          applyBlur: options.applyBlur,
-        };
+        cache.imageHash = generateImageHash(currentImageData);
       }
     }
 
@@ -99,17 +89,7 @@ export const useImageProcessor = () => {
 
       if (cache && options.applyDithering) {
         currentImageData = ctx.getImageData(0, 0, canvas.width, canvas.height);
-        cache.imageData = currentImageData;
-        cache.pointContainer = utils.PointContainer.fromUint8Array(
-          currentImageData.data,
-          currentImageData.width,
-          currentImageData.height,
-        );
-        cache.lastOptions = {
-          colorCount: options.colorCount,
-          rotation: options.rotation,
-          applyBlur: options.applyBlur,
-        };
+        cache.imageHash = generateImageHash(currentImageData);
       }
     }
 

@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { generateImageHash } from "../utils/imageUtils";
 import { RgbColor, DitheringCache } from "../types/ImageOptimizer.types";
-
+import RgbQuant from "rgbquant";
 /**
  * Custom hook to handle dithering effect on images using RgbQuant.js.
  * Provides functionality for color quantization and dithering with various algorithms.
@@ -53,7 +53,7 @@ export const useDithering = () => {
         transparencyMap[i / 4] = imageData.data[i + 3];
       }
 
-      const RgbQuant = (await import("rgbquant")).default;
+      // const RgbQuant = (await import("rgbquant")).default;
 
       let quantizer = cache?.quantizer;
       const currentHash = generateImageHash(imageData);
