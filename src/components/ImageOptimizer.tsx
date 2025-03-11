@@ -388,25 +388,70 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
             aria-labelledby="page-title"
             sx={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "flex-start",
               alignItems: "center",
               mb: 2,
+              position: "relative",
             }}
           >
-            <Typography
-              variant="h1"
-              id="page-title"
+            <Box
               sx={{
-                fontSize: "h3.fontSize",
-                mb: 3,
+                position: "absolute",
+                top: 0,
+                right: 0,
+                display: "flex",
+                alignItems: "center",
+                gap: 1,
               }}
             >
-              {t("title")} <small>{t("beta")}</small>
-            </Typography>
-            <Stack direction="row" spacing={2} alignItems="center">
               <ThemeToggle onThemeChange={onThemeChange} />
               <LanguageSelector />
-            </Stack>
+            </Box>
+            <img
+              src="/emeu.png"
+              alt="Emu"
+              style={{ width: "100px", height: "auto", marginRight: "10px" }}
+            />
+            <Box>
+              <Typography
+                variant="h1"
+                id="page-title"
+                sx={{
+                  fontSize: "h3.fontSize",
+                  mb: 0.5,
+                }}
+              >
+                {t("title")}
+                <Box
+                  component="span"
+                  sx={{
+                    display: "inline-flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
+                    borderRadius: 1,
+                    px: 1,
+                    py: 0.5,
+                    ml: 1,
+                    fontSize: "0.95rem",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {t("beta")}
+                </Box>
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  fontSize: "h5.fontSize",
+                  color: "text.secondary",
+                  mb: 2,
+                }}
+              >
+                {t("subtitle")}
+              </Typography>
+            </Box>
           </Box>
 
           <FeaturesDescription />

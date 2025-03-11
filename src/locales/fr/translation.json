@@ -1,5 +1,6 @@
 {
-    "title": "Optimiseur d'Images",
+    "title": "Emu",
+    "subtitle": "Compresser, flouter, recadrer, tourner.. Gratuit et sans entreloupe.",
     "beta": "Beta",
     "language": "Langue",
     "features": {
@@ -109,7 +110,7 @@
     "footer": {
         "contributions": "Les contributions sont les bienvenues !",
         "github": "Voir le projet sur GitHub",
-        "madeIn": "Fabriqué à Boccagia",
+        "madeIn": "Made in Boccagia",
         "aboutEmu": "À propos d'Emu",
         "description": "Emu est d'abord un projet d'apprentissage mais son évolution est guidée par son utilité réelle. Contributions bienvenues : suggestions, signalement de bugs ou retours d'expérience. Merci de participer à son amélioration."
     },

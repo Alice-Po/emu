@@ -1,5 +1,6 @@
 {
-    "title": "Image Optimizer",
+    "title": "Emu",
+    "subtitle": "Compress, blur, crop, rotate.. Free and without tricks.",
     "beta": "Beta",
     "language": "Language",
     "features": {
@@ -111,7 +112,7 @@
         "github": "View project on GitHub",
         "madeIn": "Made in Boccagia",
         "aboutEmu": "About Emu",
-        "description": "Emu is primarily an experimental project. Its evolution will be guided by its real utility. Contributions are welcome: suggestions, bug reports, or feedback. Thank you for participating in its improvement."
+        "description": "Emu is primarily a learning project but its evolution is guided by its real utility. Contributions are welcome: suggestions, bug reports, or feedback. Thank you for participating in its improvement."
     },
     "metadataRemoved": "Metadata has been automatically removed during processing.",
     "processInfo": {
@@ -169,7 +170,7 @@
         "emailLabel": "Your email",
         "messageLabel": "Your message",
         "submit": "Send",
-        "success": "Message sent successfully!",
+        "success": "Thank you for your message!",
         "error": "An error occurred. Please try again."
     }
 }
