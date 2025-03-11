@@ -1167,20 +1167,21 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
               </Box>
             </Grid>
           </Grid>
-
-          <AppliedTreatments
-            quality={quality}
-            originalStats={originalStats || { size: 0, width: 0, height: 0 }}
-            compressedStats={
-              compressedStats || { size: 0, width: 0, height: 0 }
-            }
-            applyBlur={applyBlur}
-            rotation={rotation}
-            calculateCompressionRatio={calculateCompressionRatio}
-            formatFileSize={formatFileSize}
-            applyDithering={applyDithering}
-            colorCount={colorCount}
-          />
+          {originalStats && compressedStats && (
+            <AppliedTreatments
+              quality={quality}
+              originalStats={originalStats || { size: 0, width: 0, height: 0 }}
+              compressedStats={
+                compressedStats || { size: 0, width: 0, height: 0 }
+              }
+              applyBlur={applyBlur}
+              rotation={rotation}
+              calculateCompressionRatio={calculateCompressionRatio}
+              formatFileSize={formatFileSize}
+              applyDithering={applyDithering}
+              colorCount={colorCount}
+            />
+          )}
 
           <Footer />
 
