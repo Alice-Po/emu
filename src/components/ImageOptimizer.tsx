@@ -1133,6 +1133,8 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
             rotation={rotation}
             calculateCompressionRatio={calculateCompressionRatio}
             formatFileSize={formatFileSize}
+            applyDithering={applyDithering}
+            colorCount={colorCount}
           />
 
           <Footer />

@@ -13,6 +13,8 @@ interface AppliedTreatmentsProps {
     compressedStats: any,
   ) => number;
   formatFileSize: (size: number) => string;
+  applyDithering?: boolean;
+  colorCount?: number;
 }
 
 const AppliedTreatments: React.FC<AppliedTreatmentsProps> = ({
@@ -23,6 +25,8 @@ const AppliedTreatments: React.FC<AppliedTreatmentsProps> = ({
   rotation,
   calculateCompressionRatio,
   formatFileSize,
+  applyDithering,
+  colorCount,
 }) => {
   const { t } = useTranslation();
 
@@ -84,6 +88,15 @@ const AppliedTreatments: React.FC<AppliedTreatmentsProps> = ({
               })}
             </Typography>
           )}
+
+        {/* Dithering info */}
+        {applyDithering && colorCount && (
+          <Typography component="li" sx={{ mb: 1 }}>
+            {t("processInfo.dithering", {
+              colors: colorCount,
+            })}
+          </Typography>
+        )}
 
         {/* Face blur info */}
         {applyBlur && (
