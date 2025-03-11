@@ -1,9 +1,34 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Paper, Typography, Tooltip, Snackbar } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import { useDithering } from "../hooks/useDithering";
-
-const ColorPalette: React.FC<ColorPaletteProps> = ({ colors }) => {
+import { useState } from "react";
+import ContentCopyIcon from "@mui/icons-material/ContentCopy";
+const ColorPalette: React.FC[] = ({ colors }) => {
   const { t } = useTranslation();
+
+  const [openSnackbar, setOpenSnackbar] = useState(false);
+
+  // Convertir RGB en Hexadécimal
+  const rgbToHex = (color: RgbColor): string => {
+    const toHex = (n: number): string => {
+      const hex = n.toString(16);
+      return hex.length === 1 ? "0" + hex : hex;
+    };
+    return `#${toHex(color.r)}${toHex(color.g)}${toHex(color.b)}`.toUpperCase();
+  };
+
+  // Copier la couleur dans le presse-papier
+  const handleColorClick = async (color: RgbColor) => {
+    const hexColor = rgbToHex(color);
+    try {
+      await navigator.clipboard.writeText(hexColor);
+      setOpenSnackbar(true);
+    } catch (err) {
+      console.error("Failed to copy color code:", err);
+    }
+  };
+
+  if (!colors || colors.length === 0) return null;
 
   return (
     <Box>
@@ -33,20 +58,46 @@ const ColorPalette: React.FC<ColorPaletteProps> = ({ colors }) => {
         }}
       >
         {colors.map((color, index) => (
-          <Box
-            key={index}
-            sx={{
-              width: 15,
-              height: 15,
-              flexGrow: 0,
-              flexShrink: 0,
-              backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
-              borderRadius: 0.5,
-            }}
-            title={`RGB(${color.r}, ${color.g}, ${color.b})`}
-          />
+          <Tooltip key={index} title={rgbToHex(color)} arrow placement="top">
+            <Box
+              key={index}
+              onClick={() => handleColorClick(color)}
+              sx={{
+                width: 15,
+                height: 15,
+                flexGrow: 0,
+                flexShrink: 0,
+                backgroundColor: `rgb(${color.r}, ${color.g}, ${color.b})`,
+                borderRadius: 0.5,
+              }}
+            />
+          </Tooltip>
         ))}
       </Box>
+      <Typography
+        variant="caption"
+        sx={{
+          display: "flex",
+          alignItems: "center",
+          gap: 0.5,
+          mt: 1,
+          color: "text.secondary",
+          fontSize: "0.75rem",
+          opacity: 0.8,
+          justifyContent: "center",
+        }}
+      >
+        <ContentCopyIcon sx={{ fontSize: "0.9rem" }} />
+        {t("colorPalette.clickToCopy") ||
+          "Cliquez sur une couleur pour copier son code"}
+      </Typography>
+      <Snackbar
+        open={openSnackbar}
+        autoHideDuration={2000}
+        onClose={() => setOpenSnackbar(false)}
+        message={t("colorPalette.copied") || "Code couleur copié !"}
+        anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      />
     </Box>
   );
 };

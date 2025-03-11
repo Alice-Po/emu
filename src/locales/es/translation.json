@@ -128,5 +128,9 @@
         }
     },
     "switchToDark": "Cambiar a tema oscuro",
-    "switchToLight": "Cambiar a tema claro"
+    "switchToLight": "Cambiar a tema claro",
+    "colorPalette": {
+        "copied": "¡Código de color copiado!",
+        "clickToCopy": "Haz clic en un color para copiar su código"
+    }
 }

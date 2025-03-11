@@ -128,5 +128,9 @@
         }
     },
     "switchToDark": "ダークテーマに切り替え",
-    "switchToLight": "ライトテーマに切り替え"
+    "switchToLight": "ライトテーマに切り替え",
+    "colorPalette": {
+        "copied": "カラーコードがコピーされました！",
+        "clickToCopy": "コードをコピーするには色をクリックしてください"
+    }
 }

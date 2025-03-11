@@ -148,5 +148,9 @@
         }
     },
     "switchToDark": "Switch to dark theme",
-    "switchToLight": "Switch to light theme"
+    "switchToLight": "Switch to light theme",
+    "colorPalette": {
+        "copied": "Color code copied!",
+        "clickToCopy": "Click a color to copy its code"
+    }
 }
