@@ -6,7 +6,7 @@
     "features": {
         "title": "Fonctionnalités :",
         "list": {
-            "compression": "Compression intelligente avec contrôle de la qualité",
+            "compression": "Compression avec contrôle de la qualité",
             "faceBlur": "Floutage automatique des visages",
             "cropRotate": "Outils de recadrage et rotation",
             "metadata": "Lecture et effacement des métadonnées"
