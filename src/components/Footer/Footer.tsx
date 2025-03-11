@@ -62,7 +62,7 @@ const Footer: React.FC = () => {
           }}
         >
           <MuiLink
-            href="https://github.com/Alice-Po/image-ecolo/issues/new"
+            href="https://github.com/Alice-Po/emu/issues/new"
             target="_blank"
             rel="noopener noreferrer"
           >
@@ -71,17 +71,17 @@ const Footer: React.FC = () => {
               startIcon={<BugReportIcon />}
               size="small"
             >
-              Reporter un bug
+              {t("footer.reportBug")}
             </Button>
           </MuiLink>
 
           <MuiLink
-            href="https://github.com/Alice-Po/image-ecolo"
+            href="https://github.com/Alice-Po/emu"
             target="_blank"
             rel="noopener noreferrer"
           >
             <Button variant="outlined" startIcon={<GitHubIcon />} size="small">
-              Contribuer
+              {t("footer.contribute")}
             </Button>
           </MuiLink>
           <ContactForm />
