@@ -3,7 +3,7 @@
     "beta": "Beta",
     "language": "Lingua",
     "features": {
-        "title": "Caratteristiche:",
+        "title": "Funzionalità:",
         "list": {
             "compression": "Compressione intelligente con controllo della qualità",
             "faceBlur": "Sfocatura automatica dei volti",
@@ -31,7 +31,7 @@
     },
     "controls": {
         "basic": {
-            "title": "Impostazioni di Base"
+            "title": "Impostazioni di base"
         },
         "quality": {
             "label": "Qualità di compressione (%)",
@@ -43,24 +43,26 @@
             "description": "Imposta la larghezza massima dell'immagine"
         },
         "dithering": {
-            "title": "Effetto Dithering",
+            "title": "Effetto dithering",
             "label": "Applica effetto dithering",
             "colors": "Numero di colori",
+            "palette": "Palette dei colori",
             "toggle": "Attiva/disattiva effetto dithering",
-            "description": "Il dithering riduce il numero di colori mantenendo la qualità visiva"
+            "description": "Il dithering riduce il numero di colori mantenendo la qualità visiva",
+            "learnMore": "Per saperne di più"
         },
         "faceBlur": {
-            "title": "Sfocatura Volti",
+            "title": "Sfocatura volti",
             "label": "Sfoca i volti",
             "toggle": "Attiva/disattiva sfocatura volti",
             "loading": "Caricamento modelli di rilevamento...",
             "description": "Rileva e sfoca automaticamente i volti nell'immagine per proteggere la privacy",
-            "manual": "La sfocatura manuale dei volti sarà presto disponibile! Questa funzionalità ti permetterà di selezionare con precisione le aree da sfocare."
+            "manual": "Sfocatura manuale dei volti in arrivo! Questa funzione ti permetterà di selezionare con precisione le aree da sfocare."
         }
     },
     "loading": {
-        "initial": "Attendere mentre l'immagine viene elaborata..",
-        "long": "Ci sta impiegando più tempo del previsto..",
+        "initial": "Attendi mentre la tua immagine viene elaborata..",
+        "long": "Ok, sta richiedendo un po' più del previsto..",
         "veryLong": "Ci siamo quasi!",
         "status": "Stato di caricamento",
         "imageAlt": "Animazione di caricamento",
@@ -70,7 +72,7 @@
         "title": "Metadati dell'immagine",
         "noData": "Nessun metadato disponibile per questa immagine.",
         "device": "Dispositivo",
-        "date": "Data di scatto",
+        "date": "Data scatto",
         "exposure": "Tempo di esposizione",
         "aperture": "Apertura",
         "focalLength": "Lunghezza focale",
@@ -88,9 +90,35 @@
     "footer": {
         "contributions": "I contributi sono benvenuti!",
         "github": "Vedi progetto su GitHub",
-        "madeIn": "Fatto a Boccagia"
+        "madeIn": "Made in Boccagia",
+        "aboutEmu": "Informazioni su Emu",
+        "description": "Emu è principalmente un progetto sperimentale. La sua evoluzione sarà guidata dalla sua reale utilità. I contributi sono benvenuti: suggerimenti, segnalazioni di bug o feedback. Grazie per partecipare al suo miglioramento."
     },
     "metadataRemoved": "I metadati sono stati rimossi automaticamente durante l'elaborazione.",
+    "processInfo": {
+        "title": "Processi applicati",
+        "compression": "Compressione al {{quality}}% di qualità ({{ratio}}% di riduzione, da {{originalSize}} a {{newSize}})",
+        "resize": "Ridimensionamento da {{originalWidth}}x{{originalHeight}}px a {{newWidth}}x{{newHeight}}px",
+        "dithering": "Effetto dithering applicato con {{colors}} colori",
+        "faceBlur": "Sfocatura automatica dei volti applicata",
+        "rotation": "Rotazione di {{degrees}}°",
+        "metadata": "Rimozione dei metadati"
+    },
+    "processing": {
+        "steps": {
+            "starting": "Avvio elaborazione immagine",
+            "usingCache": "Utilizzo versione in cache",
+            "finalizing": "Finalizzazione immagine",
+            "complete": "Elaborazione completata"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "Utilizzo palette colori in cache",
+            "creatingPalette": "Creazione palette colori",
+            "applying": "Applicazione effetto dithering"
+        }
+    },
     "image": {
         "original": {
             "alt": "Immagine originale"
@@ -101,5 +129,27 @@
         "crop": {
             "alt": "Immagine da ritagliare"
         }
+    },
+    "switchToDark": "Passa al tema scuro",
+    "switchToLight": "Passa al tema chiaro",
+    "colorPalette": {
+        "copied": "Codice colore copiato!",
+        "clickToCopy": "Clicca su un colore per copiare il suo codice"
+    },
+    "ditheringDialogue": {
+        "title": "Maggiori informazioni sul dithering",
+        "description": "L'elaborazione utilizza l'algoritmo di dithering Floyd-Steinberg con modalità serpentina e preserva i valori alfa originali dei pixel per mantenere la trasparenza.",
+        "method": "Metodo di quantizzazione (method: 2): Analizza piccole aree dell'immagine separatamente per preservare meglio i dettagli locali.",
+        "algorithm": "Algoritmo di dithering (dithKern: 'FloydSteinberg'): Crea un'illusione di colori intermedi disponendo i pixel in modo alternato.",
+        "serpentine": "Modalità serpentina (dithSerp: true): Elabora l'immagine a zigzag invece di andare sempre da sinistra a destra.",
+        "technicalNote": "Nota tecnica: La trasparenza è preservata memorizzando i valori alfa originali in una mappa separata, quindi riapplicandoli dopo il processo di quantizzazione e dithering."
+    },
+    "contact": {
+        "title": "Contattaci",
+        "emailLabel": "La tua email",
+        "messageLabel": "Il tuo messaggio",
+        "submit": "Invia",
+        "success": "Messaggio inviato con successo!",
+        "error": "Si è verificato un errore. Per favore riprova."
     }
 }

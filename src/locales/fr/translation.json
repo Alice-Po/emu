@@ -1,5 +1,6 @@
 {
-    "title": "Optimiseur d'Images",
+    "title": "Emu",
+    "subtitle": "Compresser, flouter, recadrer, tourner.. Gratuit et sans entreloupe.",
     "beta": "Beta",
     "language": "Langue",
     "features": {
@@ -8,7 +9,7 @@
             "compression": "Compression intelligente avec contrôle de la qualité",
             "faceBlur": "Floutage automatique des visages",
             "cropRotate": "Outils de recadrage et rotation",
-            "metadata": "Lecture et effacement des meta-données"
+            "metadata": "Lecture et effacement des métadonnées"
         }
     },
     "localProcessing": "✨ Toutes les images sont traitées localement dans votre navigateur - Aucun envoi sur un serveur !",
@@ -46,8 +47,29 @@
             "title": "Effet de tramage",
             "label": "Appliquer l'effet de tramage",
             "colors": "Nombre de couleurs",
+            "palette": "Palette de couleurs",
             "toggle": "Activer/désactiver l'effet de tramage",
-            "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle"
+            "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle.",
+            "algorithm": "Algorithme de tramage",
+            "quality": "Qualité du tramage",
+            "serpentine": "Mode serpentin (meilleure qualité)",
+            "qualityLevels": {
+                "low": "Basse (plus rapide)",
+                "medium": "Moyenne (équilibrée)",
+                "high": "Haute (meilleure qualité)"
+            },
+            "algorithms": {
+                "FloydSteinberg": "Floyd-Steinberg (Standard)",
+                "FalseFloydSteinberg": "False Floyd-Steinberg (Plus rapide)",
+                "Stucki": "Stucki (Haute qualité)",
+                "Atkinson": "Atkinson (Style rétro)",
+                "Jarvis": "Jarvis (Détaillé)",
+                "Burkes": "Burkes (Équilibré)",
+                "Sierra": "Sierra (Doux)",
+                "TwoSierra": "Two-Row Sierra (Plus léger)",
+                "SierraLite": "Sierra Lite (Minimal)"
+            },
+            "learnMore": "En savoir plus"
         },
         "faceBlur": {
             "title": "Floutage des visages",
@@ -61,7 +83,7 @@
     "loading": {
         "initial": "Patience, votre image est en cours de traitement..",
         "long": "Ok c'est vrai que c'est un peu long..",
-        "veryLong": "Ca vient ! Ca vient !",
+        "veryLong": "Ça vient ! Ça vient !",
         "status": "État du chargement",
         "imageAlt": "Animation de chargement",
         "progress": "Progression de {{step}}"
@@ -88,9 +110,44 @@
     "footer": {
         "contributions": "Les contributions sont les bienvenues !",
         "github": "Voir le projet sur GitHub",
-        "madeIn": "Made in Boccagia"
+        "madeIn": "Made in Boccagia",
+        "aboutEmu": "À propos d'Emu",
+        "description": "Emu est d'abord un projet d'apprentissage mais son évolution est guidée par son utilité réelle. Contributions bienvenues : suggestions, signalement de bugs ou retours d'expérience. Merci de participer à son amélioration."
     },
-    "metadataRemoved": "Les metadonnées ont été automatiquement supprimées pendant le traitement.",
+    "contact": {
+        "title": "Contactez-nous",
+        "emailLabel": "Votre email",
+        "messageLabel": "Votre message",
+        "submit": "Envoyer",
+        "success": "Merci de votre message !",
+        "error": "Une erreur est survenue. Veuillez réessayer."
+    },
+    "metadataRemoved": "Les métadonnées ont été automatiquement supprimées pendant le traitement.",
+    "processInfo": {
+        "title": "Traitements appliqués",
+        "compression": "Compression à {{quality}}% de qualité ({{ratio}}% de réduction, de {{originalSize}} à {{newSize}})",
+        "resize": "Redimensionnement de {{originalWidth}}x{{originalHeight}}px à {{newWidth}}x{{newHeight}}px",
+        "dithering": "Effet de tramage appliqué avec {{colors}} couleurs",
+        "faceBlur": "Floutage automatique des visages appliqué",
+        "rotation": "Rotation de {{degrees}}°",
+        "metadata": "Suppression des métadonnées"
+    },
+    "processing": {
+        "steps": {
+            "starting": "Démarrage du traitement de l'image",
+            "compression": "Compression de l'image",
+            "usingCache": "Utilisation de la version en cache",
+            "finalizing": "Finalisation de l'image",
+            "complete": "Traitement terminé"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "Utilisation de la palette en cache",
+            "creatingPalette": "Création de la palette de couleurs",
+            "applying": "Application de l'effet de tramage"
+        }
+    },
     "image": {
         "original": {
             "alt": "Image originale"
@@ -101,5 +158,19 @@
         "crop": {
             "alt": "Image à recadrer"
         }
+    },
+    "switchToDark": "Passer au thème sombre",
+    "switchToLight": "Passer au thème clair",
+    "colorPalette": {
+        "copied": "Code couleur copié !",
+        "clickToCopy": "Cliquez sur une couleur pour copier son code"
+    },
+    "ditheringDialogue": {
+        "title": "Plus d'information sur le tramage",
+        "description": "Le traitement utilise l'algorithme de tramage Floyd-Steinberg avec mode serpentin et préserve les valeurs alpha originales des pixels pour maintenir la transparence.",
+        "method": "Méthode de quantification (method: 2) : Analyse les petites zones de l'image séparément pour mieux préserver les détails locaux.",
+        "algorithm": "Algorithme de tramage (dithKern: 'FloydSteinberg') : Crée une illusion de couleurs intermédiaires en disposant les pixels de façon alternée.",
+        "serpentine": "Mode serpentin (dithSerp: true) : Traite l'image en zigzag au lieu de toujours aller de gauche à droite.",
+        "technicalNote": "Note technique : La transparence est préservée en stockant les valeurs alpha originales dans une carte séparée, puis en les réappliquant après le processus de quantification et de tramage."
     }
 }

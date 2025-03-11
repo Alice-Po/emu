@@ -1,5 +1,6 @@
 {
-    "title": "Image Optimizer",
+    "title": "Emu",
+    "subtitle": "Compress, blur, crop, rotate.. Free and without tricks.",
     "beta": "Beta",
     "language": "Language",
     "features": {
@@ -46,8 +47,29 @@
             "title": "Dithering Effect",
             "label": "Apply dithering effect",
             "colors": "Number of colors",
+            "palette": "Color palette",
             "toggle": "Toggle dithering effect",
-            "description": "Dithering reduces the number of colors while preserving visual quality"
+            "description": "Dithering reduces the number of colors while preserving visual quality",
+            "algorithm": "Dithering algorithm",
+            "quality": "Dithering quality",
+            "serpentine": "Serpentine mode (better quality)",
+            "qualityLevels": {
+                "low": "Low (faster)",
+                "medium": "Medium (balanced)",
+                "high": "High (best quality)"
+            },
+            "algorithms": {
+                "FloydSteinberg": "Floyd-Steinberg (Standard)",
+                "FalseFloydSteinberg": "False Floyd-Steinberg (Faster)",
+                "Stucki": "Stucki (High quality)",
+                "Atkinson": "Atkinson (Retro style)",
+                "Jarvis": "Jarvis (Detailed)",
+                "Burkes": "Burkes (Balanced)",
+                "Sierra": "Sierra (Smooth)",
+                "TwoSierra": "Two-Row Sierra (Lighter)",
+                "SierraLite": "Sierra Lite (Minimal)"
+            },
+            "learnMore": "Learn more"
         },
         "faceBlur": {
             "title": "Face Blurring",
@@ -88,9 +110,36 @@
     "footer": {
         "contributions": "Contributions are welcome!",
         "github": "View project on GitHub",
-        "madeIn": "Made in Boccagia"
+        "madeIn": "Made in Boccagia",
+        "aboutEmu": "About Emu",
+        "description": "Emu is primarily a learning project but its evolution is guided by its real utility. Contributions are welcome: suggestions, bug reports, or feedback. Thank you for participating in its improvement."
     },
     "metadataRemoved": "Metadata has been automatically removed during processing.",
+    "processInfo": {
+        "title": "Applied Processes",
+        "compression": "Compression at {{quality}}% quality ({{ratio}}% reduction, from {{originalSize}} to {{newSize}})",
+        "resize": "Resized from {{originalWidth}}x{{originalHeight}}px to {{newWidth}}x{{newHeight}}px",
+        "dithering": "Dithering effect applied with {{colors}} colors",
+        "faceBlur": "Automatic face blurring applied",
+        "rotation": "Rotation of {{degrees}}°",
+        "metadata": "Metadata removal"
+    },
+    "processing": {
+        "steps": {
+            "starting": "Starting image processing",
+            "compression": "Compressing image",
+            "usingCache": "Using cached version",
+            "finalizing": "Finalizing image",
+            "complete": "Processing complete"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "Using cached color palette",
+            "creatingPalette": "Creating color palette",
+            "applying": "Applying dithering effect"
+        }
+    },
     "image": {
         "original": {
             "alt": "Original image"
@@ -101,5 +150,27 @@
         "crop": {
             "alt": "Image to crop"
         }
+    },
+    "switchToDark": "Switch to dark theme",
+    "switchToLight": "Switch to light theme",
+    "colorPalette": {
+        "copied": "Color code copied!",
+        "clickToCopy": "Click a color to copy its code"
+    },
+    "ditheringDialogue": {
+        "title": "More information about dithering",
+        "description": "The processing uses the Floyd-Steinberg dithering algorithm with serpentine mode and preserves the original alpha values of the pixels to maintain transparency.",
+        "method": "Quantization method (method: 2): Analyzes small areas of the image separately to better preserve local details.",
+        "algorithm": "Dithering algorithm (dithKern: 'FloydSteinberg'): Creates an illusion of intermediate colors by arranging pixels alternately.",
+        "serpentine": "Serpentine mode (dithSerp: true): Processes the image in a zigzag instead of always going from left to right.",
+        "technicalNote": "Technical note: Transparency is preserved by storing the original alpha values in a separate map, then reapplying them after the quantization and dithering process."
+    },
+    "contact": {
+        "title": "Contact Us",
+        "emailLabel": "Your email",
+        "messageLabel": "Your message",
+        "submit": "Send",
+        "success": "Thank you for your message!",
+        "error": "An error occurred. Please try again."
     }
 }

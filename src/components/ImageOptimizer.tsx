@@ -26,12 +26,9 @@ import {
   FormControlLabel,
   Grid,
   IconButton,
-  Link,
-  MenuItem,
   Paper,
-  Select,
-  SelectChangeEvent,
   Slider,
+  Stack,
   Switch,
   Tooltip,
   Typography,
@@ -47,15 +44,27 @@ import {
   calculateCompressionRatio,
   formatFileSize,
   getCroppedImg,
-  hasMetadata,
 } from "../utils/imageUtils";
+import DitheringControls from "./Dithering/DitheringControls";
+import FeaturesDescription from "./FeaturesDescription";
+import Footer from "./Footer/Footer";
+import ImageMetadataDisplay from "./ImageMetadataDisplay";
+import LanguageSelector from "./LanguageSelector";
+import { ThemeToggle } from "./ThemeToggle";
+import { DitheringOptions } from "../types/ImageOptimizer.types";
+import { useDithering } from "../hooks/useDithering";
+import AppliedTreatments from "./AppliedTreatments";
+
+interface ImageOptimizerProps {
+  onThemeChange: (mode: "light" | "dark") => void;
+}
 
 /**
  * Main ImageOptimizer component that handles all image processing operations
  * @returns {JSX.Element} The rendered component
  */
-const ImageOptimizer: React.FC = () => {
-  const { t, i18n } = useTranslation();
+const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
+  const { t } = useTranslation();
   const {
     loading,
     progress,
@@ -63,17 +72,19 @@ const ImageOptimizer: React.FC = () => {
     compressedImage,
     originalStats,
     compressedStats,
-    metadata,
     canvasRef,
     processImage,
     setOriginalImage,
-    reset,
+    clearCache,
+    currentPalette,
   } = useImageProcessor();
+  const { applyDitheringEffect, currentPalette: ditheringPalette } =
+    useDithering();
 
   const [quality, setQuality] = useState<number>(75);
   const [maxWidth, setMaxWidth] = useState<number>(1920);
-  const [applyStyle, setApplyStyle] = useState<boolean>(false);
-  const [colorCount, setColorCount] = useState<number>(32);
+  const [applyDithering, setApplyDithering] = useState<boolean>(false);
+  const [colorCount, setColorCount] = useState<number>(16);
   const [applyBlur, setApplyBlur] = useState<boolean>(false);
   const [modelsLoaded, setModelsLoaded] = useState<boolean>(false);
   const [rotation, setRotation] = useState<number>(0);
@@ -90,6 +101,7 @@ const ImageOptimizer: React.FC = () => {
     "Patience, votre image est en cours de traitement..",
   );
   const [maxWidthLimit, setMaxWidthLimit] = useState<number>(3840);
+  const loadingSectionRef = useRef<HTMLDivElement>(null);
 
   /**
    * Debounced function that handles parameter changes for image processing
@@ -106,8 +118,9 @@ const ImageOptimizer: React.FC = () => {
       const options = {
         quality,
         maxWidth,
-        applyStyle,
+        applyDithering,
         applyBlur,
+        rotation,
         colorCount,
         [params.name]: params.value,
       };
@@ -145,36 +158,20 @@ const ImageOptimizer: React.FC = () => {
   };
 
   /**
-   * Handles changes to the color count slider for dithering effect
-   * Updates the colorCount state and triggers debounced image processing
-   *
-   * @param {Event} _event - The event object (unused)
-   * @param {number | number[]} newValue - The new color count value
-   */
-  const handleColorCountChange = (
-    _event: Event,
-    newValue: number | number[],
-  ) => {
-    const value = newValue as number;
-    setColorCount(value);
-    debouncedProcessWithParams({ name: "colorCount", value });
-  };
-
-  /**
    * Handles toggling of the dithering effect
    * Immediately processes the image with the new style setting
    *
    * @param {React.ChangeEvent<HTMLInputElement>} event - The change event
    */
-  const handleStyleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = event.target.checked;
-    setApplyStyle(value);
+  const handleDitheringChange = (value: boolean) => {
+    setApplyDithering(value);
     if (originalImage) {
       processImage(originalImage, {
         quality,
         maxWidth,
-        applyStyle: value,
+        applyDithering: value,
         applyBlur,
+        rotation,
         colorCount,
       });
     }
@@ -193,9 +190,30 @@ const ImageOptimizer: React.FC = () => {
       processImage(originalImage, {
         quality,
         maxWidth,
-        applyStyle,
+        applyDithering: applyDithering,
         applyBlur: value,
+        rotation,
         colorCount,
+      });
+    }
+  };
+
+  /**
+   * Handles changes to the color count
+   * Updates the colorCount state and triggers debounced image processing
+   *
+   * @param {number} value - The new color count value
+   */
+  const handleColorCountChange = (value: number) => {
+    setColorCount(value);
+    if (originalImage && applyDithering) {
+      processImage(originalImage, {
+        quality,
+        maxWidth,
+        applyDithering,
+        applyBlur,
+        rotation,
+        colorCount: value,
       });
     }
   };
@@ -227,10 +245,10 @@ const ImageOptimizer: React.FC = () => {
     await processImage(originalImage, {
       quality,
       maxWidth,
-      applyStyle,
+      applyDithering,
       applyBlur,
-      colorCount,
       rotation: newRotation,
+      colorCount,
     });
   };
 
@@ -250,8 +268,9 @@ const ImageOptimizer: React.FC = () => {
       await processImage(croppedFile, {
         quality,
         maxWidth,
-        applyStyle,
+        applyDithering,
         applyBlur,
+        rotation,
         colorCount,
       });
 
@@ -305,6 +324,20 @@ const ImageOptimizer: React.FC = () => {
     };
   }, [loading, t]);
 
+  const scrollToLoadingSection = () => {
+    if (loadingSectionRef.current) {
+      const yOffset = -100;
+      const element = loadingSectionRef.current;
+      const y =
+        element.getBoundingClientRect().top + window.pageYOffset + yOffset;
+
+      window.scrollTo({
+        top: y,
+        behavior: "smooth",
+      });
+    }
+  };
+
   /**
    * Handles initial image upload
    * Sets the original image and triggers initial processing
@@ -321,11 +354,21 @@ const ImageOptimizer: React.FC = () => {
     await processImage(file, {
       quality,
       maxWidth,
-      applyStyle,
+      applyDithering,
       applyBlur,
+      rotation,
       colorCount,
     });
   };
+
+  // Add effect to handle scroll when loading state changes
+  useEffect(() => {
+    if (loading && loadingSectionRef.current) {
+      setTimeout(() => {
+        scrollToLoadingSection();
+      }, 100);
+    }
+  }, [loading]);
 
   useEffect(() => {
     if (originalStats?.width) {
@@ -336,10 +379,6 @@ const ImageOptimizer: React.FC = () => {
     }
   }, [originalStats?.width]);
 
-  const handleLanguageChange = (event: SelectChangeEvent) => {
-    i18n.changeLanguage(event.target.value);
-  };
-
   return (
     <main role="main" aria-label="Image optimizer interface">
       <Card>
@@ -349,152 +388,73 @@ const ImageOptimizer: React.FC = () => {
             aria-labelledby="page-title"
             sx={{
               display: "flex",
-              justifyContent: "space-between",
+              justifyContent: "flex-start",
               alignItems: "center",
               mb: 2,
+              position: "relative",
             }}
           >
-            <Typography
-              variant="h1"
-              id="page-title"
-              sx={{
-                fontSize: "h3.fontSize",
-                mb: 3,
-              }}
-            >
-              {t("title")} <small>{t("beta")}</small>
-            </Typography>
             <Box
-              component="section"
-              aria-labelledby="language-section-title"
               sx={{
+                position: "absolute",
+                top: 0,
+                right: 0,
                 display: "flex",
                 alignItems: "center",
                 gap: 1,
               }}
             >
+              <ThemeToggle onThemeChange={onThemeChange} />
+              <LanguageSelector />
+            </Box>
+            <img
+              src="/emeu.png"
+              alt="Emu"
+              style={{ width: "100px", height: "auto", marginRight: "10px" }}
+            />
+            <Box>
               <Typography
-                variant="h2"
-                id="language-section-title"
+                variant="h1"
+                id="page-title"
                 sx={{
-                  fontSize: "0.9rem",
-                  color: "text.secondary",
-                  fontWeight: "medium",
+                  fontSize: "h3.fontSize",
+                  mb: 0.5,
                 }}
               >
-                {t("language")}
-              </Typography>
-              <Select
-                value={i18n.language}
-                onChange={handleLanguageChange}
-                size="small"
-                aria-label={t("language")}
-                title={t("language")}
-                sx={{
-                  minWidth: 120,
-                  height: 32,
-                  ".MuiSelect-select": {
-                    py: 0.5,
-                    display: "flex",
+                {t("title")}
+                <Box
+                  component="span"
+                  sx={{
+                    display: "inline-flex",
                     alignItems: "center",
-                    gap: 1,
-                  },
+                    justifyContent: "center",
+                    bgcolor: "primary.main",
+                    color: "primary.contrastText",
+                    borderRadius: 1,
+                    px: 1,
+                    py: 0.5,
+                    ml: 1,
+                    fontSize: "0.95rem",
+                    fontWeight: "bold",
+                  }}
+                >
+                  {t("beta")}
+                </Box>
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  fontSize: "h5.fontSize",
+                  color: "text.secondary",
+                  mb: 2,
                 }}
               >
-                <MenuItem
-                  value="fr"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇫🇷
-                  </Box>
-                  Français
-                </MenuItem>
-                <MenuItem
-                  value="en"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇬🇧
-                  </Box>
-                  English
-                </MenuItem>
-                <MenuItem
-                  value="es"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇪🇸
-                  </Box>
-                  Español
-                </MenuItem>
-                <MenuItem
-                  value="it"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇮🇹
-                  </Box>
-                  Italiano
-                </MenuItem>
-                <MenuItem
-                  value="hi"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇮🇳
-                  </Box>
-                  हिंदी
-                </MenuItem>
-                <MenuItem
-                  value="ja"
-                  sx={{ display: "flex", alignItems: "center", gap: 1 }}
-                >
-                  <Box
-                    component="span"
-                    sx={{ fontSize: "1.2em", lineHeight: 1 }}
-                  >
-                    🇯🇵
-                  </Box>
-                  日本語
-                </MenuItem>
-              </Select>
+                {t("subtitle")}
+              </Typography>
             </Box>
           </Box>
 
-          <Paper sx={{ p: 2, mb: 3 }}>
-            <Typography component="div" variant="body2" sx={{ mb: 2 }}>
-              <strong>{t("features.title")}</strong>
-              <ul>
-                <li>{t("features.list.compression")}</li>
-                <li>{t("features.list.faceBlur")}</li>
-                <li>{t("features.list.cropRotate")}</li>
-                <li>{t("features.list.metadata")}</li>
-              </ul>
-            </Typography>
-            <Typography
-              variant="body2"
-              color="primary"
-              sx={{ fontWeight: "medium" }}
-            >
-              {t("localProcessing")}
-            </Typography>
-          </Paper>
+          <FeaturesDescription />
 
           <Box
             component="section"
@@ -544,33 +504,34 @@ const ImageOptimizer: React.FC = () => {
                     flex: 1,
                     width: "100%",
                     p: 2,
-                    bgcolor: "#1E1E1E",
+                    bgcolor: "background.paper",
                     borderRadius: 1,
                     textAlign: "center",
+                    border: 1,
+                    borderColor: "divider",
                   }}
                 >
                   <Typography
-                    color="grey.300"
                     variant="h2"
                     gutterBottom
                     sx={{
-                      transition: "color 0.3s ease",
                       fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
+                      color: "text.primary",
                     }}
                   >
                     {t("stats.original.title")}
                   </Typography>
                   <Typography
                     variant="h3"
-                    color="grey.100"
                     sx={{
                       mb: 1,
                       fontSize: { xs: "h4.fontSize", sm: "h4.fontSize" },
+                      color: "text.primary",
                     }}
                   >
                     {formatFileSize(originalStats.size)}
                   </Typography>
-                  <Typography color="grey.400">
+                  <Typography color="text.secondary">
                     {t("stats.original.dimensions", {
                       width: originalStats.width,
                       height: originalStats.height,
@@ -600,14 +561,16 @@ const ImageOptimizer: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        bgcolor: "#1E1E1E",
+                        bgcolor: "background.paper",
                         borderRadius: "50%",
+                        border: 1,
+                        borderColor: "divider",
                       }}
                     >
                       <CircularProgress
                         size={60}
                         thickness={4}
-                        sx={{ color: "#9DFF20" }}
+                        color="primary"
                       />
                     </Box>
                   ) : (
@@ -617,9 +580,9 @@ const ImageOptimizer: React.FC = () => {
                           width: "100%",
                           height: "100%",
                           position: "absolute",
-                          background: `conic-gradient(
-                            #9DFF20 0deg,
-                            #9DFF20 ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg,
+                          background: (theme) => `conic-gradient(
+                            ${theme.palette.primary.main} 0deg,
+                            ${theme.palette.primary.main} ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg,
                             transparent ${parseFloat(calculateCompressionRatio(originalStats, compressedStats)) * 3.6}deg
                           )`,
                           borderRadius: "50%",
@@ -630,20 +593,22 @@ const ImageOptimizer: React.FC = () => {
                         sx={{
                           width: "92%",
                           height: "92%",
-                          bgcolor: "#1E1E1E",
+                          bgcolor: "background.paper",
                           borderRadius: "50%",
                           position: "relative",
                           display: "flex",
                           flexDirection: "column",
                           alignItems: "center",
                           justifyContent: "center",
+                          border: 1,
+                          borderColor: "divider",
                         }}
                       >
                         <Typography
                           variant="h4"
                           sx={{
                             fontWeight: "bold",
-                            color: "#9DFF20",
+                            color: "primary.main",
                             lineHeight: 1,
                           }}
                         >
@@ -654,7 +619,7 @@ const ImageOptimizer: React.FC = () => {
                         </Typography>
                         <Typography
                           sx={{
-                            color: "rgba(255,255,255,0.7)",
+                            color: "text.secondary",
                             fontSize: "0.875rem",
                           }}
                         >
@@ -671,7 +636,7 @@ const ImageOptimizer: React.FC = () => {
                     flex: 1,
                     width: "100%",
                     p: 2,
-                    bgcolor: loading ? "#1E1E1E" : "#9DFF20",
+                    bgcolor: loading ? "background.paper" : "primary.main",
                     borderRadius: 1,
                     textAlign: "center",
                     position: "relative",
@@ -685,7 +650,7 @@ const ImageOptimizer: React.FC = () => {
                           transform: "translateY(-50%)",
                           width: 100,
                           height: 100,
-                          background: "#9DFF20",
+                          bgcolor: "primary.main",
                           clipPath: "circle(50% at 100% 50%)",
                         }
                       : undefined,
@@ -695,7 +660,7 @@ const ImageOptimizer: React.FC = () => {
                     variant="h3"
                     gutterBottom
                     sx={{
-                      color: loading ? "grey.300" : "rgba(0, 0, 0, 0.87)",
+                      color: loading ? "text.primary" : "primary.contrastText",
                       transition: "color 0.3s ease",
                       fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
                     }}
@@ -711,21 +676,21 @@ const ImageOptimizer: React.FC = () => {
                         height: 100,
                       }}
                     >
-                      <CircularProgress sx={{ color: "#9DFF20" }} />
+                      <CircularProgress color="primary" />
                     </Box>
                   ) : (
                     <>
                       <Typography
                         variant="h4"
                         sx={{
-                          color: "rgba(0, 0, 0, 0.87)",
+                          color: "primary.contrastText",
                           mb: 1,
                           fontWeight: "bold",
                         }}
                       >
                         {formatFileSize(compressedStats.size)}
                       </Typography>
-                      <Typography sx={{ color: "rgba(0, 0, 0, 0.7)" }}>
+                      <Typography sx={{ color: "primary.contrastText" }}>
                         {t("stats.optimized.dimensions", {
                           width: compressedStats.width,
                           height: compressedStats.height,
@@ -742,13 +707,12 @@ const ImageOptimizer: React.FC = () => {
                   sx={{
                     mt: 3,
                     textAlign: "center",
-                    color: "#9DFF20",
+                    color: "primary.main",
                     fontWeight: "bold",
                     fontSize: "1.1rem",
-                    textShadow: "0 2px 4px rgba(0,0,0,0.2)",
                     padding: "8px 16px",
                     borderRadius: "4px",
-                    backgroundColor: "rgba(0,0,0,0.7)",
+                    bgcolor: "action.hover",
                     display: "inline-block",
                     margin: "0 auto",
                     marginTop: 3,
@@ -893,135 +857,13 @@ const ImageOptimizer: React.FC = () => {
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Paper
-                sx={{
-                  p: { xs: 2, sm: 3 },
-                  height: "100%",
-                  backgroundColor: "background.default",
-                  borderRadius: 2,
-                  boxShadow: (theme) => theme.shadows[1],
-                  border: (theme) => `1px solid ${theme.palette.divider}`,
-                  transition: "box-shadow 0.2s ease-in-out",
-                  "&:hover": {
-                    boxShadow: (theme) => theme.shadows[2],
-                  },
-                }}
-                role="region"
-                aria-labelledby="dithering-section-title"
-              >
-                <Box
-                  sx={{
-                    display: "flex",
-                    flexDirection: "column",
-                    gap: { xs: 1, sm: 2 },
-                  }}
-                >
-                  <Box
-                    sx={{
-                      display: "flex",
-                      flexDirection: { xs: "column", sm: "row" },
-                      alignItems: { xs: "stretch", sm: "center" },
-                      gap: { xs: 1.5, sm: 2 },
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <Typography
-                      variant="h2"
-                      id="dithering-section-title"
-                      sx={{
-                        color: "primary.main",
-                        fontWeight: "medium",
-                        fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
-                        display: "flex",
-                        alignItems: "center",
-                        gap: 1,
-                        "&::before": {
-                          content: '""',
-                          width: 4,
-                          height: { xs: 24, sm: 24 },
-                          backgroundColor: "primary.main",
-                          borderRadius: 1,
-                        },
-                      }}
-                    >
-                      {t("controls.dithering.title")}
-                    </Typography>
-                    <FormControlLabel
-                      sx={{
-                        m: 0,
-                        ml: { xs: 1, sm: 0 },
-                        ".MuiFormControlLabel-label": {
-                          fontSize: { xs: "1rem", sm: "1rem" },
-                          color: "text.secondary",
-                        },
-                      }}
-                      control={
-                        <Switch
-                          checked={applyStyle}
-                          onChange={handleStyleChange}
-                          aria-label={t("controls.dithering.toggle")}
-                          size="small"
-                        />
-                      }
-                      label={t("controls.dithering.label")}
-                    />
-                  </Box>
-                  <Typography
-                    id="settings-description"
-                    variant="body2"
-                    color="text.secondary"
-                    sx={{
-                      fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                      mt: { xs: 0, sm: -1 },
-                    }}
-                  >
-                    {t("controls.dithering.description")}
-                  </Typography>
-                  {applyStyle && (
-                    <Box
-                      sx={{ mt: { xs: 2, sm: 2 } }}
-                      role="group"
-                      aria-label={t("controls.dithering.colors")}
-                    >
-                      <Typography
-                        gutterBottom
-                        id="color-count-slider-label"
-                        sx={{
-                          fontSize: { xs: "1rem", sm: "1rem" },
-                          fontWeight: "medium",
-                          color: "text.secondary",
-                          mb: 1,
-                        }}
-                      >
-                        {t("controls.dithering.colors")}
-                      </Typography>
-                      <Slider
-                        value={colorCount}
-                        onChange={handleColorCountChange}
-                        min={2}
-                        max={32}
-                        step={1}
-                        marks={[
-                          { value: 2, label: "2" },
-                          { value: 8, label: "8" },
-                          { value: 16, label: "16" },
-                          { value: 32, label: "32" },
-                        ]}
-                        valueLabelDisplay="auto"
-                        aria-labelledby="color-count-slider-label"
-                        sx={{
-                          "& .MuiSlider-markLabel": {
-                            fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                          },
-                          "& .MuiSlider-valueLabel": {
-                            fontSize: { xs: "0.875rem", sm: "0.875rem" },
-                          },
-                        }}
-                      />
-                    </Box>
-                  )}
-                </Box>
-              </Paper>
+              <DitheringControls
+                applyDithering={applyDithering}
+                onDitheringChange={handleDitheringChange}
+                colorCount={colorCount}
+                onColorCountChange={handleColorCountChange}
+                currentPalette={currentPalette}
+              />
             </Grid>
 
             <Grid item xs={12} md={6}>
@@ -1168,93 +1010,7 @@ const ImageOptimizer: React.FC = () => {
                   alt="Original"
                 />
               )}
-              {metadata && (
-                <Paper sx={{ p: 2, mb: 3 }}>
-                  <Typography
-                    variant="h2"
-                    sx={{
-                      color: "primary.main",
-                      fontWeight: "medium",
-                      fontSize: { xs: "h6.fontSize", sm: "h6.fontSize" },
-                      display: "flex",
-                      alignItems: "center",
-                      gap: 1,
-                      "&::before": {
-                        content: '""',
-                        width: 4,
-                        height: { xs: 24, sm: 24 },
-                        backgroundColor: "primary.main",
-                        borderRadius: 1,
-                      },
-                    }}
-                    gutterBottom
-                  >
-                    {t("metadata.title")}
-                  </Typography>
-                  {hasMetadata(metadata) ? (
-                    <Grid container spacing={2}>
-                      {metadata.Make && (
-                        <Grid item xs={12} sm={6}>
-                          <Typography>
-                            <strong>{t("metadata.device")}:</strong>{" "}
-                            {metadata.Make} {metadata.Model}
-                          </Typography>
-                        </Grid>
-                      )}
-                      {metadata.DateTimeOriginal && (
-                        <Grid item xs={12} sm={6}>
-                          <Typography>
-                            <strong>{t("metadata.date")}:</strong>{" "}
-                            {new Date(
-                              metadata.DateTimeOriginal,
-                            ).toLocaleString()}
-                          </Typography>
-                        </Grid>
-                      )}
-                      {metadata.ExposureTime && (
-                        <Grid item xs={12} sm={6}>
-                          <Typography>
-                            <strong>{t("metadata.exposure")}:</strong>{" "}
-                            {metadata.ExposureTime}s
-                          </Typography>
-                        </Grid>
-                      )}
-                      {metadata.FNumber && (
-                        <Grid item xs={12} sm={6}>
-                          <Typography>
-                            <strong>{t("metadata.aperture")}:</strong> f/
-                            {metadata.FNumber}
-                          </Typography>
-                        </Grid>
-                      )}
-                      {metadata.FocalLength && (
-                        <Grid item xs={12} sm={6}>
-                          <Typography>
-                            <strong>{t("metadata.focalLength")}:</strong>{" "}
-                            {metadata.FocalLength}mm
-                          </Typography>
-                        </Grid>
-                      )}
-                      {metadata.latitude && metadata.longitude && (
-                        <Grid item xs={12}>
-                          <Typography>
-                            <strong>{t("metadata.location")}:</strong>{" "}
-                            {metadata.latitude.toFixed(6)},{" "}
-                            {metadata.longitude.toFixed(6)}
-                          </Typography>
-                        </Grid>
-                      )}
-                    </Grid>
-                  ) : (
-                    <Typography
-                      color="text.secondary"
-                      sx={{ fontStyle: "italic" }}
-                    >
-                      {t("metadata.noData")}
-                    </Typography>
-                  )}
-                </Paper>
-              )}
+              {originalImage && <ImageMetadataDisplay file={originalImage} />}
             </Grid>
             <Grid item xs={12} md={6}>
               <Box sx={{ position: "relative" }}>
@@ -1264,10 +1020,19 @@ const ImageOptimizer: React.FC = () => {
                 {loading ? (
                   <>
                     <Box
+                      ref={loadingSectionRef}
                       role="status"
                       aria-live="polite"
                       aria-busy="true"
                       aria-label={t("loading.status")}
+                      sx={{
+                        minHeight: "300px",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                        my: 4,
+                      }}
                     >
                       <Box
                         component="img"
@@ -1403,38 +1168,24 @@ const ImageOptimizer: React.FC = () => {
             </Grid>
           </Grid>
 
-          <Box
-            component="footer"
-            sx={{
-              p: 2,
-              mt: 3,
-              borderTop: 1,
-              borderColor: "divider",
-              textAlign: "center",
-              backgroundColor: "background.paper",
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 1,
-            }}
-          >
-            <Typography variant="body2" color="text.secondary">
-              {t("footer.contributions")}
-              <Link
-                href="https://github.com/Alice-Po/image-ecolo"
-                target="_blank"
-                rel="noopener noreferrer"
-                sx={{ ml: 1 }}
-              >
-                {t("footer.github")}
-              </Link>
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {t("footer.madeIn")}
-            </Typography>
-          </Box>
+          <AppliedTreatments
+            quality={quality}
+            originalStats={originalStats || { size: 0, width: 0, height: 0 }}
+            compressedStats={
+              compressedStats || { size: 0, width: 0, height: 0 }
+            }
+            applyBlur={applyBlur}
+            rotation={rotation}
+            calculateCompressionRatio={calculateCompressionRatio}
+            formatFileSize={formatFileSize}
+            applyDithering={applyDithering}
+            colorCount={colorCount}
+          />
+
+          <Footer />
+
+          <canvas ref={canvasRef} style={{ display: "none" }} />
         </CardContent>
-        <canvas ref={canvasRef} style={{ display: "none" }} />
       </Card>
     </main>
   );

@@ -1,5 +1,6 @@
 {
-    "title": "Optimizador de Imágenes",
+    "title": "Emu",
+    "subtitle": "Comprime, difumina, recorta, gira.. Gratis y sin trucos.",
     "beta": "Beta",
     "language": "Idioma",
     "features": {
@@ -23,7 +24,7 @@
             "dimensions": "{{width}} × {{height}}px"
         },
         "reduction": {
-            "label": "de reducción",
+            "label": "reducción",
             "excellent": "¡Excelente optimización! 🎉",
             "good": "Buena optimización",
             "moderate": "Optimización moderada"
@@ -31,7 +32,7 @@
     },
     "controls": {
         "basic": {
-            "title": "Ajustes Básicos"
+            "title": "Ajustes básicos"
         },
         "quality": {
             "label": "Calidad de compresión (%)",
@@ -43,24 +44,45 @@
             "description": "Establece el ancho máximo de la imagen"
         },
         "dithering": {
-            "title": "Efecto de Tramado",
+            "title": "Efecto de tramado",
             "label": "Aplicar efecto de tramado",
             "colors": "Número de colores",
+            "palette": "Paleta de colores",
             "toggle": "Alternar efecto de tramado",
-            "description": "El tramado reduce el número de colores mientras preserva la calidad visual"
+            "description": "El tramado reduce el número de colores mientras preserva la calidad visual",
+            "algorithm": "Algoritmo de tramado",
+            "quality": "Calidad de tramado",
+            "serpentine": "Modo serpentina (mejor calidad)",
+            "qualityLevels": {
+                "low": "Baja (más rápido)",
+                "medium": "Media (equilibrado)",
+                "high": "Alta (mejor calidad)"
+            },
+            "algorithms": {
+                "FloydSteinberg": "Floyd-Steinberg (Estándar)",
+                "FalseFloydSteinberg": "Falso Floyd-Steinberg (Más rápido)",
+                "Stucki": "Stucki (Alta calidad)",
+                "Atkinson": "Atkinson (Estilo retro)",
+                "Jarvis": "Jarvis (Detallado)",
+                "Burkes": "Burkes (Equilibrado)",
+                "Sierra": "Sierra (Suave)",
+                "TwoSierra": "Sierra de dos filas (Más ligero)",
+                "SierraLite": "Sierra Lite (Mínimo)"
+            },
+            "learnMore": "Más información"
         },
         "faceBlur": {
-            "title": "Difuminado de Rostros",
+            "title": "Difuminado de rostros",
             "label": "Difuminar rostros",
             "toggle": "Alternar difuminado de rostros",
             "loading": "Cargando modelos de detección...",
             "description": "Detecta y difumina automáticamente los rostros en la imagen para proteger la privacidad",
-            "manual": "¡El difuminado manual de rostros estará disponible pronto! Esta función te permitirá seleccionar con precisión las áreas a difuminar."
+            "manual": "¡Difuminado manual de rostros próximamente! Esta función te permitirá seleccionar con precisión las áreas a difuminar."
         }
     },
     "loading": {
-        "initial": "Por favor espere mientras se procesa su imagen..",
-        "long": "Está tomando más tiempo de lo esperado..",
+        "initial": "Por favor, espera mientras se procesa tu imagen..",
+        "long": "Vale, está tardando un poco más de lo esperado..",
         "veryLong": "¡Ya casi está!",
         "status": "Estado de carga",
         "imageAlt": "Animación de carga",
@@ -88,9 +110,44 @@
     "footer": {
         "contributions": "¡Las contribuciones son bienvenidas!",
         "github": "Ver proyecto en GitHub",
-        "madeIn": "Hecho en Boccagia"
+        "madeIn": "Hecho en Boccagia",
+        "aboutEmu": "Acerca de Emu",
+        "description": "Emu es principalmente un proyecto de aprendizaje pero su evolución está guiada por su utilidad real. Las contribuciones son bienvenidas: sugerencias, reportes de errores o comentarios. Gracias por participar en su mejora."
+    },
+    "contact": {
+        "title": "Contáctanos",
+        "emailLabel": "Tu correo electrónico",
+        "messageLabel": "Tu mensaje",
+        "submit": "Enviar",
+        "success": "¡Gracias por tu mensaje!",
+        "error": "Ocurrió un error. Por favor, inténtalo de nuevo."
     },
     "metadataRemoved": "Los metadatos se han eliminado automáticamente durante el procesamiento.",
+    "processInfo": {
+        "title": "Procesos aplicados",
+        "compression": "Compresión al {{quality}}% de calidad ({{ratio}}% de reducción, de {{originalSize}} a {{newSize}})",
+        "resize": "Redimensionado de {{originalWidth}}x{{originalHeight}}px a {{newWidth}}x{{newHeight}}px",
+        "dithering": "Efecto de tramado aplicado con {{colors}} colores",
+        "faceBlur": "Difuminado automático de rostros aplicado",
+        "rotation": "Rotación de {{degrees}}°",
+        "metadata": "Eliminación de metadatos"
+    },
+    "processing": {
+        "steps": {
+            "starting": "Iniciando procesamiento de imagen",
+            "compression": "Comprimiendo imagen",
+            "usingCache": "Usando versión en caché",
+            "finalizing": "Finalizando imagen",
+            "complete": "Procesamiento completo"
+        }
+    },
+    "dithering": {
+        "steps": {
+            "usingCache": "Usando paleta de colores en caché",
+            "creatingPalette": "Creando paleta de colores",
+            "applying": "Aplicando efecto de tramado"
+        }
+    },
     "image": {
         "original": {
             "alt": "Imagen original"
@@ -101,5 +158,19 @@
         "crop": {
             "alt": "Imagen para recortar"
         }
+    },
+    "switchToDark": "Cambiar a tema oscuro",
+    "switchToLight": "Cambiar a tema claro",
+    "colorPalette": {
+        "copied": "¡Código de color copiado!",
+        "clickToCopy": "Haz clic en un color para copiar su código"
+    },
+    "ditheringDialogue": {
+        "title": "Más información sobre el tramado",
+        "description": "El procesamiento utiliza el algoritmo de tramado Floyd-Steinberg con modo serpentina y preserva los valores alfa originales de los píxeles para mantener la transparencia.",
+        "method": "Método de cuantización (método: 2): Analiza pequeñas áreas de la imagen por separado para preservar mejor los detalles locales.",
+        "algorithm": "Algoritmo de tramado (dithKern: 'FloydSteinberg'): Crea una ilusión de colores intermedios mediante la disposición alterna de píxeles.",
+        "serpentine": "Modo serpentina (dithSerp: true): Procesa la imagen en zigzag en lugar de ir siempre de izquierda a derecha.",
+        "technicalNote": "Nota técnica: La transparencia se preserva almacenando los valores alfa originales en un mapa separado, luego reaplicándolos después del proceso de cuantización y tramado."
     }
 }
