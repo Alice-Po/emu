@@ -48,7 +48,7 @@
             "colors": "Nombre de couleurs",
             "palette": "Palette de couleurs",
             "toggle": "Activer/désactiver l'effet de tramage",
-            "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle",
+            "description": "Le tramage permet de réduire le nombre de couleurs tout en préservant la qualité visuelle.",
             "algorithm": "Algorithme de tramage",
             "quality": "Qualité du tramage",
             "serpentine": "Mode serpentin (meilleure qualité)",
@@ -67,7 +67,8 @@
                 "Sierra": "Sierra (Doux)",
                 "TwoSierra": "Two-Row Sierra (Plus léger)",
                 "SierraLite": "Sierra Lite (Minimal)"
-            }
+            },
+            "learnMore": "En savoir plus"
         },
         "faceBlur": {
             "title": "Floutage des visages",
@@ -108,7 +109,17 @@
     "footer": {
         "contributions": "Les contributions sont les bienvenues !",
         "github": "Voir le projet sur GitHub",
-        "madeIn": "Made in Boccagia"
+        "madeIn": "Fabriqué à Boccagia",
+        "aboutEmu": "À propos d'Emu",
+        "description": "Emu est d'abord un projet d'apprentissage mais son évolution est guidée par son utilité réelle. Contributions bienvenues : suggestions, signalement de bugs ou retours d'expérience. Merci de participer à son amélioration."
+    },
+    "contact": {
+        "title": "Contactez-nous",
+        "emailLabel": "Votre email",
+        "messageLabel": "Votre message",
+        "submit": "Envoyer",
+        "success": "Merci de votre message !",
+        "error": "Une erreur est survenue. Veuillez réessayer."
     },
     "metadataRemoved": "Les métadonnées ont été automatiquement supprimées pendant le traitement.",
     "processInfo": {
@@ -152,5 +163,13 @@
     "colorPalette": {
         "copied": "Code couleur copié !",
         "clickToCopy": "Cliquez sur une couleur pour copier son code"
+    },
+    "ditheringDialogue": {
+        "title": "Plus d'information sur le tramage",
+        "description": "Le traitement utilise l'algorithme de tramage Floyd-Steinberg avec mode serpentin et préserve les valeurs alpha originales des pixels pour maintenir la transparence.",
+        "method": "Méthode de quantification (method: 2) : Analyse les petites zones de l'image séparément pour mieux préserver les détails locaux.",
+        "algorithm": "Algorithme de tramage (dithKern: 'FloydSteinberg') : Crée une illusion de couleurs intermédiaires en disposant les pixels de façon alternée.",
+        "serpentine": "Mode serpentin (dithSerp: true) : Traite l'image en zigzag au lieu de toujours aller de gauche à droite.",
+        "technicalNote": "Note technique : La transparence est préservée en stockant les valeurs alpha originales dans une carte séparée, puis en les réappliquant après le processus de quantification et de tramage."
     }
 }

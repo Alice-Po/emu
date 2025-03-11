@@ -48,7 +48,8 @@
             "colors": "Numero di colori",
             "palette": "Palette dei colori",
             "toggle": "Attiva/disattiva effetto dithering",
-            "description": "Il dithering riduce il numero di colori mantenendo la qualità visiva"
+            "description": "Il dithering riduce il numero di colori mantenendo la qualità visiva",
+            "learnMore": "Per saperne di più"
         },
         "faceBlur": {
             "title": "Sfocatura volti",
@@ -89,7 +90,9 @@
     "footer": {
         "contributions": "I contributi sono benvenuti!",
         "github": "Vedi progetto su GitHub",
-        "madeIn": "Made in Boccagia"
+        "madeIn": "Made in Boccagia",
+        "aboutEmu": "Informazioni su Emu",
+        "description": "Emu è principalmente un progetto sperimentale. La sua evoluzione sarà guidata dalla sua reale utilità. I contributi sono benvenuti: suggerimenti, segnalazioni di bug o feedback. Grazie per partecipare al suo miglioramento."
     },
     "metadataRemoved": "I metadati sono stati rimossi automaticamente durante l'elaborazione.",
     "processInfo": {
@@ -132,5 +135,21 @@
     "colorPalette": {
         "copied": "Codice colore copiato!",
         "clickToCopy": "Clicca su un colore per copiare il suo codice"
+    },
+    "ditheringDialogue": {
+        "title": "Maggiori informazioni sul dithering",
+        "description": "L'elaborazione utilizza l'algoritmo di dithering Floyd-Steinberg con modalità serpentina e preserva i valori alfa originali dei pixel per mantenere la trasparenza.",
+        "method": "Metodo di quantizzazione (method: 2): Analizza piccole aree dell'immagine separatamente per preservare meglio i dettagli locali.",
+        "algorithm": "Algoritmo di dithering (dithKern: 'FloydSteinberg'): Crea un'illusione di colori intermedi disponendo i pixel in modo alternato.",
+        "serpentine": "Modalità serpentina (dithSerp: true): Elabora l'immagine a zigzag invece di andare sempre da sinistra a destra.",
+        "technicalNote": "Nota tecnica: La trasparenza è preservata memorizzando i valori alfa originali in una mappa separata, quindi riapplicandoli dopo il processo di quantizzazione e dithering."
+    },
+    "contact": {
+        "title": "Contattaci",
+        "emailLabel": "La tua email",
+        "messageLabel": "Il tuo messaggio",
+        "submit": "Invia",
+        "success": "Messaggio inviato con successo!",
+        "error": "Si è verificato un errore. Per favore riprova."
     }
 }

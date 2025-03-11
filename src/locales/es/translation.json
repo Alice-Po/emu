@@ -48,7 +48,8 @@
             "colors": "Número de colores",
             "palette": "Paleta de colores",
             "toggle": "Activar/desactivar efecto de tramado",
-            "description": "El tramado reduce el número de colores manteniendo la calidad visual"
+            "description": "El tramado reduce el número de colores manteniendo la calidad visual",
+            "learnMore": "Aprender más"
         },
         "faceBlur": {
             "title": "Difuminado de rostros",
@@ -89,7 +90,9 @@
     "footer": {
         "contributions": "¡Las contribuciones son bienvenidas!",
         "github": "Ver proyecto en GitHub",
-        "madeIn": "Hecho en Boccagia"
+        "madeIn": "Hecho en Boccagia",
+        "aboutEmu": "Acerca de Emu",
+        "description": "Emu es principalmente un proyecto experimental. Su evolución será guiada por su utilidad real. Las contribuciones son bienvenidas: sugerencias, informes de errores o comentarios. Gracias por participar en su mejora."
     },
     "metadataRemoved": "Los metadatos se han eliminado automáticamente durante el procesamiento.",
     "processInfo": {
@@ -132,5 +135,21 @@
     "colorPalette": {
         "copied": "¡Código de color copiado!",
         "clickToCopy": "Haz clic en un color para copiar su código"
+    },
+    "ditheringDialogue": {
+        "title": "Más información sobre el tramado",
+        "description": "El procesamiento utiliza el algoritmo de tramado Floyd-Steinberg con modo serpentino y preserva los valores alfa originales de los píxeles para mantener la transparencia.",
+        "method": "Método de cuantificación (method: 2): Analiza pequeñas áreas de la imagen por separado para preservar mejor los detalles locales.",
+        "algorithm": "Algoritmo de tramado (dithKern: 'FloydSteinberg'): Crea una ilusión de colores intermedios al disponer los píxeles de manera alternada.",
+        "serpentine": "Modo serpentino (dithSerp: true): Procesa la imagen en zigzag en lugar de ir siempre de izquierda a derecha.",
+        "technicalNote": "Nota técnica: La transparencia se preserva almacenando los valores alfa originales en un mapa separado, y luego reaplicándolos después del proceso de cuantificación y tramado."
+    },
+    "contact": {
+        "title": "Contáctenos",
+        "emailLabel": "Tu correo electrónico",
+        "messageLabel": "Tu mensaje",
+        "submit": "Enviar",
+        "success": "¡Mensaje enviado con éxito!",
+        "error": "Ocurrió un error. Por favor, inténtelo de nuevo."
     }
 }

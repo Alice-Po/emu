@@ -48,7 +48,8 @@
             "colors": "色数",
             "palette": "カラーパレット",
             "toggle": "ディザリング効果の切り替え",
-            "description": "ディザリングは視覚的品質を保ちながら色数を削減します"
+            "description": "ディザリングは視覚的品質を保ちながら色数を削減します",
+            "learnMore": "詳細を学ぶ"
         },
         "faceBlur": {
             "title": "顔のぼかし",
@@ -89,7 +90,9 @@
     "footer": {
         "contributions": "貢献歓迎！",
         "github": "GitHubでプロジェクトを見る",
-        "madeIn": "Made in Boccagia"
+        "madeIn": "Made in Boccagia",
+        "aboutEmu": "Emuについて",
+        "description": "Emuは主に実験的なプロジェクトです。その進化は実際の有用性によって導かれます。貢献は歓迎されます：提案、バグ報告、またはフィードバック。改善に参加していただきありがとうございます。"
     },
     "metadataRemoved": "処理中にメタデータは自動的に削除されました。",
     "processInfo": {
@@ -132,5 +135,21 @@
     "colorPalette": {
         "copied": "カラーコードがコピーされました！",
         "clickToCopy": "コードをコピーするには色をクリックしてください"
+    },
+    "ditheringDialogue": {
+        "title": "ディザリングについての詳細情報",
+        "description": "処理は、蛇行モードのフロイド-スタインバーグディザリングアルゴリズムを使用し、透明性を維持するためにピクセルの元のアルファ値を保持します。",
+        "method": "量子化方法 (method: 2): 画像の小さな領域を個別に分析して、ローカルの詳細をよりよく保存します。",
+        "algorithm": "ディザリングアルゴリズム (dithKern: 'FloydSteinberg'): ピクセルを交互に配置することで中間色の錯覚を作り出します。",
+        "serpentine": "蛇行モード (dithSerp: true): 常に左から右に進むのではなく、ジグザグに画像を処理します。",
+        "technicalNote": "技術的な注意: 透明性は、元のアルファ値を別のマップに保存し、量子化とディザリングプロセスの後に再適用することで維持されます。"
+    },
+    "contact": {
+        "title": "お問い合わせ",
+        "emailLabel": "あなたのメール",
+        "messageLabel": "あなたのメッセージ",
+        "submit": "送信",
+        "success": "メッセージが正常に送信されました！",
+        "error": "エラーが発生しました。もう一度お試しください。"
     }
 }

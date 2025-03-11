@@ -67,7 +67,8 @@
                 "Sierra": "Sierra (Smooth)",
                 "TwoSierra": "Two-Row Sierra (Lighter)",
                 "SierraLite": "Sierra Lite (Minimal)"
-            }
+            },
+            "learnMore": "Learn more"
         },
         "faceBlur": {
             "title": "Face Blurring",
@@ -108,7 +109,9 @@
     "footer": {
         "contributions": "Contributions are welcome!",
         "github": "View project on GitHub",
-        "madeIn": "Made in Boccagia"
+        "madeIn": "Made in Boccagia",
+        "aboutEmu": "About Emu",
+        "description": "Emu is primarily an experimental project. Its evolution will be guided by its real utility. Contributions are welcome: suggestions, bug reports, or feedback. Thank you for participating in its improvement."
     },
     "metadataRemoved": "Metadata has been automatically removed during processing.",
     "processInfo": {
@@ -152,5 +155,21 @@
     "colorPalette": {
         "copied": "Color code copied!",
         "clickToCopy": "Click a color to copy its code"
+    },
+    "ditheringDialogue": {
+        "title": "More information about dithering",
+        "description": "The processing uses the Floyd-Steinberg dithering algorithm with serpentine mode and preserves the original alpha values of the pixels to maintain transparency.",
+        "method": "Quantization method (method: 2): Analyzes small areas of the image separately to better preserve local details.",
+        "algorithm": "Dithering algorithm (dithKern: 'FloydSteinberg'): Creates an illusion of intermediate colors by arranging pixels alternately.",
+        "serpentine": "Serpentine mode (dithSerp: true): Processes the image in a zigzag instead of always going from left to right.",
+        "technicalNote": "Technical note: Transparency is preserved by storing the original alpha values in a separate map, then reapplying them after the quantization and dithering process."
+    },
+    "contact": {
+        "title": "Contact Us",
+        "emailLabel": "Your email",
+        "messageLabel": "Your message",
+        "submit": "Send",
+        "success": "Message sent successfully!",
+        "error": "An error occurred. Please try again."
     }
 }
