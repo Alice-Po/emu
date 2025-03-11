@@ -53,6 +53,7 @@ import LanguageSelector from "./LanguageSelector";
 import { ThemeToggle } from "./ThemeToggle";
 import { DitheringOptions } from "../types/ImageOptimizer.types";
 import { useDithering } from "../hooks/useDithering";
+import AppliedTreatments from "./AppliedTreatments";
 
 interface ImageOptimizerProps {
   onThemeChange: (mode: "light" | "dark") => void;
@@ -1115,102 +1116,24 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
                           </>
                         )}
                       </Box>
-
-                      {/* Processing Information Section */}
-                      <Paper
-                        sx={{
-                          mt: 3,
-                          p: 2,
-                          bgcolor: "background.paper",
-                          borderRadius: 1,
-                          border: "1px solid",
-                          borderColor: "divider",
-                        }}
-                      >
-                        <Typography
-                          variant="h6"
-                          sx={{
-                            fontSize: "1rem",
-                            fontWeight: "medium",
-                            mb: 2,
-                            color: "primary.main",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: 1,
-                            "&::before": {
-                              content: '""',
-                              width: 4,
-                              height: 20,
-                              backgroundColor: "primary.main",
-                              borderRadius: 1,
-                            },
-                          }}
-                        >
-                          {t("processInfo.title", "Traitements appliqués")}
-                        </Typography>
-
-                        <Box component="ul" sx={{ m: 0, pl: 2 }}>
-                          {/* Compression info */}
-                          <Typography component="li" sx={{ mb: 1 }}>
-                            {t("processInfo.compression", {
-                              quality,
-                              ratio: calculateCompressionRatio(
-                                originalStats,
-                                compressedStats,
-                              ),
-                              originalSize: formatFileSize(
-                                originalStats?.size || 0,
-                              ),
-                              newSize: formatFileSize(
-                                compressedStats?.size || 0,
-                              ),
-                            })}
-                          </Typography>
-
-                          {/* Resizing info */}
-                          {originalStats &&
-                            compressedStats &&
-                            (originalStats.width !== compressedStats.width ||
-                              originalStats.height !==
-                                compressedStats.height) && (
-                              <Typography component="li" sx={{ mb: 1 }}>
-                                {t("processInfo.resize", {
-                                  originalWidth: originalStats.width,
-                                  originalHeight: originalStats.height,
-                                  newWidth: compressedStats.width,
-                                  newHeight: compressedStats.height,
-                                })}
-                              </Typography>
-                            )}
-
-                          {/* Face blur info */}
-                          {applyBlur && (
-                            <Typography component="li" sx={{ mb: 1 }}>
-                              {t("processInfo.faceBlur")}
-                            </Typography>
-                          )}
-
-                          {/* Rotation info */}
-                          {rotation !== 0 && (
-                            <Typography component="li" sx={{ mb: 1 }}>
-                              {t("processInfo.rotation", {
-                                degrees: rotation,
-                              })}
-                            </Typography>
-                          )}
-
-                          {/* Metadata info */}
-                          <Typography component="li" sx={{ mb: 1 }}>
-                            {t("processInfo.metadata")}
-                          </Typography>
-                        </Box>
-                      </Paper>
                     </>
                   )
                 )}
               </Box>
             </Grid>
           </Grid>
+
+          <AppliedTreatments
+            quality={quality}
+            originalStats={originalStats || { size: 0, width: 0, height: 0 }}
+            compressedStats={
+              compressedStats || { size: 0, width: 0, height: 0 }
+            }
+            applyBlur={applyBlur}
+            rotation={rotation}
+            calculateCompressionRatio={calculateCompressionRatio}
+            formatFileSize={formatFileSize}
+          />
 
           <Footer />
 
