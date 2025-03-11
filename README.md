@@ -101,8 +101,4 @@ To add a new language:
 
 ## 📜 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Made with love and passion for a better web for all
+This project is licensed under the MIT License.
