@@ -1,4 +1,3 @@
-import { utils } from "image-q";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -12,6 +11,7 @@ import { useDithering } from "./useDithering";
 import { useFaceBlur } from "./useFaceBlur";
 import { useImageCache } from "./useImageCache";
 import { useImageCompression } from "./useImageCompression";
+import { utils } from "face-api.js";
 /**
  * Hook to handle image processing
  * Uses useCanvasOperations for canvas manipulation

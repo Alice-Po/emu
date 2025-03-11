@@ -60,7 +60,7 @@ export interface BlurArea {
 export interface PaletteCache {
   imageHash: string; // A unique identifier for the image
   colorCount: number;
-  palette: any; // The exact type depends on image-q
+  palette: any;
 }
 
 /**
