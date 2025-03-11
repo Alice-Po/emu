@@ -45,9 +45,9 @@ import {
   formatFileSize,
   getCroppedImg,
 } from "../utils/imageUtils";
-import DitheringControls from "./DitheringControls";
+import DitheringControls from "./Dithering/DitheringControls";
 import FeaturesDescription from "./FeaturesDescription";
-import Footer from "./Footer";
+import Footer from "./Footer/Footer";
 import ImageMetadataDisplay from "./ImageMetadataDisplay";
 import LanguageSelector from "./LanguageSelector";
 import { ThemeToggle } from "./ThemeToggle";

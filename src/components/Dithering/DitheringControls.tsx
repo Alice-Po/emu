@@ -5,11 +5,13 @@ import {
   Slider,
   Switch,
   Typography,
+  Link,
 } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { DitheringControlsProps } from "../types/ImageOptimizer.types";
+import { DitheringControlsProps } from "../../types/ImageOptimizer.types";
 import ColorPalette from "./ColorPalette";
-
+import { useState } from "react";
+import DitheringDialogue from "./DitheringDialogue";
 /**
  * Component that handles dithering controls for image processing
  * @returns {JSX.Element} The DitheringControls component
@@ -22,6 +24,7 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
   currentPalette,
 }) => {
   const { t } = useTranslation();
+  const [openDialog, setOpenDialog] = useState(false);
 
   const handleDitheringToggle = (
     event: React.ChangeEvent<HTMLInputElement>,
@@ -112,6 +115,23 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
           }}
         >
           {t("controls.dithering.description")}
+          <Link
+            component="button"
+            variant="caption"
+            onClick={() => setOpenDialog(true)}
+            sx={{
+              color: "text.secondary",
+              textDecoration: "underline",
+              cursor: "pointer",
+              ml: 1,
+              opacity: 0.8,
+              "&:hover": {
+                opacity: 1,
+              },
+            }}
+          >
+            {t("controls.dithering.learnMore")}
+          </Link>
         </Typography>
 
         {applyDithering && (
@@ -151,6 +171,10 @@ const DitheringControls: React.FC<DitheringControlsProps> = ({
           </>
         )}
       </Box>
+      <DitheringDialogue
+        open={openDialog}
+        onClose={() => setOpenDialog(false)}
+      />
     </Paper>
   );
 };

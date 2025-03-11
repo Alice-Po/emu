@@ -1,6 +1,6 @@
 import { Box, Paper, Typography, Tooltip, Snackbar } from "@mui/material";
 import { useTranslation } from "react-i18next";
-import { useDithering } from "../hooks/useDithering";
+import { useDithering } from "../../hooks/useDithering";
 import { useState } from "react";
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 const ColorPalette: React.FC[] = ({ colors }) => {
