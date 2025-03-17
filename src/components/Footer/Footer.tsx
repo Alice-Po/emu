@@ -50,14 +50,18 @@ const Footer: React.FC = () => {
         </Typography>
 
         <Stack
-          direction="row"
-          spacing={3}
+          direction={{ xs: "column", sm: "row" }}
+          spacing={{ xs: 2, sm: 3 }}
           justifyContent="center"
           sx={{
+            width: { xs: "100%", sm: "auto" },
             "& a": {
               textDecoration: "none",
               transition: "transform 0.2s ease-in-out",
               "&:hover": { transform: "translateY(-2px)" },
+            },
+            "& a, & > *": {
+              width: { xs: "100%", sm: "auto" },
             },
           }}
         >
@@ -65,11 +69,13 @@ const Footer: React.FC = () => {
             href="https://github.com/Alice-Po/emu/issues/new"
             target="_blank"
             rel="noopener noreferrer"
+            sx={{ width: { xs: "100%", sm: "auto" } }}
           >
             <Button
               variant="outlined"
               startIcon={<BugReportIcon />}
               size="small"
+              fullWidth={true}
             >
               {t("footer.reportBug")}
             </Button>
@@ -79,8 +85,14 @@ const Footer: React.FC = () => {
             href="https://github.com/Alice-Po/emu"
             target="_blank"
             rel="noopener noreferrer"
+            sx={{ width: { xs: "100%", sm: "auto" } }}
           >
-            <Button variant="outlined" startIcon={<GitHubIcon />} size="small">
+            <Button
+              variant="outlined"
+              startIcon={<GitHubIcon />}
+              size="small"
+              fullWidth={true}
+            >
               {t("footer.contribute")}
             </Button>
           </MuiLink>

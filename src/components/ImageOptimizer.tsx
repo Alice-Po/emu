@@ -380,7 +380,14 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
   }, [originalStats?.width]);
 
   return (
-    <main role="main" aria-label="Image optimizer interface">
+    <main
+      role="main"
+      aria-label="Image optimizer interface"
+      style={{
+        margin: "0 auto",
+        // maxWidth: "1200px",
+      }}
+    >
       <Card>
         <CardContent>
           <Box
@@ -388,69 +395,95 @@ const ImageOptimizer: React.FC<ImageOptimizerProps> = ({ onThemeChange }) => {
             aria-labelledby="page-title"
             sx={{
               display: "flex",
-              justifyContent: "flex-start",
-              alignItems: "center",
+              flexDirection: "column",
+              gap: 2,
               mb: 2,
-              position: "relative",
             }}
           >
+            {/* Controls row */}
             <Box
               sx={{
-                position: "absolute",
-                top: 0,
-                right: 0,
                 display: "flex",
-                alignItems: "center",
+                justifyContent: "flex-end",
                 gap: 1,
               }}
             >
               <ThemeToggle onThemeChange={onThemeChange} />
               <LanguageSelector />
             </Box>
-            <img
-              src="/emeu.png"
-              alt="Emu"
-              style={{ width: "100px", height: "auto", marginRight: "10px" }}
-            />
-            <Box>
-              <Typography
-                variant="h1"
-                id="page-title"
+
+            {/* Title row */}
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: { xs: "column", sm: "row" },
+                alignItems: { xs: "center", sm: "flex-start" },
+                gap: { xs: 2, sm: 3 },
+              }}
+            >
+              <img
+                src="/emeu.png"
+                alt="Emu"
+                style={{
+                  width: "80px",
+                  height: "auto",
+                }}
+              />
+              <Box
                 sx={{
-                  fontSize: "h3.fontSize",
-                  mb: 0.5,
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: { xs: "center", sm: "flex-start" },
+                  textAlign: { xs: "center", sm: "left" },
                 }}
               >
-                {t("title")}
                 <Box
-                  component="span"
                   sx={{
-                    display: "inline-flex",
+                    display: "flex",
                     alignItems: "center",
-                    justifyContent: "center",
-                    bgcolor: "primary.main",
-                    color: "primary.contrastText",
-                    borderRadius: 1,
-                    px: 1,
-                    py: 0.5,
-                    ml: 1,
-                    fontSize: "0.95rem",
-                    fontWeight: "bold",
+                    gap: 1,
+                    flexWrap: "wrap",
+                    justifyContent: { xs: "center", sm: "flex-start" },
                   }}
                 >
-                  {t("beta")}
+                  <Typography
+                    variant="h1"
+                    id="page-title"
+                    sx={{
+                      fontSize: { xs: "h4.fontSize", sm: "h3.fontSize" },
+                      mb: 0.5,
+                    }}
+                  >
+                    {t("title")}
+                  </Typography>
+                  <Box
+                    component="span"
+                    sx={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      bgcolor: "primary.main",
+                      color: "primary.contrastText",
+                      borderRadius: 1,
+                      px: 1,
+                      py: 0.5,
+                      fontSize: "0.85rem",
+                      fontWeight: "bold",
+                    }}
+                  >
+                    {t("beta")}
+                  </Box>
                 </Box>
-              </Typography>
-              <Typography
-                variant="subtitle1"
-                sx={{
-                  fontSize: "h5.fontSize",
-                  color: "text.secondary",
-                  mb: 2,
-                }}
-              >
-                {t("subtitle")}
-              </Typography>
+                <Typography
+                  variant="subtitle1"
+                  sx={{
+                    fontSize: { xs: "h6.fontSize", sm: "h5.fontSize" },
+                    color: "text.secondary",
+                  }}
+                >
+                  {t("subtitle")}
+                </Typography>
+              </Box>
             </Box>
           </Box>
 
